@@ -39,7 +39,6 @@ type Order = 'asc' | 'desc';
 interface HeadCell {
     key: string,
     disablePadding: boolean;
-    id: any;
     label: string;
     numeric: boolean;
 }
@@ -60,7 +59,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         props;
     const createSortHandler =
         (property: any) => (event: React.MouseEvent<unknown>) => {
-            console.log(event, property)
             onRequestSort(event, property);
         };
 
@@ -81,20 +79,20 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                 </TableCell>
                 {props.headCells.map((headCell) => (
                     <TableCell
-                        key={headCell.id}
-                        className=' capitalize'
+                        key={headCell.key}
+                        className='capitalize'
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
-                        sortDirection={orderBy === headCell.id ? order : false}
+                        sortDirection={orderBy === headCell.key ? order : false}
                     >
                         <TableSortLabel
 
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
-                            onClick={createSortHandler(headCell.id)}
+                            active={orderBy === headCell.key}
+                            direction={orderBy === headCell.key ? order : 'asc'}
+                            onClick={createSortHandler(headCell.key)}
                         >
                             {headCell.label}
-                            {orderBy === headCell.id ? (
+                            {orderBy === headCell.key ? (
                                 <Box component="span" sx={visuallyHidden}>
                                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </Box>
@@ -163,7 +161,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps & { title: string
 }
 
 export function EnhancedTable(props: TableDjangoProps) {
-    const [order, setOrder] = React.useState<Order>('asc');
+    const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<any>('id');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
@@ -174,10 +172,10 @@ export function EnhancedTable(props: TableDjangoProps) {
         event: React.MouseEvent<unknown>,
         property: any,
     ) => {
-        // todo:请求数据
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
+        props.onRequestSort(isAsc ? '-' : '', property)
     };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,13 +208,15 @@ export function EnhancedTable(props: TableDjangoProps) {
     };
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(newPage)
         props.onSetPage(newPage + 1)
     };
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        props.onSetPageSize(parseInt(event.target.value, 10))
+        props.onSetPage(1)
+
     };
 
     const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -345,7 +345,9 @@ interface TableDjangoProps {
         total_pages: number;
         total_record: number;
     },
+    onRequestSort: (order: string, property: any) => void;
     onSetPage: (targetPage: number) => void
+    onSetPageSize: (size: number) => void
 }
 
 export function TableDjango(props: TableDjangoProps) {

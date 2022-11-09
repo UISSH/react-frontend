@@ -1,0 +1,100 @@
+import PublicIcon from '@mui/icons-material/Public';
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+import { TableDjango } from "../../components/djangoTable";
+import { SwitchSSL } from '../../components/website/switchSSL';
+import { getfetch } from "../../requests/http";
+import { GlobalProgressAtom } from "../../store/recoilStore";
+
+export default function WebsiteTable() {
+    const [t] = useTranslation()
+    const headCells = [
+        {
+            key: 'id',
+            numeric: false,
+            disablePadding: true,
+            label: 'ID',
+        }, {
+            key: 'domain',
+            numeric: false,
+            disablePadding: false,
+            label: t('website.domain'),
+        },
+        {
+            key: 'web_server_type_text',
+            numeric: true,
+            disablePadding: false,
+            label: t('website.application'),
+        },
+        {
+            key: 'database_id',
+            numeric: true,
+            disablePadding: false,
+            label: t('website.database'),
+        },
+        {
+            key: 'index_root',
+            numeric: true,
+            disablePadding: false,
+            label: t('website.path'),
+        },
+        {
+            key: 'ssl_enable',
+            numeric: true,
+            disablePadding: false,
+            label: t('website.ssl'),
+        },
+    ];
+    const [globalProgress, setGlobalProgress] = useRecoilState(GlobalProgressAtom)
+    const [updateState, setUpdateState] = useState(1)
+    const [rowsState, setRowsState] = useState([])
+    const [paginationState, setPaginationState] = useState()
+    const [pageState, setPageState] = useState(1)
+    const [orederState, setOrederState] = useState("-id")
+    const [pageSizeState, setPageSizeState] = useState(5)
+
+    const handleSetTargetPage = (targetPage: number) => {
+        setPageState(targetPage)
+        setUpdateState(updateState + 1)
+    }
+    const handleRequestSort = (
+        order: string,
+        property: any,
+    ) => {
+        setOrederState(order + property)
+        setUpdateState(updateState + 1)
+    };
+
+    const handleSetpageSize = (size: number) => {
+        setPageSizeState(size)
+        setUpdateState(updateState + 1)
+    }
+
+    useEffect(() => {
+        setGlobalProgress(true)
+        const handleUpdate = () => {
+            setUpdateState(updateState + 1)
+        }
+        getfetch("website", {
+        }, {
+            searchParam: {
+                "page": String(pageState),
+                "ordering": orederState,
+                "page_size": String(pageSizeState)
+            }
+        }).then(res => res.json()).then(res => {
+            setRowsState(res.results.map((row: any) => {
+                row.domain = <div className="flex content-center gap-1">{row.domain} <PublicIcon fontSize="small" color={row.ssl_enable ? "success" : "inherit"}></PublicIcon> </div>
+                row.database_id = row.database_id ? row.database_id : '-'
+                row.ssl_enable = <SwitchSSL id={row.id} status={row.ssl_enable} onUpdate={handleUpdate}></SwitchSSL>
+                return row
+            }))
+            setPaginationState(res.pagination)
+        }).finally(() => {
+            setGlobalProgress(false)
+        })
+    }, [updateState])
+    return <TableDjango onSetPageSize={handleSetpageSize} onRequestSort={handleRequestSort} onSetPage={handleSetTargetPage} rows={rowsState} headCells={headCells} title={"layout.website"} pagination={paginationState}></TableDjango>
+
+}
