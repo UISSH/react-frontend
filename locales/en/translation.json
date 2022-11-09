@@ -1,0 +1,42 @@
+{
+  "key": "hello world",
+  "Oops": "Oops",
+  "sorry-an-unexpected-error-has-occurred": "Sorry, an unexpected error has occurred.",
+  "permission denied": "Permission denied",
+  "back-home": "back home",
+  "Not Found": "Not Found",
+  "network-error": "Network Error",
+  "overview": {
+    "status": {
+      "load": "load",
+      "status": "status",
+      "cpu": "CPU",
+      "disk": "disk",
+      "system-info": "system info",
+      "ram": "ram"
+    }
+  },
+  "friendly-simple-and-focused-on-privacy": "friendly, simple, and focused on privacy.",
+  "rows-per-page": "Rows per page",
+  "login": {
+    "username": "username",
+    "password": "password",
+    "remember-me": "remember me",
+    "login": "Login"
+  },
+  "layout": {
+    "overview": "overview",
+    "website": "website",
+    "database": "database",
+    "files": "files",
+    "terminal": "terminal",
+    "ftp": "FTP"
+  },
+  "website": {
+    "domain": "domain",
+    "application": "application",
+    "database": "database",
+    "path": "path",
+    "ssl": "SSL"
+  }
+}
