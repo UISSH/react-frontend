@@ -63,17 +63,17 @@ function Login() {
     const navigate = useNavigate()
     const setUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserInfo(state => ({ ...state, username: event.target.value }));
-      
+
     }
 
     const setPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserInfo(state => ({ ...state, password: event.target.value }));
- 
+
     }
 
     const setRememberMe = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserInfo(state => ({ ...state, remember_me: event.target.checked }));
-    
+
 
     }
     const updateUrl = (val: any) => {

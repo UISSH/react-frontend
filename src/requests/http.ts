@@ -6,10 +6,13 @@ import { getApiGateway } from "./utils";
 export let api = {
     version: "/api/version/",
     accountLogin: "/api/User/login/",
-    // website
+    // Website
     website: '/api/Website/',
     enableWebsiteSSL: '/api/Website/{id}/enable_ssl/',
     disableWebsiteSSL: '/api/Website/{id}/disable_ssl/',
+    verifyDomainRecords:'/api/Website/verify_dns_records/',
+    // Application
+    listApplication: '/api/Application/list_application/'
 };
 
 
@@ -18,6 +21,12 @@ export let api = {
 export type ApiType = keyof typeof api
 
 
+
+export function hasAuthToken() {
+    let token = Cookies.get(ACCESS_TOKEN)
+
+    return Boolean(token)
+}
 function addHeader(ApiType: ApiType, init?: RequestInit) {
     let token = Cookies.get(ACCESS_TOKEN)
     let authorization = { "Authorization": "token " + token }

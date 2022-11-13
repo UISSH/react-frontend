@@ -1,4 +1,5 @@
 import PublicIcon from '@mui/icons-material/Public';
+import { alpha, Button, ButtonGroup, IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -6,6 +7,62 @@ import { TableDjango } from "../../components/djangoTable";
 import { SwitchSSL } from '../../components/website/switchSSL';
 import { getfetch } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CreateWebsiteDialog from './createWebsiteDialog';
+
+interface EnhancedTableToolbarProps {
+    numSelected: number;
+}
+function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+    const { numSelected } = props;
+    const [t] = useTranslation()
+    const [openDialog, setOpenDialog] = useState(true)
+
+    return (<>
+        <CreateWebsiteDialog open={openDialog} onStatus={(res) => { setOpenDialog(false) }}></CreateWebsiteDialog>
+        <Toolbar
+            sx={{
+                pl: { sm: 2 },
+                pr: { xs: 1, sm: 1 },
+                ...(numSelected > 0 && {
+                    bgcolor: (theme) =>
+                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+                }),
+            }}
+        >
+            {numSelected > 0 ? (
+                <Typography
+                    sx={{ flex: '1 1 100%' }}
+                    color="inherit"
+                    variant="subtitle1"
+                    component="div"
+                >
+                    {numSelected} {t("layout.website")}
+                </Typography>
+            ) : (
+                <Typography
+                    className='capitalize'
+                    sx={{ flex: '1 1 100%' }}
+                    variant="h6"
+                    id="tableTitle"
+                    component="div"
+                >
+                    {t("layout.website")}
+                </Typography>
+            )}
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button startIcon={<AddIcon />} onClick={() => { setOpenDialog(true) }}>{t("website.add")}</Button>
+
+                {numSelected > 0 ? (
+                    <Button color='error' startIcon={<DeleteIcon />}>{t("website.delete")}</Button>
+                ) : (<div></div>)}
+            </ButtonGroup>
+
+        </Toolbar>
+    </>
+    );
+}
 
 export default function WebsiteTable() {
     const [t] = useTranslation()
@@ -53,7 +110,7 @@ export default function WebsiteTable() {
     const [pageState, setPageState] = useState(1)
     const [orederState, setOrederState] = useState("-id")
     const [pageSizeState, setPageSizeState] = useState(5)
-
+    const [selected, setSelected] = useState<readonly string[]>([]);
     const handleSetTargetPage = (targetPage: number) => {
         setPageState(targetPage)
         setUpdateState(updateState + 1)
@@ -95,6 +152,15 @@ export default function WebsiteTable() {
             setGlobalProgress(false)
         })
     }, [updateState])
-    return <TableDjango onSetPageSize={handleSetpageSize} onRequestSort={handleRequestSort} onSetPage={handleSetTargetPage} rows={rowsState} headCells={headCells} title={"layout.website"} pagination={paginationState}></TableDjango>
+    return (
+        <div>
+            <TableDjango
+                enhancedTableToolbar={EnhancedTableToolbar} selectedState={[selected, setSelected]}
+                onSetPageSize={handleSetpageSize} onRequestSort={handleRequestSort} onSetPage={handleSetTargetPage}
+                rows={rowsState} headCells={headCells} title={"layout.website"} pagination={paginationState}
+            />
+        </div>
+    )
+
 
 }

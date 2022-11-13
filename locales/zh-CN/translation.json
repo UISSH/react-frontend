@@ -30,6 +30,7 @@
     "terminal": "终端",
     "ftp": "FTP",
     "files": "文件管理",
-    "database": "数据库"
+    "database": "数据库",
+    "selected": "被选中"
   }
 }

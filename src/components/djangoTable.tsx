@@ -16,12 +16,12 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { useTranslation } from 'react-i18next';
+import CreateWebsiteDialog from './website/createWebsiteDialog';
 
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -109,7 +109,12 @@ interface EnhancedTableToolbarProps {
     numSelected: number;
 }
 
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps & { title: string }) {
+function EnhancedTableToolbar(props: EnhancedTableToolbarProps & { title?: string, customToolbar?: (props: EnhancedTableToolbarProps) => JSX.Element }) {
+
+    if (props.customToolbar) {
+        return props.customToolbar({ numSelected: props.numSelected })
+    }
+
     const { numSelected } = props;
     const [t] = useTranslation()
     return (
@@ -140,7 +145,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps & { title: string
                     id="tableTitle"
                     component="div"
                 >
-                    {t(props.title)}
+                    {props.title ? t(props.title) : ''}
                 </Typography>
             )}
             {numSelected > 0 ? (
@@ -161,9 +166,11 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps & { title: string
 }
 
 export function EnhancedTable(props: TableDjangoProps) {
+
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<any>('id');
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [selected, setSelected] = props.selectedState
+    //const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -232,7 +239,8 @@ export function EnhancedTable(props: TableDjangoProps) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} title={props.title} />
+
+                {<EnhancedTableToolbar numSelected={selected.length} title={props.title} customToolbar={props.enhancedTableToolbar} />}
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -345,9 +353,11 @@ interface TableDjangoProps {
         total_pages: number;
         total_record: number;
     },
+    selectedState: [readonly string[], React.Dispatch<React.SetStateAction<readonly string[]>>],
     onRequestSort: (order: string, property: any) => void;
     onSetPage: (targetPage: number) => void
     onSetPageSize: (size: number) => void
+    enhancedTableToolbar?: (props: EnhancedTableToolbarProps) => JSX.Element
 }
 
 export function TableDjango(props: TableDjangoProps) {

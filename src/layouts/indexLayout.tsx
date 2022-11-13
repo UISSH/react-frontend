@@ -13,7 +13,7 @@ import CookieIcon from '@mui/icons-material/Cookie';
 import MenuIcon from '@mui/icons-material/Menu';
 import StorageIcon from '@mui/icons-material/Storage';
 import WebIcon from '@mui/icons-material/Web';
-import { CircularProgress, CssBaseline, Dialog, DialogContent, DialogTitle, Drawer, FormControlLabel, FormGroup, LinearProgress, Modal, Switch, Tab, Typography } from "@mui/material";
+import { CircularProgress, CssBaseline, Dialog, DialogContent, DialogTitle, Drawer, FormControlLabel, FormGroup, LinearProgress, Modal, Switch, Tab, Typography, useMediaQuery } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
@@ -24,7 +24,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet, useLocation, useNavigation, useParams, useSearchParams } from "react-router-dom";
 import packagejs from "../../package.json";
-import { getfetch } from "../requests/http";
+import { getfetch, hasAuthToken } from "../requests/http";
 import { useRecoilState } from 'recoil';
 import { GlobalProgressAtom, GlobalLoadingAtom } from '../store/recoilStore';
 
@@ -82,6 +82,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export async function loader() {
+    if (!hasAuthToken()) {
+        throw new Response("permission denied", { status: 404 });
+    }
     let data = await getfetch("version")
     if (data.status == 403) {
         throw new Response("permission denied", { status: 404 });
@@ -155,8 +158,9 @@ function GlobalLoading() {
 
 
 export default function PersistentDrawerLeft() {
+    const matches = useMediaQuery('(min-width:900px)');
     const theme = useTheme();
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(matches);
     const { t } = useTranslation()
     const [openDebugSwitch, setOpenDebugSwitch] = useState(false)
     const navigation = useNavigation();

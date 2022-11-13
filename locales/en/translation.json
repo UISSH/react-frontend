@@ -30,13 +30,17 @@
     "database": "database",
     "files": "files",
     "terminal": "terminal",
-    "ftp": "FTP"
+    "ftp": "FTP",
+    "selected": "selected"
   },
   "website": {
     "domain": "domain",
     "application": "application",
     "database": "database",
     "path": "path",
-    "ssl": "SSL"
+    "ssl": "SSL",
+    "add": "add",
+    "delete": "delete",
+    "create-new-website": "create new website"
   }
 }
