@@ -42,5 +42,6 @@
     "add": "add",
     "delete": "delete",
     "create-new-website": "create new website"
-  }
+  },
+  "the-domain-name-has-not-yet-resolved-to-the-server-public-ip": "The domain name has not yet resolved to the server public IP"
 }

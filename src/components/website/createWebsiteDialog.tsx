@@ -3,9 +3,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, DialogActions, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, Radio, RadioGroup, Switch, TextField } from '@mui/material';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useSnackbar } from 'notistack';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useRecoilState } from 'recoil';
 import { getfetch } from '../../requests/http';
+import { OperationResIF } from '../../requests/interface';
+import { GlobalLoadingAtom } from '../../store/recoilStore';
 import CardDialog from '../cardDialog';
 import { ApplicationType } from './interface';
 
@@ -57,15 +61,40 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
         const [sslCheck, setSslCheck] = useState(false)
         const [databaseCheck, setDatabaseCheck] = useState(false)
+        const [globalLoadingAtom, setGlobalLoadingAtom] = useRecoilState(GlobalLoadingAtom)
+        const { enqueueSnackbar } = useSnackbar();
+
         const handleSslChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             let status = event.target.checked
 
-            getfetch('verifyDomainRecords', {}, {
-                searchParam: { domain: "www.baidu.com" }
-            }).then((res) => {
-                console.log({ res })
-            })
-            setSslCheck(status);
+            if (status) {
+                setGlobalLoadingAtom(true)
+
+                getfetch('verifyDomainRecords', {}, {
+                    searchParam: { domain: "api-c11.jcpumiao.com" }
+                }).then(async (res) => {
+                    if (!res.ok) {
+                        enqueueSnackbar(t('network-error'), { variant: "error" });
+                        setSslCheck(false)
+                    }
+                    let op: OperationResIF = await res.json()
+                    if (op.result.result == 1) {
+                        setSslCheck(true)
+                        enqueueSnackbar('ok', { variant: 'success' });
+                    } else if (op.result.result == 2) {
+                        setSslCheck(false)
+                        enqueueSnackbar(op.msg !== 'None' ? op.msg : t('the-domain-name-has-not-yet-resolved-to-the-server-public-ip'), { variant: "error" });
+                    }
+
+                }).finally(() => {
+                    setGlobalLoadingAtom(false)
+
+                })
+            }else{
+                setSslCheck(status)
+            }
+
+
         };
 
         const handleDatabaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
