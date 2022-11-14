@@ -14,6 +14,7 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
+
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useSnackbar } from "notistack";
@@ -23,8 +24,218 @@ import { useRecoilState } from "recoil";
 import { getfetch } from "../../requests/http";
 import { OperationResIF } from "../../requests/interface";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
+import { generateRandom } from "../../utils";
 import CardDialog from "../cardDialog";
-import { ApplicationType } from "./interface";
+import {
+  ApplicationType,
+  BaseSettingChangeData,
+  BaseSettingProps,
+} from "./interface";
+
+function BaseSetting(props: BaseSettingProps) {
+  const [sslCheck, setSslCheck] = useState(false);
+  const [databaseCheck, setDatabaseCheck] = useState(false);
+
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+
+  const [websiteBody, setWebsiteBody] = useState({
+    name: "",
+    domain: "",
+    ssl_enable: false,
+    index_root: "",
+  });
+  const [databaseBody, setDatabaseBody] = useState({
+    name: "",
+    username: "",
+    password: "",
+  });
+
+  const handleSslChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let status = event.target.checked;
+    if (status) {
+      if (websiteBody.domain.length < 2) {
+        enqueueSnackbar(t("website.please-input-domain"), { variant: "warning" });
+        return;
+      }
+      setGlobalLoadingAtom(true);
+      getfetch(
+        "verifyDomainRecords",
+        {},
+        {
+          searchParam: { domain: websiteBody.domain },
+        }
+      )
+        .then(async (res) => {
+          if (!res.ok) {
+            enqueueSnackbar(t("network-error"), { variant: "error" });
+            setSslCheck(false);
+          }
+          let op: OperationResIF = await res.json();
+          if (op.result.result == 1) {
+            setSslCheck(true);
+            enqueueSnackbar("ok", { variant: "success" });
+          } else if (op.result.result == 2) {
+            setSslCheck(false);
+            enqueueSnackbar(
+              op.msg !== "None"
+                ? op.msg
+                : t(
+                    "the-domain-name-has-not-yet-resolved-to-the-server-public-ip"
+                  ),
+              { variant: "error" }
+            );
+          }
+        })
+        .finally(() => {
+          setGlobalLoadingAtom(false);
+        });
+    } else {
+      setSslCheck(status);
+    }
+  };
+
+  const handleDatabaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDatabaseBody({
+      name: "DB_" + generateRandom(6),
+      username: generateRandom(8),
+      password: generateRandom(32),
+    });
+    setDatabaseCheck(event.target.checked);
+  };
+
+  const handleValidation = (data: string, reg: RegExp) => {
+    let ok = data != "" && !Boolean(reg.exec(data));
+    return { error: ok };
+  };
+  useEffect(() => {
+    if (props.onChange) {
+      let data: BaseSettingChangeData = {
+        ...websiteBody,
+      };
+
+      if (databaseCheck) {
+        data["database"] = databaseBody;
+      }
+
+      props.onChange(data);
+    }
+  }, [websiteBody, databaseBody]);
+
+  return (
+    <>
+      <Box
+        className="grid py-4 gap-2"
+        component="form"
+        noValidate
+        autoComplete="off">
+        <div className="capitalize">
+          <Divider textAlign="center">{t("basic")}</Divider>
+        </div>
+
+        <TextField
+          error={websiteBody.name != "" && websiteBody.name.length < 2}
+          id={"website_name"}
+          label="name"
+          value={websiteBody.name}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setWebsiteBody((state) => ({
+              ...state,
+              name: event.target.value,
+            }));
+          }}
+        />
+        <TextField
+          {...handleValidation(
+            websiteBody.domain,
+            /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/
+          )}
+          id={"website_domain"}
+          label="domain"
+          value={websiteBody.domain}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setWebsiteBody((state) => ({
+              ...state,
+              domain: event.target.value,
+              index_root: "/var/www/" + event.target.value,
+            }));
+          }}
+        />
+        <TextField
+          {...handleValidation(websiteBody.index_root, /^\/|(\/[\w-]+)+$/)}
+          id={"website_directory"}
+          label="directory"
+          value={websiteBody.index_root}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setWebsiteBody((state) => ({
+              ...state,
+              index_root: event.target.value,
+            }));
+          }}
+        />
+
+        {databaseCheck ? (
+          <>
+            <div className="capitalize">
+              <Divider textAlign="center">{t("database")}</Divider>
+            </div>
+            <TextField
+              id={"database_name"}
+              label="name"
+              value={databaseBody.name}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setDatabaseBody((state) => ({
+                  ...state,
+                  name: event.target.value,
+                }));
+              }}
+            />
+            <TextField
+              id={"database_username"}
+              label="username"
+              value={databaseBody.username}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setDatabaseBody((state) => ({
+                  ...state,
+                  username: event.target.value,
+                }));
+              }}
+            />
+            <TextField
+              id={"website_directory"}
+              label={t("password")}
+              value={databaseBody.password}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setDatabaseBody((state) => ({
+                  ...state,
+                  password: event.target.value,
+                }));
+              }}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </Box>
+      <FormGroup row sx={{ justifyContent: "right" }}>
+        <FormControlLabel
+          className="capitalize"
+          control={<Switch checked={sslCheck} onChange={handleSslChange} />}
+          label={t("website.ssl")}
+        />
+        <FormControlLabel
+          className="capitalize"
+          control={
+            <Switch checked={databaseCheck} onChange={handleDatabaseChange} />
+          }
+          label={t("website.database")}
+        />
+      </FormGroup>
+    </>
+  );
+}
 
 interface CreateWebsiteProps {
   open: boolean;
@@ -61,8 +272,7 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           value={selectedApplication}
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
-          onChange={handleChange}
-        >
+          onChange={handleChange}>
           {Object.keys(application).map((item) => {
             console.log(application[item]);
             let name = application[item].info.name;
@@ -72,105 +282,6 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           })}
         </RadioGroup>
       </FormControl>
-    );
-  };
-
-  const BaseSetting = () => {
-    const [sslCheck, setSslCheck] = useState(false);
-    const [databaseCheck, setDatabaseCheck] = useState(false);
-    const [globalLoadingAtom, setGlobalLoadingAtom] =
-      useRecoilState(GlobalLoadingAtom);
-    const { enqueueSnackbar } = useSnackbar();
-
-    const handleSslChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      let status = event.target.checked;
-      if (status) {
-        setGlobalLoadingAtom(true);
-        getfetch(
-          "verifyDomainRecords",
-          {},
-          {
-            searchParam: { domain: "api-c11.jcpumiao.com" },
-          }
-        )
-          .then(async (res) => {
-            if (!res.ok) {
-              enqueueSnackbar(t("network-error"), { variant: "error" });
-              setSslCheck(false);
-            }
-            let op: OperationResIF = await res.json();
-            if (op.result.result == 1) {
-              setSslCheck(true);
-              enqueueSnackbar("ok", { variant: "success" });
-            } else if (op.result.result == 2) {
-              setSslCheck(false);
-              enqueueSnackbar(
-                op.msg !== "None"
-                  ? op.msg
-                  : t(
-                      "the-domain-name-has-not-yet-resolved-to-the-server-public-ip"
-                    ),
-                { variant: "error" }
-              );
-            }
-          })
-          .finally(() => {
-            setGlobalLoadingAtom(false);
-          });
-      } else {
-        setSslCheck(status);
-      }
-    };
-
-    const handleDatabaseChange = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      setDatabaseCheck(event.target.checked);
-    };
-    return (
-      <>
-        <Box
-          className="grid py-4 gap-2"
-          component="form"
-          noValidate
-          autoComplete="off"
-        >
-          <div className="capitalize">
-            <Divider textAlign="center">{t("basic")}</Divider>
-          </div>
-
-          <TextField id={"website_name"} label="name" />
-          <TextField id={"website_domain"} label="domain" />
-          <TextField id={"website_directory"} label="directory" />
-
-          {databaseCheck ? (
-            <>
-              <div className="capitalize">
-                <Divider textAlign="center">{t("database")}</Divider>
-              </div>
-              <TextField id={"database_name"} label="name" />
-              <TextField id={"database_username"} label="username" />
-              <TextField id={"website_directory"} label={t("password")} />
-            </>
-          ) : (
-            <></>
-          )}
-        </Box>
-        <FormGroup row sx={{ justifyContent: "right" }}>
-          <FormControlLabel
-            className="capitalize"
-            control={<Switch checked={sslCheck} onChange={handleSslChange} />}
-            label={t("website.ssl")}
-          />
-          <FormControlLabel
-            className="capitalize"
-            control={
-              <Switch checked={databaseCheck} onChange={handleDatabaseChange} />
-            }
-            label={t("website.database")}
-          />
-        </FormGroup>
-      </>
     );
   };
 
@@ -214,7 +325,7 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           .then((res) => res.json())
           .then((res) => {
             setApplication(res);
-            //setStep(1)
+            setStep(1);
           })
       : "";
   }, [open]);
@@ -223,12 +334,10 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     <CardDialog
       disableEscapeKeyDown
       open={open}
-      onClose={() => onStatus("cancel")}
-    >
+      onClose={() => onStatus("cancel")}>
       <DialogTitle
         bgcolor={(theme) => theme.palette.primary.main}
-        color={(theme) => theme.palette.text.disabled}
-      >
+        color={(theme) => theme.palette.text.disabled}>
         <div className="flex justify-between  items-center">
           <div className="capitalize">{t("website.create-new-website")}</div>
           <IconButton color="inherit" onClick={() => onStatus("cancel")}>

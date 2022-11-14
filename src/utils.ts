@@ -9,6 +9,21 @@ export function formatBytes(bytes: number, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export function generateRandom(length: number) {
+  let pass = "";
+  let str =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 1; i <= length; i++) {
+    let char = Math.floor(Math.random() * str.length + 1);
+
+    pass += str.charAt(char);
+  }
+
+  return pass;
+}
+
 export class LocalStorageJson {
   static getItem(key: string): any {
     let data = window.localStorage.getItem(key);

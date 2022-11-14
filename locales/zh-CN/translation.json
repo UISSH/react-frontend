@@ -32,5 +32,8 @@
     "files": "文件管理",
     "database": "数据库",
     "selected": "被选中"
+  },
+  "website": {
+    "please-input-domain": "请填入域名"
   }
 }
