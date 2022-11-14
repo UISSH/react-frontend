@@ -1,6 +1,5 @@
 import request from "../utils/request";
-import {ACCESS_TOKEN, USER_INFO} from "src/utils/mutation-types";
-
+import { ACCESS_TOKEN, USER_INFO } from "src/utils/mutation-types";
 
 const api = {
   account: "/api/User",

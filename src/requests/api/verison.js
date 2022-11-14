@@ -6,8 +6,6 @@ const api = {
 
 export function getVersion() {
   return request({
-    url: api.version
-  })
+    url: api.version,
+  });
 }
-
-
