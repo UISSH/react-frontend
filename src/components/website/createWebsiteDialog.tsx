@@ -61,7 +61,8 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           value={selectedApplication}
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
-          onChange={handleChange}>
+          onChange={handleChange}
+        >
           {Object.keys(application).map((item) => {
             console.log(application[item]);
             let name = application[item].info.name;
@@ -132,7 +133,8 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           className="grid py-4 gap-2"
           component="form"
           noValidate
-          autoComplete="off">
+          autoComplete="off"
+        >
           <div className="capitalize">
             <Divider textAlign="center">{t("basic")}</Divider>
           </div>
@@ -221,10 +223,12 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     <CardDialog
       disableEscapeKeyDown
       open={open}
-      onClose={() => onStatus("cancel")}>
+      onClose={() => onStatus("cancel")}
+    >
       <DialogTitle
         bgcolor={(theme) => theme.palette.primary.main}
-        color={(theme) => theme.palette.text.disabled}>
+        color={(theme) => theme.palette.text.disabled}
+      >
         <div className="flex justify-between  items-center">
           <div className="capitalize">{t("website.create-new-website")}</div>
           <IconButton color="inherit" onClick={() => onStatus("cancel")}>
