@@ -2,8 +2,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 
 import DialogTitle from "@mui/material/DialogTitle";
+import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+import { getfetch } from "../../requests/http";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 import CardDialog from "../CardDialog";
 import ApplicationSettings from "./ApplicationSettings";
 import BaseSetting from "./BaseSetting";
@@ -21,8 +25,14 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
   const [step, setStep] = useState(1);
   const [application, setApplication] = useState<ApplicationType>();
+  const requestBody = useRef({
+    website: {},
+    database: {},
+  });
 
-  const canNext = useRef(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
 
   const handlePreviousStep = () => {
     setStep((state) => {
@@ -36,6 +46,88 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
   const handleSelectApplication = (data: ApplicationType) => {
     setApplication(data);
+  };
+
+  const handleDone = async () => {
+    setGlobalLoadingAtom(true);
+
+    console.log(requestBody.current);
+
+    // create website
+    let res = await getfetch("website", {
+      method: "POST",
+      body: JSON.stringify(requestBody.current.website),
+    });
+    let resWebsiteJson = { id: -1 };
+
+    if (res.ok) {
+      resWebsiteJson = await res.json();
+    } else {
+      setGlobalLoadingAtom(false);
+      enqueueSnackbar(t("Create website error"), { variant: "error" });
+      return;
+    }
+
+    // create database
+    res = await getfetch("database", {
+      method: "POST",
+      body: JSON.stringify({
+        ...requestBody.current.database,
+        website: resWebsiteJson.id,
+      }),
+    });
+
+    let resDatabaseJson = { id: -1 };
+
+    if (res.ok) {
+      resDatabaseJson = await res.json();
+    } else {
+      setGlobalLoadingAtom(false);
+      enqueueSnackbar(t("Create database error"), { variant: "error" });
+      return;
+    }
+
+    // create database instance on server
+
+    res = await getfetch(
+      "createDatabaseInstance",
+      {
+        method: "POST",
+      },
+      { pathParam: { id: String(resDatabaseJson.id) } }
+    );
+
+    if (!res.ok) {
+      setGlobalLoadingAtom(false);
+      enqueueSnackbar(t("Create database instance error"), {
+        variant: "error",
+      });
+
+      return;
+    }
+
+    res = await getfetch(
+      "createApplication",
+      {
+        method: "POST",
+      },
+      { pathParam: { id: String(resWebsiteJson.id) } }
+    );
+
+    if (!res.ok) {
+      setGlobalLoadingAtom(false);
+      enqueueSnackbar(t("Failed to deploy application"), {
+        variant: "error",
+      });
+
+      return;
+    }
+
+    setGlobalLoadingAtom(false);
+    enqueueSnackbar(t("Successfully deployed the application"), {
+      variant: "success",
+    });
+    onStatus("done");
   };
 
   useEffect(() => {
@@ -63,6 +155,7 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       {open && (
         <div className={step === 1 ? "" : "hidden"}>
           <SelectApplication
+            requestBody={requestBody}
             onNextStep={handleNextStep}
             onSelectApplication={handleSelectApplication}></SelectApplication>
         </div>
@@ -71,6 +164,7 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       {open && (
         <div className={step === 2 ? "" : "hidden"}>
           <BaseSetting
+            requestBody={requestBody}
             onPreviousStep={handlePreviousStep}
             onNextStep={handleNextStep}></BaseSetting>
         </div>
@@ -78,6 +172,8 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
       {open && step === 3 && (
         <ApplicationSettings
+          onDone={handleDone}
+          requestBody={requestBody}
           onPreviousStep={handlePreviousStep}
           application={application}></ApplicationSettings>
       )}

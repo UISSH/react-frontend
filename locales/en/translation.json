@@ -42,7 +42,8 @@
     "add": "add",
     "delete": "delete",
     "create-new-website": "create new website",
-    "please-input-domain": "Please input domain"
+    "please-input-domain": "Please input domain",
+    "are-you-sure-to-delete-the-website": "Are you sure to delete the website?"
   },
   "the-domain-name-has-not-yet-resolved-to-the-server-public-ip": "The domain name has not yet resolved to the server public IP"
 }

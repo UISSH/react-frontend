@@ -1,6 +1,8 @@
-import * as React from "react";
-import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import { alpha } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,17 +12,14 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-import CreateWebsiteDialog from "./website/CreateWebsiteDialog";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -104,8 +103,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-interface EnhancedTableToolbarProps {
+export interface EnhancedTableToolbarProps {
   numSelected: number;
+  onAction?: (action: string) => void;
 }
 
 function EnhancedTableToolbar(
@@ -115,7 +115,7 @@ function EnhancedTableToolbar(
   }
 ) {
   if (props.customToolbar) {
-    return props.customToolbar({ numSelected: props.numSelected });
+    return props.customToolbar({ ...props });
   }
 
   const { numSelected } = props;
@@ -245,6 +245,7 @@ export function EnhancedTable(props: TableDjangoProps) {
         {
           <EnhancedTableToolbar
             numSelected={selected.length}
+            onAction={props.onAction}
             title={props.title}
             customToolbar={props.enhancedTableToolbar}
           />
@@ -373,6 +374,7 @@ interface TableDjangoProps {
   onSetPage: (targetPage: number) => void;
   onSetPageSize: (size: number) => void;
   enhancedTableToolbar?: (props: EnhancedTableToolbarProps) => JSX.Element;
+  onAction: (action: string) => void;
 }
 
 export function TableDjango(props: TableDjangoProps) {

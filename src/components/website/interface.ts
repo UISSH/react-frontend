@@ -1,3 +1,5 @@
+import { MutableRefObject } from "react";
+
 export interface ApplicationType {
   info: Info;
   attr: AttrElement[];
@@ -101,6 +103,10 @@ export interface BaseSettingChangeData {
   };
 }
 export interface CreateWebsiteStepProps {
+  requestBody: MutableRefObject<{
+    website: {};
+    database: {};
+  }>;
   onPreviousStep?: () => void;
   onNextStep?: () => void;
 }

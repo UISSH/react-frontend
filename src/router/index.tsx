@@ -1,30 +1,43 @@
-import { createBrowserRouter, json, redirect } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 
-import Login from "../pages/Login";
+import { loader as indexLayoutLoader } from "../layouts/indexLayout";
 
-import ErrorPage from "../pages/ErrorPage";
-import IndexLayout, {
-  loader as indexLayoutLoader,
-} from "../layouts/indexLayout";
-import Index from "../pages/IndexLayout/Index";
-import Website from "../pages/IndexLayout/Website";
-import Database from "../pages/IndexLayout/Database";
-import File from "../pages/IndexLayout/File";
-import Terminal from "../pages/IndexLayout/Terminal";
-import Mount from "../pages/IndexLayout/Mount";
+import { lazy, Suspense } from "react";
+import { CircularProgress } from "@mui/material";
+
+const Loading = () => {
+  return (
+    <div className="grid h-screen place-items-center">
+      <CircularProgress size={"128px"} />
+    </div>
+  );
+};
+
+const LazySuspense = (props: { import: string }) => {
+  let Component = lazy(() => import(props.import));
+
+  return (
+    <Suspense fallback={<Loading />}>
+      <Component></Component>
+    </Suspense>
+  );
+};
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    errorElement: <ErrorPage />,
-    element: <Login />,
+    errorElement: <LazySuspense import="../pages/ErrorPage" />,
+    element: <LazySuspense import="../pages/Login" />,
   },
-  { path: "/login", element: <Login /> },
+  {
+    path: "/login",
+    element: <LazySuspense import="../pages/Login" />,
+  },
   {
     path: "/dash",
     loader: indexLayoutLoader,
-    element: <IndexLayout />,
-    errorElement: <ErrorPage />,
+    element: <LazySuspense import="../layouts/indexLayout" />,
+    errorElement: <LazySuspense import="../pages/ErrorPage" />,
     children: [
       {
         index: true,
@@ -34,27 +47,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "index",
-        element: <Index></Index>,
+        element: <LazySuspense import="../pages/IndexLayout/Index" />,
       },
       {
         path: "website",
-        element: <Website></Website>,
+        element: <LazySuspense import="../pages/IndexLayout/Website" />,
       },
       {
         path: "database",
-        element: <Database></Database>,
+        element: <LazySuspense import="../pages/IndexLayout/Database" />,
       },
       {
         path: "file",
-        element: <File></File>,
+        element: <LazySuspense import="../pages/IndexLayout/File" />,
       },
       {
         path: "terminal",
-        element: <Terminal></Terminal>,
+        element: <LazySuspense import="../pages/IndexLayout/Terminal" />,
       },
       {
         path: "mount",
-        element: <Mount></Mount>,
+        element: <LazySuspense import="../pages/IndexLayout/Mount" />,
       },
     ],
   },

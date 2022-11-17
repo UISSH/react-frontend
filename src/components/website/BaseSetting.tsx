@@ -99,6 +99,24 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
     setDatabaseCheck(event.target.checked);
   };
 
+  const handleNextStep = () => {
+    props.requestBody.current.website = {
+      ...props.requestBody.current.website,
+      ...websiteBody,
+    };
+
+    if (!databaseCheck) {
+      props.requestBody.current.database = {};
+    } else {
+      props.requestBody.current.database = {
+        ...props.requestBody.current.database,
+        ...databaseBody,
+      };
+    }
+
+    props.onNextStep ? props.onNextStep() : null;
+  };
+
   const validate = (
     id: string,
     value: string,
@@ -257,7 +275,7 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
             // disabled={!canNext.current}
             disabled={disable}
             variant="contained"
-            onClick={props.onNextStep}>
+            onClick={handleNextStep}>
             {t("next")}
           </Button>
         )}

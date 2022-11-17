@@ -1,9 +1,13 @@
 import {
-    Box,
-    Button, CircularProgress,
-    DialogActions, FormControl,
-    FormControlLabel, FormLabel, Radio,
-    RadioGroup
+  Box,
+  Button,
+  CircularProgress,
+  DialogActions,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 
 import DialogContent from "@mui/material/DialogContent";
@@ -14,9 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { getfetch } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
-import {
-    ApplicationType, CreateWebsiteStepProps
-} from "./interface";
+import { ApplicationType, CreateWebsiteStepProps } from "./interface";
 
 export default function SelectApplication(
   props: CreateWebsiteStepProps & {
@@ -39,6 +41,14 @@ export default function SelectApplication(
   const application = useQuery(["getApplication"], () =>
     getfetch("listApplication").then((res) => res.json())
   );
+
+  const handleNextStep = () => {
+    props.requestBody.current.website = {
+      ...props.requestBody.current.website,
+      application: selectedApplication,
+    };
+    props.onNextStep ? props.onNextStep() : null;
+  };
 
   if (application.isLoading)
     return (
@@ -90,7 +100,7 @@ export default function SelectApplication(
           <Button
             disabled={!selectedApplication}
             variant="contained"
-            onClick={props.onNextStep}>
+            onClick={handleNextStep}>
             {t("next")}
           </Button>
         )}

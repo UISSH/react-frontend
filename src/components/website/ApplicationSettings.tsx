@@ -2,16 +2,21 @@ import { Box, Button, DialogActions, TextField } from "@mui/material";
 
 import DialogContent from "@mui/material/DialogContent";
 import { useSnackbar } from "notistack";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationType, CreateWebsiteStepProps } from "./interface";
 
+type ApplicationParams = Record<string, string>;
+
 export default function ApplicationSettings(
-  props: CreateWebsiteStepProps & { application?: ApplicationType }
+  props: CreateWebsiteStepProps & {
+    onDone: () => void;
+    application?: ApplicationType;
+  }
 ) {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [params, setParams] = useState<Record<string, string>>({});
+  const [params, setParams] = useState<ApplicationParams>({});
 
   const getLabel = (data: { [name: string]: string }) => {
     return data["default"];
@@ -26,7 +31,6 @@ export default function ApplicationSettings(
       return;
     }
 
-    // 遍历所有的参数，如果有必填的参数没有填写，就不允许下一步
     for (const param of props.application.attr) {
       if (param.required && !params[param.name]) {
         enqueueSnackbar(getLabel(param.label) + " " + t("is required"), {
@@ -36,7 +40,11 @@ export default function ApplicationSettings(
       }
     }
 
-    console.log(params);
+    props.requestBody.current.website = {
+      ...props.requestBody.current.website,
+      application_config: params,
+    };
+    props.onDone();
   };
   useLayoutEffect(() => {
     if (props.application) {
@@ -61,6 +69,7 @@ export default function ApplicationSettings(
           noValidate
           autoComplete="off">
           {props.application &&
+            params &&
             props.application.attr.map((item) => {
               return (
                 <TextField

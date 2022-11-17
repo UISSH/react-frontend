@@ -1,3 +1,4 @@
+import { CreateDatabase } from "./../components/website/interface";
 import Cookies from "js-cookie";
 
 import { ACCESS_TOKEN } from "../constant";
@@ -8,11 +9,17 @@ export let api = {
   accountLogin: "/api/User/login/",
   // Website
   website: "/api/Website/",
+  websiteItem: "/api/Website/{id}/",
   enableWebsiteSSL: "/api/Website/{id}/enable_ssl/",
   disableWebsiteSSL: "/api/Website/{id}/disable_ssl/",
   verifyDomainRecords: "/api/Website/verify_dns_records/",
   // Application
   listApplication: "/api/Application/list_application/",
+  createApplication: "/api/Application/{id}/app_create/",
+  // Database
+  database: "/api/DataBase/",
+  databaseItem: "/api/DataBase/{id}/",
+  createDatabaseInstance: "/api/DataBase/{id}/create_instance/",
 };
 
 export type ApiType = keyof typeof api;
@@ -74,7 +81,6 @@ export function getfetch(
     url = new URL(url);
 
     if (searchParam) {
-      console.log("==");
       url.search = new URLSearchParams(searchParam).toString();
     }
     return fetch(url, init);
