@@ -16,9 +16,10 @@ import { useTranslation } from "react-i18next";
 import { useLoaderData } from "react-router-dom";
 import { getWSGateway } from "../../requests/utils";
 import { formatBytes } from "../../utils";
-import SystemInfo from "./systemInfo";
+
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { useRecoilState } from "recoil";
+import SystemInfo from "./SystemInfo";
 
 export async function loader(props: { params: object }) {
   let data = useLoaderData();
@@ -63,8 +64,7 @@ function WithLabelCularProgress(
         <React.Fragment>
           <div> {props.tooltip}</div>
         </React.Fragment>
-      }
-    >
+      }>
       <div>
         <Box sx={{ position: "relative", display: "inline-flex" }}>
           <CircularProgress
@@ -88,8 +88,7 @@ function WithLabelCularProgress(
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-            }}
-          >
+            }}>
             <CircularProgress
               color={getColor()}
               size={"6rem"}
@@ -106,14 +105,12 @@ function WithLabelCularProgress(
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Typography
                 fontSize={18}
                 variant="caption"
                 component="div"
-                color={getColor()}
-              >{`${Math.round(props.value)}%`}</Typography>
+                color={getColor()}>{`${Math.round(props.value)}%`}</Typography>
             </Box>
           </Box>
         </Box>

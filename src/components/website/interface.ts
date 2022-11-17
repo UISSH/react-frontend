@@ -16,7 +16,7 @@ export interface AttrAttr {}
 
 export interface Description {
   default: string;
-  "en-US": string;
+  [name: string]: string;
 }
 
 export interface Info {
@@ -100,9 +100,9 @@ export interface BaseSettingChangeData {
     password: string;
   };
 }
-export interface BaseSettingProps {
-  onChange?: (data: BaseSettingChangeData) => void;
-  onCanNextChange?: (res: boolean) => void;
+export interface CreateWebsiteStepProps {
+  onPreviousStep?: () => void;
+  onNextStep?: () => void;
 }
 interface Sslconfig {
   certbot: Certbot;

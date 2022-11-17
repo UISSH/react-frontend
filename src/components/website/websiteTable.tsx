@@ -11,13 +11,13 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { TableDjango } from "../../components/djangoTable";
-import { SwitchSSL } from "../../components/website/switchSSL";
+import { TableDjango } from "../DjangoTable";
+import { SwitchSSL } from "./SwitchSSL";
 import { getfetch } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CreateWebsiteDialog from "./createWebsiteDialog";
+import CreateWebsiteDialog from "./CreateWebsiteDialog";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
@@ -25,7 +25,7 @@ interface EnhancedTableToolbarProps {
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
   const [t] = useTranslation();
-  const [openDialog, setOpenDialog] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
 
   return (
     <>
@@ -33,8 +33,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         open={openDialog}
         onStatus={(res) => {
           setOpenDialog(false);
-        }}
-      ></CreateWebsiteDialog>
+        }}></CreateWebsiteDialog>
       <Toolbar
         sx={{
           pl: { sm: 2 },
@@ -46,15 +45,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}
-      >
+        }}>
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 100%" }}
             color="inherit"
             variant="subtitle1"
-            component="div"
-          >
+            component="div">
             {numSelected} {t("layout.website")}
           </Typography>
         ) : (
@@ -63,21 +60,18 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 100%" }}
             variant="h6"
             id="tableTitle"
-            component="div"
-          >
+            component="div">
             {t("layout.website")}
           </Typography>
         )}
         <ButtonGroup
           variant="contained"
-          aria-label="outlined primary button group"
-        >
+          aria-label="outlined primary button group">
           <Button
             startIcon={<AddIcon />}
             onClick={() => {
               setOpenDialog(true);
-            }}
-          >
+            }}>
             {t("website.add")}
           </Button>
 
@@ -182,8 +176,9 @@ export default function WebsiteTable() {
                 {row.domain}{" "}
                 <PublicIcon
                   fontSize="small"
-                  color={row.ssl_enable ? "success" : "inherit"}
-                ></PublicIcon>{" "}
+                  color={
+                    row.ssl_enable ? "success" : "inherit"
+                  }></PublicIcon>{" "}
               </div>
             );
             row.database_id = row.database_id ? row.database_id : "-";
@@ -191,8 +186,7 @@ export default function WebsiteTable() {
               <SwitchSSL
                 id={row.id}
                 status={row.ssl_enable}
-                onUpdate={handleUpdate}
-              ></SwitchSSL>
+                onUpdate={handleUpdate}></SwitchSSL>
             );
             return row;
           })

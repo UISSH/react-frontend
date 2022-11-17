@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import SystemStatus from "../../components/overview/systemStatus";
+import SystemStatus from "../../components/overview/SystemStatus";
 
 export async function loader(props: { params: object }) {
   let data = useLoaderData();

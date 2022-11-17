@@ -1,4 +1,4 @@
-import WebsiteTable from "../../components/website/websiteTable";
+import WebsiteTable from "../../components/website/WebsiteTable";
 
 export default function Index() {
   return (

@@ -1,17 +1,17 @@
 import { createBrowserRouter, json, redirect } from "react-router-dom";
 
-import Login from "../pages/login";
+import Login from "../pages/Login";
 
-import ErrorPage from "../pages/errorPage";
+import ErrorPage from "../pages/ErrorPage";
 import IndexLayout, {
   loader as indexLayoutLoader,
 } from "../layouts/indexLayout";
-import Index from "../pages/indexLayout/index";
-import Website from "../pages/indexLayout/website";
-import Database from "../pages/indexLayout/database";
-import File from "../pages/indexLayout/file";
-import Terminal from "../pages/indexLayout/terminal";
-import Mount from "../pages/indexLayout/mount";
+import Index from "../pages/IndexLayout/Index";
+import Website from "../pages/IndexLayout/Website";
+import Database from "../pages/IndexLayout/Database";
+import File from "../pages/IndexLayout/File";
+import Terminal from "../pages/IndexLayout/Terminal";
+import Mount from "../pages/IndexLayout/Mount";
 
 export const router = createBrowserRouter([
   {

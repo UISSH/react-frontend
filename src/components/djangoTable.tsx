@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-import CreateWebsiteDialog from "./website/createWebsiteDialog";
+import CreateWebsiteDialog from "./website/CreateWebsiteDialog";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -85,13 +85,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             className="capitalize"
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.key ? order : false}
-          >
+            sortDirection={orderBy === headCell.key ? order : false}>
             <TableSortLabel
               active={orderBy === headCell.key}
               direction={orderBy === headCell.key ? order : "asc"}
-              onClick={createSortHandler(headCell.key)}
-            >
+              onClick={createSortHandler(headCell.key)}>
               {headCell.label}
               {orderBy === headCell.key ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -134,15 +132,13 @@ function EnhancedTableToolbar(
               theme.palette.action.activatedOpacity
             ),
         }),
-      }}
-    >
+      }}>
       {numSelected > 0 ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
-          component="div"
-        >
+          component="div">
           {numSelected} selected
         </Typography>
       ) : (
@@ -151,8 +147,7 @@ function EnhancedTableToolbar(
           sx={{ flex: "1 1 100%" }}
           variant="h6"
           id="tableTitle"
-          component="div"
-        >
+          component="div">
           {props.title ? t(props.title) : ""}
         </Typography>
       )}
@@ -258,8 +253,7 @@ export function EnhancedTable(props: TableDjangoProps) {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
+            size={dense ? "small" : "medium"}>
             <EnhancedTableHead
               headCells={props.headCells}
               numSelected={selected.length}
@@ -283,8 +277,7 @@ export function EnhancedTable(props: TableDjangoProps) {
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.id}
-                    selected={isItemSelected}
-                  >
+                    selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
@@ -302,8 +295,7 @@ export function EnhancedTable(props: TableDjangoProps) {
                             component="th"
                             id={labelId}
                             scope="row"
-                            padding="none"
-                          >
+                            padding="none">
                             {/* @ts-ignore */}
                             {row[headRow.key]}
                           </TableCell>
@@ -313,7 +305,7 @@ export function EnhancedTable(props: TableDjangoProps) {
                           /* @ts-ignore */
                         }
                         return (
-                          <TableCell key={[headRow.key]} align="right">
+                          <TableCell key={headRow.key} align="right">
                             {row[headRow.key]}
                           </TableCell>
                         );
@@ -327,8 +319,7 @@ export function EnhancedTable(props: TableDjangoProps) {
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
+                  }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
