@@ -1,3 +1,4 @@
+import { components } from "./../requests/schema";
 import { createTheme } from "@mui/material";
 
 function getTheme(rootElement?: HTMLElement | null) {
@@ -65,6 +66,14 @@ function getTheme(rootElement?: HTMLElement | null) {
       MuiPopper: {
         defaultProps: {
           container: rootElement,
+        },
+      },
+      MuiDialogTitle: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.text.disabled,
+          }),
         },
       },
     },

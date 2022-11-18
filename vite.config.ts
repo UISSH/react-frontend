@@ -10,8 +10,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ["react"],
-          "react-router-dom": ["react-router-dom"],
+          axios: ["axios"],
+          i18next: [
+            "i18next",
+            "i18next-http-backend",
+            "i18next-browser-languagedetector",
+          ],
+          "react-hook-form": ["react-hook-form"],
         },
       },
     },

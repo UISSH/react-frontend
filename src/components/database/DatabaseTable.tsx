@@ -14,29 +14,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { getfetch } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
-import CardDialog from "../CardDialog";
+//import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
-function CreateDatabaseDialog(props: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}) {
-  return (
-    <>
-      <CardDialog
-        disableEscapeKeyDown
-        open={props.open}
-        onClose={() => props.setOpen(false)}>
-        <DialogTitle></DialogTitle>
-      </CardDialog>
-    </>
-  );
-}
+const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
@@ -58,12 +44,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
   return (
     <>
-      <CreateDatabaseDialog
-        open={openDialog}
-        setOpen={(open) => {
-          setOpenDialog(open);
-          handleReloadParent();
-        }}></CreateDatabaseDialog>
+      <Suspense>
+        <CreateDatabaseDialog
+          open={openDialog}
+          setOpen={(open) => {
+            setOpenDialog(open);
+            handleReloadParent();
+          }}></CreateDatabaseDialog>
+      </Suspense>
       <Toolbar
         sx={{
           pl: { sm: 2 },
