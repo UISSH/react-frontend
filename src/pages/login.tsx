@@ -23,22 +23,22 @@ import {
   SupervisorAccountOutlined,
 } from "@mui/icons-material";
 
+import Cookies from "js-cookie";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { SetterOrUpdater } from "recoil";
 import { ACCESS_TOKEN, USER_INFO } from "../constant";
-import { NetErrorValue, useNetError } from "../requests/hook";
+
 import { getfetch } from "../requests/http";
 import { getApiGateway, setApiGateway } from "../requests/utils";
 import { getUserInfo } from "../store";
 import { LocalStorageJson } from "../utils";
-import { useTranslation } from "react-i18next";
-import Cookies from "js-cookie";
 
 interface FormTextProps {
   label: string;
   value: any;
   setStatus: SetterOrUpdater<any>;
-  netError: NetErrorValue & { getItem: Function };
+  netError: string[] | string | undefined;
   type: React.InputHTMLAttributes<unknown>["type"];
   InputProps?: any;
 }
@@ -48,21 +48,27 @@ function FormTextField(props: FormTextProps) {
     <TextField
       label={props.label}
       required
-      error={props.netError.item.hasOwnProperty(props.label)}
-      helperText={props.netError.getItem(props.label)}
+      error={Boolean(props.netError)}
+      helperText={props.netError}
       onChange={props.setStatus}
       value={props.value}
       type={props.type}
-      InputProps={props.InputProps}
-    ></TextField>
+      InputProps={props.InputProps}></TextField>
   );
 }
 
+export interface NetErrorValue {
+  item: { [name: string]: string[] | string };
+  msg: string;
+}
 function Login() {
   const { t, i18n } = useTranslation();
 
   const [loading, setLoading] = useState(false);
-  const [netError, setNetError] = useNetError(null);
+  const [netError, setNetError] = useState<NetErrorValue>({
+    item: {},
+    msg: "",
+  });
   const [url, setUrl] = useState(() => getApiGateway());
   const [userInfo, setUserInfo] = useState(() => getUserInfo());
 
@@ -101,7 +107,7 @@ function Login() {
             USER_INFO,
             JSON.stringify(res, null, 2)
           );
-          setNetError(null);
+          setNetError({ item: {}, msg: "" });
           navigate("/dash");
         } else {
           setNetError({ item: res, msg: "" });
@@ -134,17 +140,15 @@ function Login() {
 
   return (
     <ScopedCssBaseline enableColorScheme>
-      <Container className="container px-0 w-screen  h-screen bg-cover bg-center bg-[url('/assets/background.jpg')]">
+      <div className=" p-0  m-0 w-screen  h-screen bg-cover bg-center bg-[url('/assets/background.jpg')]">
         <div
           className={
             "h-full flex items-center justify-center backdrop-blur-xl "
-          }
-        >
+          }>
           <Card className="rounded-2xl  text-center w-96  shadow-2xl">
             <CardHeader
               title="Login Server"
-              className="text-center  "
-            ></CardHeader>
+              className="text-center"></CardHeader>
             {netError.msg ? <Alert severity="error">{netError.msg}</Alert> : ""}
 
             <CardContent className="flex flex-col">
@@ -166,14 +170,13 @@ function Login() {
                       </InputAdornment>
                     ),
                   }}
-                  label="api"
-                ></TextField>
+                  label="api"></TextField>
 
                 <FormTextField
                   label={t("login.username")}
                   value={userInfo.username}
                   type={"text"}
-                  netError={netError}
+                  netError={netError.item?.username}
                   setStatus={setUsername}
                   InputProps={{
                     startAdornment: (
@@ -181,14 +184,13 @@ function Login() {
                         <SupervisorAccountOutlined />
                       </InputAdornment>
                     ),
-                  }}
-                ></FormTextField>
+                  }}></FormTextField>
 
                 <FormTextField
                   label={t("login.password")}
                   value={userInfo.password}
                   type={"password"}
-                  netError={netError}
+                  netError={netError.item?.password}
                   setStatus={setPassword}
                   InputProps={{
                     startAdornment: (
@@ -196,8 +198,7 @@ function Login() {
                         <Password />
                       </InputAdornment>
                     ),
-                  }}
-                ></FormTextField>
+                  }}></FormTextField>
               </Stack>
             </CardContent>
             <CardActions color={""} className={"flex justify-end px-4"}>
@@ -215,14 +216,13 @@ function Login() {
               <LoadingButton
                 loading={loading}
                 variant={"contained"}
-                onClick={onLogin}
-              >
+                onClick={onLogin}>
                 {t("login.login")}
               </LoadingButton>
             </CardActions>
           </Card>
         </div>
-      </Container>
+      </div>
     </ScopedCssBaseline>
   );
 }

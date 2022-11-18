@@ -1,14 +1,15 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 
-import { loader as indexLayoutLoader } from "../layouts/indexLayout";
-
 import { lazy, Suspense } from "react";
-import { CircularProgress } from "@mui/material";
-
+import { loader as indexLayoutLoader } from "../layouts/indexLayout";
+import BlurOnIcon from "@mui/icons-material/BlurOn";
 const Loading = () => {
   return (
-    <div className="grid h-screen place-items-center">
-      <CircularProgress size={"128px"} />
+    <div className="grid h-screen place-items-center bg-gray-50">
+      <BlurOnIcon
+        className="animate-spin text-6xl"
+        color="primary"
+        fontSize="large"></BlurOnIcon>
     </div>
   );
 };
