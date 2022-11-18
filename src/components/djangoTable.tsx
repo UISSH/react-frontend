@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-
+import MoodBadIcon from "@mui/icons-material/MoodBad";
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -265,7 +265,6 @@ export function EnhancedTable(props: TableDjangoProps) {
               rowCount={props.rows.length}
             />
             <TableBody>
-              {/* todo 改成网络请求，后端传回排序数据  */}
               {props.rows.map((row, index) => {
                 const isItemSelected = isSelected(String(row.id));
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -322,6 +321,20 @@ export function EnhancedTable(props: TableDjangoProps) {
                     height: (dense ? 33 : 53) * emptyRows,
                   }}>
                   <TableCell colSpan={6} />
+                </TableRow>
+              )}
+
+              {props.rows.length == 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * 2,
+                  }}>
+                  <TableCell
+                    align="center"
+                    colSpan={props.headCells.length + 1}>
+                    <MoodBadIcon fontSize="large"></MoodBadIcon>
+                    <div className="opacity-80 ">{t("empty-data")}</div>
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

@@ -1,18 +1,13 @@
-import { useLoaderData } from "react-router-dom";
-import SystemStatus from "../../components/overview/SystemStatus";
+import React from "react";
 
-export async function loader(props: { params: object }) {
-  let data = useLoaderData();
-}
-
-export async function action(props: { params: any; request: any }) {
-  let formData = await props.request.formData();
-}
+const DatabaseTable = React.lazy(
+  () => import("../../components/database/DatabaseTable")
+);
 
 export default function Index() {
   return (
     <>
-      <div></div>
+      <DatabaseTable></DatabaseTable>
     </>
   );
 }

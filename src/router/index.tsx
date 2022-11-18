@@ -1,38 +1,17 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
+import LazySuspense from "../components/LazySuspense";
 
-import { lazy, Suspense } from "react";
 import { loader as indexLayoutLoader } from "../layouts/indexLayout";
-import BlurOnIcon from "@mui/icons-material/BlurOn";
-const Loading = () => {
-  return (
-    <div className="grid h-screen place-items-center bg-gray-50">
-      <BlurOnIcon
-        className="animate-spin text-6xl"
-        color="primary"
-        fontSize="large"></BlurOnIcon>
-    </div>
-  );
-};
-
-const LazySuspense = (props: { import: string }) => {
-  let Component = lazy(() => import(props.import));
-
-  return (
-    <Suspense fallback={<Loading />}>
-      <Component></Component>
-    </Suspense>
-  );
-};
 
 export const router = createBrowserRouter([
   {
     path: "/",
     errorElement: <LazySuspense import="../pages/ErrorPage" />,
-    element: <LazySuspense import="../pages/Login" />,
+    element: <LazySuspense import="../pages/Login" loading={true} />,
   },
   {
     path: "/login",
-    element: <LazySuspense import="../pages/Login" />,
+    element: <LazySuspense import="../pages/Login" loading={true} />,
   },
   {
     path: "/dash",

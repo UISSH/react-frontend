@@ -1,37 +1,37 @@
 {
-  "key": "hello world",
-  "Oops": "哎呀",
-  "sorry-an-unexpected-error-has-occurred": "抱歉，这里有一个错误发生.",
-  "permission denied": "权限拒绝",
   "back-home": "返回主页",
-  "network-error": "网络错误",
-  "overview": {
-    "status": {
-      "cpu": "CPU",
-      "load": "负载",
-      "system-info": "系统信息",
-      "disk": "磁盘",
-      "status": "状态",
-      "ram": "内存"
-    }
-  },
   "friendly-simple-and-focused-on-privacy": "友好且简单，注重隐私。",
+  "key": "hello world",
+  "network-error": "网络错误",
+  "Not Found": "未找到页面",
+  "Oops": "哎呀",
+  "permission denied": "权限拒绝",
   "rows-per-page": "每页行数",
+  "sorry-an-unexpected-error-has-occurred": "抱歉，这里有一个错误发生.",
+  "layout": {
+    "database": "数据库",
+    "files": "文件管理",
+    "ftp": "FTP",
+    "overview": "概述",
+    "selected": "被选中",
+    "terminal": "终端",
+    "website": "站点"
+  },
   "login": {
     "login": "登录",
     "password": "密码",
     "remember-me": "记住我",
     "username": "用户名"
   },
-  "Not Found": "未找到页面",
-  "layout": {
-    "website": "站点",
-    "overview": "概述",
-    "terminal": "终端",
-    "ftp": "FTP",
-    "files": "文件管理",
-    "database": "数据库",
-    "selected": "被选中"
+  "overview": {
+    "status": {
+      "cpu": "CPU",
+      "disk": "磁盘",
+      "load": "负载",
+      "ram": "内存",
+      "status": "状态",
+      "system-info": "系统信息"
+    }
   },
   "website": {
     "please-input-domain": "请填入域名"
