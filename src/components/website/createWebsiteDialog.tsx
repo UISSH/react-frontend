@@ -130,7 +130,6 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       enqueueSnackbar(t("Failed to deploy application"), {
         variant: "error",
       });
-
       return;
     }
 

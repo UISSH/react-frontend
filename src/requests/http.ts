@@ -88,3 +88,5 @@ export function fetchData(props: fetchDataProps): Promise<Response> {
     return fetch(url, init);
   }
 }
+
+export function createDatabase() {}

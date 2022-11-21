@@ -1,7 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
-import RefreshIcon from "@mui/icons-material/Refresh";
-
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   alpha,
   Button,
@@ -11,16 +15,18 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  InputAdornment,
+  OutlinedInput,
   Toolbar,
   Typography,
 } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
+import useSWR from "swr";
 import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
-import useSWR from "swr";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
@@ -113,6 +119,47 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </ButtonGroup>
       </Toolbar>
     </>
+  );
+}
+
+function PasswordField({
+  password,
+  readOnly,
+}: {
+  password: string;
+  readOnly?: boolean;
+}) {
+  const [show, setShow] = React.useState(false);
+
+  const handleClickShowPassword = (event: any) => {
+    event.stopPropagation();
+    setShow((state) => !state);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+
+  return (
+    <OutlinedInput
+      size="small"
+      readOnly={readOnly}
+      type={show ? "text" : "password"}
+      value={password}
+      endAdornment={
+        <InputAdornment position="end">
+          <IconButton
+            aria-label="toggle password visibility"
+            onClick={handleClickShowPassword}
+            onMouseDown={handleMouseDownPassword}
+            edge="end">
+            {show ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      }
+    />
   );
 }
 
@@ -251,34 +298,34 @@ export default function Index() {
     },
   };
 
-  useEffect(() => {
+  const { mutate } = useSWR(fetchDataProps, (props) => {
     setGlobalProgress(true);
-    setSelected([]);
-    const handleUpdate = () => {
-      setUpdateState(updateState + 1);
-    };
     fetchData(fetchDataProps)
       .then((res) => res.json())
       .then((res) => {
         setRowsState(
           res.results.map((row: any) => {
-            // row.domain = (
-            //   <div className="flex content-center gap-1">
-            //     {row.domain}{" "}
-            //     <PublicIcon
-            //       fontSize="small"
-            //       color={
-            //         row.ssl_enable ? "success" : "inherit"
-            //       }></PublicIcon>{" "}
-            //   </div>
-            // );
-            // row.database_id = row.database_id ? row.database_id : "-";
-            // row.ssl_enable = (
-            //   <SwitchSSL
-            //     id={row.id}
-            //     status={row.ssl_enable}
-            //     onUpdate={handleUpdate}></SwitchSSL>
-            // );
+            row.password = (
+              <PasswordField
+                password={row.password}
+                readOnly={true}></PasswordField>
+            );
+            if (row.create_status_text == "success") {
+              row.create_status_text = (
+                <CheckCircleOutlineIcon color="success"></CheckCircleOutlineIcon>
+              );
+            } else if (row.create_status_text == "pending") {
+              row.create_status_text = (
+                <HourglassEmptyIcon
+                  className="animate-pulse"
+                  color="info"></HourglassEmptyIcon>
+              );
+            } else {
+              row.create_status_text = (
+                <ErrorOutlineIcon color="error"></ErrorOutlineIcon>
+              );
+            }
+
             return row;
           })
         );
@@ -287,7 +334,13 @@ export default function Index() {
       .finally(() => {
         setGlobalProgress(false);
       });
+  });
+
+  useEffect(() => {
+    setSelected([]);
+    mutate();
   }, [updateState]);
+
   return (
     <div>
       <Dialog open={alertDialog.open} onClose={handleClose}>

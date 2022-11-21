@@ -30,9 +30,27 @@ export default function Index(props: {
     reset,
   } = useForm<IFormInput>();
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+  const requestCreateDatabseInstance = async (id: string) => {
+    let createDatabaseRes = await fetchData({
+      apiType: "createDatabaseInstance",
+      init: {
+        method: "POST",
+      },
+      params: {
+        pathParam: { id: id },
+      },
+    });
 
+    if (createDatabaseRes.ok) {
+      handleClose();
+    } else {
+      enqueueSnackbar(t("Create database instance error"), {
+        variant: "error",
+      });
+    }
+  };
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     let fecthProps: fetchDataProps = {
       apiType: "database",
       init: {
@@ -41,22 +59,22 @@ export default function Index(props: {
       },
     };
 
-    fetchData(fecthProps).then(async (res) => {
-      console.log(res);
-      if (res.status === 201) {
-        enqueueSnackbar(t("database.create.success"), {
-          variant: "success",
-        });
-      } else if (res.status === 400) {
-        enqueueSnackbar(JSON.stringify(await res.json()), {
-          variant: "error",
-        });
-      } else {
-        enqueueSnackbar(t("error"), { variant: "error" });
-      }
-      props.setOpen(false);
-      // todo 创建数据库
-    });
+    let res = await fetchData(fecthProps);
+
+    if (res.status === 201) {
+      let resJson = await res.json();
+      console.log(resJson.id);
+      requestCreateDatabseInstance(resJson.id);
+      enqueueSnackbar(t("database.create.success"), {
+        variant: "success",
+      });
+    } else if (res.status === 400) {
+      enqueueSnackbar(JSON.stringify(await res.json()), {
+        variant: "error",
+      });
+    } else {
+      enqueueSnackbar(t("error"), { variant: "error" });
+    }
   };
 
   const handleClose = () => {
