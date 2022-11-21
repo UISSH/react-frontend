@@ -29,7 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { SetterOrUpdater } from "recoil";
 import { ACCESS_TOKEN, USER_INFO } from "../constant";
 
-import { getfetch } from "../requests/http";
+import { fetchData } from "../requests/http";
 import { getApiGateway, setApiGateway } from "../requests/utils";
 import { getUserInfo } from "../store";
 import { LocalStorageJson } from "../utils";
@@ -92,7 +92,7 @@ function Login() {
   const onLogin = () => {
     setLoading(true);
 
-    getfetch({
+    fetchData({
       apiType: "auth",
       init: { method: "POST", body: JSON.stringify(userInfo) },
     })

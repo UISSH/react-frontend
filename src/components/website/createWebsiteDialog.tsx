@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { getfetch } from "../../requests/http";
+import { fetchData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import CardDialog from "../CardDialog";
 import ApplicationSettings from "./ApplicationSettings";
@@ -54,9 +54,13 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     console.log(requestBody.current);
 
     // create website
-    let res = await getfetch("website", {
-      method: "POST",
-      body: JSON.stringify(requestBody.current.website),
+
+    let res = await fetchData({
+      apiType: "website",
+      init: {
+        method: "POST",
+        body: JSON.stringify(requestBody.current.website),
+      },
     });
     let resWebsiteJson = { id: -1 };
 
@@ -69,12 +73,15 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     }
 
     // create database
-    res = await getfetch("database", {
-      method: "POST",
-      body: JSON.stringify({
-        ...requestBody.current.database,
-        website: resWebsiteJson.id,
-      }),
+    res = await fetchData({
+      apiType: "database",
+      init: {
+        method: "POST",
+        body: JSON.stringify({
+          ...requestBody.current.database,
+          website: resWebsiteJson.id,
+        }),
+      },
     });
 
     let resDatabaseJson = { id: -1 };
@@ -89,13 +96,15 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
     // create database instance on server
 
-    res = await getfetch(
-      "createDatabaseInstance",
-      {
+    res = await fetchData({
+      apiType: "createDatabaseInstance",
+      init: {
         method: "POST",
       },
-      { pathParam: { id: String(resDatabaseJson.id) } }
-    );
+      params: {
+        pathParam: { id: String(resDatabaseJson.id) },
+      },
+    });
 
     if (!res.ok) {
       setGlobalLoadingAtom(false);
@@ -106,13 +115,15 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       return;
     }
 
-    res = await getfetch(
-      "createApplication",
-      {
+    res = await fetchData({
+      apiType: "createApplication",
+      init: {
         method: "POST",
       },
-      { pathParam: { id: String(resWebsiteJson.id) } }
-    );
+      params: {
+        pathParam: { id: String(resWebsiteJson.id) },
+      },
+    });
 
     if (!res.ok) {
       setGlobalLoadingAtom(false);

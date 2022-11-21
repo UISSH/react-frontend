@@ -53,13 +53,13 @@ interface Params {
   searchParam?: Record<string, string>;
 }
 
-export interface GetFetchProps {
+export interface fetchDataProps {
   apiType: ApiType;
   init?: RequestInit;
   params?: Params;
 }
 
-export function getfetch(props: GetFetchProps): Promise<Response> {
+export function fetchData(props: fetchDataProps): Promise<Response> {
   let init = addHeader(props.apiType, props.init);
   let { pathParam, searchParam } = props.params
     ? props.params

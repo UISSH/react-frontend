@@ -17,7 +17,7 @@ import {
 import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { getfetch, GetFetchProps } from "../../requests/http";
+import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import useSWR from "swr";
@@ -194,7 +194,7 @@ export default function Index() {
 
   const requestDelete = async () => {
     for (let i = 0; i < selected.length; i++) {
-      let getFetchProps: GetFetchProps = {
+      let fetchDataProps: fetchDataProps = {
         apiType: "databaseItem",
         init: {
           method: "delete",
@@ -205,7 +205,7 @@ export default function Index() {
           },
         },
       };
-      await getfetch(getFetchProps);
+      await fetchData(fetchDataProps);
     }
     setUpdateState(updateState + 1);
     setAlertDialog({ ...alertDialog, open: false });
@@ -240,7 +240,7 @@ export default function Index() {
 
   //const { data, error } = useSWR();
 
-  let getFetchProps: GetFetchProps = {
+  let fetchDataProps: fetchDataProps = {
     apiType: "database",
     params: {
       searchParam: {
@@ -257,7 +257,7 @@ export default function Index() {
     const handleUpdate = () => {
       setUpdateState(updateState + 1);
     };
-    getfetch(getFetchProps)
+    fetchData(fetchDataProps)
       .then((res) => res.json())
       .then((res) => {
         setRowsState(

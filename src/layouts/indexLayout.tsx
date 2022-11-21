@@ -46,7 +46,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import packagejs from "../../package.json";
-import { getfetch, hasAuthToken } from "../requests/http";
+import { fetchData, hasAuthToken } from "../requests/http";
 import { useRecoilState } from "recoil";
 import { GlobalProgressAtom, GlobalLoadingAtom } from "../store/recoilStore";
 
@@ -106,7 +106,7 @@ export async function loader() {
   if (!hasAuthToken()) {
     throw new Response("permission denied", { status: 404 });
   }
-  let data = await getfetch({ apiType: "version" });
+  let data = await fetchData({ apiType: "version" });
   if (data.status == 403) {
     throw new Response("permission denied", { status: 404 });
   }

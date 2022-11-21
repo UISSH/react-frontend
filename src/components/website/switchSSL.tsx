@@ -1,6 +1,6 @@
 import { Switch } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { ApiType, getfetch } from "../../requests/http";
+import { ApiType, fetchData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 import { useSnackbar } from "notistack";
@@ -25,7 +25,7 @@ export function SwitchSSL({
 
     let action: ApiType = checked ? "enableWebsiteSSL" : "disableWebsiteSSL";
     setGlobalLoadingAtomState(true);
-    getfetch({
+    fetchData({
       apiType: action,
       init: { method: "post" },
       params: { pathParam: { id: rowID } },

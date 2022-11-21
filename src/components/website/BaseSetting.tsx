@@ -14,7 +14,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { getfetch } from "../../requests/http";
+import { fetchData } from "../../requests/http";
 import { OperationResIF } from "../../requests/interface";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { generateRandom } from "../../utils";
@@ -54,13 +54,13 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
         return;
       }
       setGlobalLoadingAtom(true);
-      getfetch(
-        "verifyDomainRecords",
-        {},
-        {
+
+      fetchData({
+        apiType: "verifyDomainRecords",
+        params: {
           searchParam: { domain: websiteBody.domain },
-        }
-      )
+        },
+      })
         .then(async (res) => {
           if (!res.ok) {
             enqueueSnackbar(t("network-error"), { variant: "error" });

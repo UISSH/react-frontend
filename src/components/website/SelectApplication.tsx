@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
-import { getfetch } from "../../requests/http";
+import { fetchData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { ApplicationType, CreateWebsiteStepProps } from "./interface";
 
@@ -39,7 +39,7 @@ export default function SelectApplication(
   const [selectedApplication, setSelectedApplicaiton] = useState("");
 
   const application = useSWR("listApplication", (url) =>
-    getfetch({ apiType: url }).then((res) => res.json())
+    fetchData({ apiType: url }).then((res) => res.json())
   );
 
   const handleNextStep = () => {

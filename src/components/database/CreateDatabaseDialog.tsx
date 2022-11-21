@@ -8,7 +8,7 @@ import {
 import { useSnackbar } from "notistack";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { getfetch, GetFetchProps } from "../../requests/http";
+import { fetchData, fetchDataProps } from "../../requests/http";
 import { generateRandom } from "../../utils";
 import CardDialog from "../CardDialog";
 interface IFormInput {
@@ -33,7 +33,7 @@ export default function Index(props: {
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
 
-    let fecthProps: GetFetchProps = {
+    let fecthProps: fetchDataProps = {
       apiType: "database",
       init: {
         method: "POST",
@@ -41,7 +41,7 @@ export default function Index(props: {
       },
     };
 
-    getfetch(fecthProps).then(async (res) => {
+    fetchData(fecthProps).then(async (res) => {
       console.log(res);
       if (res.status === 201) {
         enqueueSnackbar(t("database.create.success"), {
