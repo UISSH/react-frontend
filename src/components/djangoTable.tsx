@@ -174,7 +174,7 @@ export function EnhancedTable(props: TableDjangoProps) {
   const [selected, setSelected] = props.selectedState;
   //const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
+  const [dense, setDense] = React.useState(props.dense);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [t] = useTranslation();
   const handleRequestSort = (
@@ -184,7 +184,7 @@ export function EnhancedTable(props: TableDjangoProps) {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-    props.onRequestSort(isAsc ? "-" : "", property);
+    props.onRequestSort && props.onRequestSort(isAsc ? "-" : "", property);
   };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,7 +217,7 @@ export function EnhancedTable(props: TableDjangoProps) {
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    props.onSetPage(newPage + 1);
+    props.onSetPage && props.onSetPage(newPage + 1);
   };
 
   const handleChangeRowsPerPage = (
@@ -225,8 +225,9 @@ export function EnhancedTable(props: TableDjangoProps) {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    props.onSetPageSize(parseInt(event.target.value, 10));
-    props.onSetPage(1);
+    props.onSetPageSize &&
+      props.onSetPageSize(parseInt(event.target.value, 10));
+    props.onSetPage && props.onSetPage(1);
   };
 
   const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -252,8 +253,7 @@ export function EnhancedTable(props: TableDjangoProps) {
         }
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
+            sx={{ minWidth: 750, borderCollapse: "inherit" }}
             size={dense ? "small" : "medium"}>
             <EnhancedTableHead
               headCells={props.headCells}
@@ -268,7 +268,6 @@ export function EnhancedTable(props: TableDjangoProps) {
               {props.rows.map((row, index) => {
                 const isItemSelected = isSelected(String(row.id));
                 const labelId = `enhanced-table-checkbox-${index}`;
-
                 return (
                   <TableRow
                     hover
@@ -383,9 +382,10 @@ interface TableDjangoProps {
     readonly string[],
     React.Dispatch<React.SetStateAction<readonly string[]>>
   ];
-  onRequestSort: (order: string, property: any) => void;
-  onSetPage: (targetPage: number) => void;
-  onSetPageSize: (size: number) => void;
+  dense?: boolean;
+  onRequestSort?: (order: string, property: any) => void;
+  onSetPage?: (targetPage: number) => void;
+  onSetPageSize?: (size: number) => void;
   enhancedTableToolbar?: (props: EnhancedTableToolbarProps) => JSX.Element;
   onAction: (action: string) => void;
 }

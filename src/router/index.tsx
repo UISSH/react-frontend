@@ -9,7 +9,7 @@ const IndexLayout = lazy(() => import("../layouts/indexLayout"));
 const Index = lazy(() => import("../pages/IndexLayout/Index"));
 const Website = lazy(() => import("../pages/IndexLayout/Website"));
 const Database = lazy(() => import("../pages/IndexLayout/Database"));
-const File = lazy(() => import("../pages/IndexLayout/File"));
+const File = lazy(() => import("../pages/IndexLayout/Explorer"));
 const Terminal = lazy(() => import("../pages/IndexLayout/Terminal"));
 const Mount = lazy(() => import("../pages/IndexLayout/Mount"));
 

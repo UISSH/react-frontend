@@ -31,9 +31,28 @@ import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
 
-const MAIN = "database";
+const MAIN = "fileBrowser";
 const ITEM = "databaseItem";
-const LABEL = "layout.database";
+const LABEL = "layout.explorer";
+
+interface IFItem {
+  path: string;
+  directory: string;
+  filename: string;
+  inode: number;
+  uid: number;
+  gid: number;
+  mode: string;
+  device: number;
+  size: number;
+  block_size: number;
+  atime: number;
+  mtime: number;
+  ctime: number;
+  btime: number;
+  symlink: number;
+  type: "directory" | "regular" | string;
+}
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
@@ -90,7 +109,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             variant="h6"
             id="tableTitle"
             component="div">
-            {t("layout.database")}
+            {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
@@ -171,50 +190,17 @@ export default function Index() {
   const [t] = useTranslation();
   const headCells = [
     {
-      key: "id",
+      key: "filename",
       numeric: false,
       disablePadding: true,
-      label: "ID",
-    },
-    {
-      key: "name",
-      numeric: true,
-      disablePadding: false,
       label: t("database.name"),
-    },
-    {
-      key: "username",
-      numeric: true,
-      disablePadding: false,
-      label: t("database.username"),
-    },
-    {
-      key: "password",
-      numeric: true,
-      disablePadding: false,
-      label: t("database.password"),
-    },
-    {
-      key: "create_status_text",
-      numeric: true,
-      disablePadding: false,
-      label: t("database.status"),
-    },
-    {
-      key: "database_type_text",
-      numeric: true,
-      disablePadding: false,
-      label: t("database.type"),
     },
   ];
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
   const [updateState, setUpdateState] = useState(1);
   const [rowsState, setRowsState] = useState<any>([]);
-  const [paginationState, setPaginationState] = useState();
-  const [pageState, setPageState] = useState(1);
-  const [orederState, setOrederState] = useState("-id");
-  const [pageSizeState, setPageSizeState] = useState(5);
+
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
@@ -228,19 +214,6 @@ export default function Index() {
 
   const handleClose = () => {
     setAlertDialog({ ...alertDialog, open: false });
-  };
-  const handleSetTargetPage = (targetPage: number) => {
-    setPageState(targetPage);
-    setUpdateState(updateState + 1);
-  };
-  const handleRequestSort = (order: string, property: any) => {
-    setOrederState(order + property);
-    setUpdateState(updateState + 1);
-  };
-
-  const handleSetpageSize = (size: number) => {
-    setPageSizeState(size);
-    setUpdateState(updateState + 1);
   };
 
   const requestDelete = async () => {
@@ -293,11 +266,13 @@ export default function Index() {
 
   let fetchDataProps: fetchDataProps = {
     apiType: MAIN,
+
     params: {
+      pathParam: {
+        action: "query",
+      },
       searchParam: {
-        page: String(pageState),
-        ordering: orederState,
-        page_size: String(pageSizeState),
+        directory: "/",
       },
     },
   };
@@ -307,33 +282,15 @@ export default function Index() {
     fetchData(fetchDataProps)
       .then((res) => res.json())
       .then((res) => {
-        setRowsState(
-          res.results.map((row: any) => {
-            row.password = (
-              <PasswordField
-                password={row.password}
-                readOnly={true}></PasswordField>
-            );
-            if (row.create_status_text == "success") {
-              row.create_status_text = (
-                <CheckCircleOutlineIcon color="success"></CheckCircleOutlineIcon>
-              );
-            } else if (row.create_status_text == "pending") {
-              row.create_status_text = (
-                <HourglassEmptyIcon
-                  className="animate-pulse"
-                  color="info"></HourglassEmptyIcon>
-              );
-            } else {
-              row.create_status_text = (
-                <ErrorOutlineIcon color="error"></ErrorOutlineIcon>
-              );
-            }
+        let c = 0;
 
+        setRowsState(
+          res.map((row: IFItem & { id: number }) => {
+            row["id"] = c++;
+            console.log(row);
             return row;
           })
         );
-        setPaginationState(res.pagination);
       })
       .finally(() => {
         setGlobalProgress(false);
@@ -368,16 +325,13 @@ export default function Index() {
         </DialogActions>
       </Dialog>
       <TableDjango
+        dense
         onAction={handleAction}
         enhancedTableToolbar={EnhancedTableToolbar}
         selectedState={[selected, setSelected]}
-        onSetPageSize={handleSetpageSize}
-        onRequestSort={handleRequestSort}
-        onSetPage={handleSetTargetPage}
         rows={rowsState}
         headCells={headCells}
-        title={"layout.website"}
-        pagination={paginationState}
+        title={LABEL}
       />
     </div>
   );

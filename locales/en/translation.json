@@ -25,7 +25,8 @@
     "overview": "overview",
     "selected": "selected",
     "terminal": "terminal",
-    "website": "website"
+    "website": "website",
+    "explorer": "explorer"
   },
   "login": {
     "login": "Login",

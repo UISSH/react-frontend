@@ -20,6 +20,9 @@ export let api = {
   database: "/api/DataBase/",
   databaseItem: "/api/DataBase/{id}/",
   createDatabaseInstance: "/api/DataBase/{id}/create_instance/",
+
+  //FileBrowser
+  fileBrowser: "/api/FileBrowser/",
 };
 
 export type ApiType = keyof typeof api;
@@ -48,7 +51,8 @@ function addHeader(ApiType: ApiType, init?: RequestInit) {
 
 interface Params {
   pathParam?: {
-    id: string;
+    id?: string;
+    action?: string;
   };
   searchParam?: Record<string, string>;
 }
@@ -66,12 +70,17 @@ export function fetchData(props: fetchDataProps): Promise<Response> {
     : { pathParam: null, searchParam: null };
 
   let url: string | URL = getApiGateway() + api[props.apiType];
-  if (api[props.apiType].includes("{id}")) {
+
+  if (api[props.apiType].includes("{id}") && pathParam?.id) {
     if (!pathParam) {
       throw `${api[props.apiType]} required 'id' PathParams`;
     } else {
       url = url.replace("{id}", pathParam.id);
     }
+  }
+
+  if (pathParam?.action) {
+    url = `${url}${pathParam.action}/`;
   }
 
   if (url.includes("//localhost") || url.includes("//127.0.0")) {
@@ -88,5 +97,3 @@ export function fetchData(props: fetchDataProps): Promise<Response> {
     return fetch(url, init);
   }
 }
-
-export function createDatabase() {}
