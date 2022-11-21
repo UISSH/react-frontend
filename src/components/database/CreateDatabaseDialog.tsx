@@ -8,7 +8,7 @@ import {
 import { useSnackbar } from "notistack";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { getfetch } from "../../requests/http";
+import { getfetch, GetFetchProps } from "../../requests/http";
 import { generateRandom } from "../../utils";
 import CardDialog from "../CardDialog";
 interface IFormInput {
@@ -32,10 +32,16 @@ export default function Index(props: {
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
-    getfetch("database", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }).then(async (res) => {
+
+    let fecthProps: GetFetchProps = {
+      apiType: "database",
+      init: {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+    };
+
+    getfetch(fecthProps).then(async (res) => {
       console.log(res);
       if (res.status === 201) {
         enqueueSnackbar(t("database.create.success"), {
@@ -49,7 +55,7 @@ export default function Index(props: {
         enqueueSnackbar(t("error"), { variant: "error" });
       }
       props.setOpen(false);
-      //todo 创建数据库
+      // todo 创建数据库
     });
   };
 

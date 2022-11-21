@@ -106,7 +106,7 @@ export async function loader() {
   if (!hasAuthToken()) {
     throw new Response("permission denied", { status: 404 });
   }
-  let data = await getfetch("version");
+  let data = await getfetch({ apiType: "version" });
   if (data.status == 403) {
     throw new Response("permission denied", { status: 404 });
   }
@@ -142,8 +142,7 @@ function LabTabs() {
             textColor="secondary"
             indicatorColor="secondary"
             onChange={handleChange}
-            aria-label="params tabs"
-          >
+            aria-label="params tabs">
             <Tab sx={{ textTransform: "none" }} label="useParams" value="1" />
             <Tab
               sx={{ textTransform: "none" }}
@@ -182,8 +181,7 @@ function GlobalLoading() {
     <div>
       <Dialog
         open={state}
-        PaperProps={{ sx: { borderRadius: "12px" }, className: "shadow-md" }}
-      >
+        PaperProps={{ sx: { borderRadius: "12px" }, className: "shadow-md" }}>
         <DialogContent className="flex flex-col justify-center items-center h-full w-full ">
           <CircularProgress size={"4rem"} />
         </DialogContent>
@@ -243,8 +241,7 @@ export default function PersistentDrawerLeft() {
           setOpenDebugSwitch(false);
         }}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+        aria-describedby="modal-modal-description">
         <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white  shadow-md rounded-md">
           <LabTabs></LabTabs>
         </Box>
@@ -258,8 +255,7 @@ export default function PersistentDrawerLeft() {
               aria-label="open drawer"
               onClick={handleDrawerOpen}
               edge="start"
-              sx={{ ...(open && { display: "none" }) }}
-            >
+              sx={{ ...(open && { display: "none" }) }}>
               <MenuIcon />
             </IconButton>
             <IconButton color="inherit" sx={{ mr: 2 }}>
@@ -304,8 +300,7 @@ export default function PersistentDrawerLeft() {
         }}
         variant="persistent"
         anchor="left"
-        open={open}
-      >
+        open={open}>
         <DrawerHeader className=" bg-gray-100">
           {t("friendly-simple-and-focused-on-privacy")}
           <IconButton size="small" onClick={handleDrawerClose}>

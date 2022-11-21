@@ -11,11 +11,11 @@ import {
 } from "@mui/material";
 
 import DialogContent from "@mui/material/DialogContent";
-import { useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
+import useSWR from "swr";
 import { getfetch } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { ApplicationType, CreateWebsiteStepProps } from "./interface";
@@ -38,8 +38,8 @@ export default function SelectApplication(
 
   const [selectedApplication, setSelectedApplicaiton] = useState("");
 
-  const application = useQuery(["getApplication"], () =>
-    getfetch("listApplication").then((res) => res.json())
+  const application = useSWR("listApplication", (url) =>
+    getfetch({ apiType: url }).then((res) => res.json())
   );
 
   const handleNextStep = () => {
@@ -50,7 +50,7 @@ export default function SelectApplication(
     props.onNextStep ? props.onNextStep() : null;
   };
 
-  if (application.isLoading)
+  if (!application.data && !application.error)
     return (
       <Box
         sx={{

@@ -6,7 +6,7 @@ import { getApiGateway } from "./utils";
 
 export let api = {
   version: "/api/version/",
-  accountLogin: "/api/User/login/",
+  auth: "/api/User/login/",
   // Website
   website: "/api/Website/",
   websiteItem: "/api/Website/{id}/",
@@ -39,7 +39,7 @@ function addHeader(ApiType: ApiType, init?: RequestInit) {
     init = { ...init, headers: { "Content-Type": "application/json" } };
   }
 
-  if (ApiType !== "accountLogin") {
+  if (ApiType !== "auth") {
     init.headers = { ...init.headers, ...authorization };
   }
 
@@ -53,20 +53,22 @@ interface Params {
   searchParam?: Record<string, string>;
 }
 
-export function getfetch(
-  ApiType: ApiType,
-  init?: RequestInit,
-  params?: Params
-): Promise<Response> {
-  init = addHeader(ApiType, init);
-  let { pathParam, searchParam } = params
-    ? params
+export interface GetFetchProps {
+  apiType: ApiType;
+  init?: RequestInit;
+  params?: Params;
+}
+
+export function getfetch(props: GetFetchProps): Promise<Response> {
+  let init = addHeader(props.apiType, props.init);
+  let { pathParam, searchParam } = props.params
+    ? props.params
     : { pathParam: null, searchParam: null };
 
-  let url: string | URL = getApiGateway() + api[ApiType];
-  if (api[ApiType].includes("{id}")) {
+  let url: string | URL = getApiGateway() + api[props.apiType];
+  if (api[props.apiType].includes("{id}")) {
     if (!pathParam) {
-      throw `${api[ApiType]} required 'id' PathParams`;
+      throw `${api[props.apiType]} required 'id' PathParams`;
     } else {
       url = url.replace("{id}", pathParam.id);
     }

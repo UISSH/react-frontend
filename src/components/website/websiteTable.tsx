@@ -191,17 +191,15 @@ export default function WebsiteTable() {
 
   const requestDeleteWebsite = async () => {
     for (let i = 0; i < selected.length; i++) {
-      await getfetch(
-        "websiteItem",
-        {
-          method: "delete",
+      await getfetch({
+        apiType: "websiteItem",
+        init: {
+          method: "DELETE",
         },
-        {
-          pathParam: {
-            id: selected[i],
-          },
-        }
-      );
+        params: {
+          pathParam: { id: selected[i] },
+        },
+      });
     }
     setUpdateState(updateState + 1);
     setAlertDialog({ ...alertDialog, open: false });
@@ -241,17 +239,16 @@ export default function WebsiteTable() {
     const handleUpdate = () => {
       setUpdateState(updateState + 1);
     };
-    getfetch(
-      "website",
-      {},
-      {
+    getfetch({
+      apiType: "website",
+      params: {
         searchParam: {
           page: String(pageState),
           ordering: orederState,
           page_size: String(pageSizeState),
         },
-      }
-    )
+      },
+    })
       .then((res) => res.json())
       .then((res) => {
         setRowsState(

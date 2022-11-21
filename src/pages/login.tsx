@@ -91,12 +91,10 @@ function Login() {
 
   const onLogin = () => {
     setLoading(true);
-    getfetch("accountLogin", {
-      method: "POST",
-      body: JSON.stringify({
-        username: userInfo.username,
-        password: userInfo.password,
-      }),
+
+    getfetch({
+      apiType: "auth",
+      init: { method: "POST", body: JSON.stringify(userInfo) },
     })
       .then(async (data) => {
         let res = await data.json();

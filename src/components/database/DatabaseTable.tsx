@@ -17,9 +17,10 @@ import {
 import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { getfetch } from "../../requests/http";
+import { getfetch, GetFetchProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import useSWR from "swr";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
@@ -193,17 +194,18 @@ export default function Index() {
 
   const requestDelete = async () => {
     for (let i = 0; i < selected.length; i++) {
-      await getfetch(
-        "databaseItem",
-        {
+      let getFetchProps: GetFetchProps = {
+        apiType: "databaseItem",
+        init: {
           method: "delete",
         },
-        {
+        params: {
           pathParam: {
             id: selected[i],
           },
-        }
-      );
+        },
+      };
+      await getfetch(getFetchProps);
     }
     setUpdateState(updateState + 1);
     setAlertDialog({ ...alertDialog, open: false });
@@ -236,23 +238,26 @@ export default function Index() {
     }
   };
 
+  //const { data, error } = useSWR();
+
+  let getFetchProps: GetFetchProps = {
+    apiType: "database",
+    params: {
+      searchParam: {
+        page: String(pageState),
+        ordering: orederState,
+        page_size: String(pageSizeState),
+      },
+    },
+  };
+
   useEffect(() => {
     setGlobalProgress(true);
     setSelected([]);
     const handleUpdate = () => {
       setUpdateState(updateState + 1);
     };
-    getfetch(
-      "database",
-      {},
-      {
-        searchParam: {
-          page: String(pageState),
-          ordering: orederState,
-          page_size: String(pageSizeState),
-        },
-      }
-    )
+    getfetch(getFetchProps)
       .then((res) => res.json())
       .then((res) => {
         setRowsState(

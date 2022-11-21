@@ -25,15 +25,11 @@ export function SwitchSSL({
 
     let action: ApiType = checked ? "enableWebsiteSSL" : "disableWebsiteSSL";
     setGlobalLoadingAtomState(true);
-    getfetch(
-      action,
-      {
-        method: "post",
-      },
-      {
-        pathParam: { id: rowID },
-      }
-    )
+    getfetch({
+      apiType: action,
+      init: { method: "post" },
+      params: { pathParam: { id: rowID } },
+    })
       .then((res) => {
         return res.json();
       })
