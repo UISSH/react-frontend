@@ -47,30 +47,6 @@ export const router = createBrowserRouter([
           return redirect("/dash/index");
         },
       },
-      // {
-      //   path: "index",
-      //   element: <LazySuspense import="../pages/IndexLayout/Index" />,
-      // },
-      // {
-      //   path: "website",
-      //   element: <LazySuspense import="../pages/IndexLayout/Website" />,
-      // },
-      // {
-      //   path: "database",
-      //   element: <LazySuspense import="../pages/IndexLayout/Database" />,
-      // },
-      // {
-      //   path: "file",
-      //   element: <LazySuspense import="../pages/IndexLayout/File" />,
-      // },
-      // {
-      //   path: "terminal",
-      //   element: <LazySuspense import="../pages/IndexLayout/Terminal" />,
-      // },
-      // {
-      //   path: "mount",
-      //   element: <LazySuspense import="../pages/IndexLayout/Mount" />,
-      // },
 
       {
         path: "index",
@@ -97,7 +73,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "file",
+        path: "explorer",
         element: (
           <Suspense>
             <File></File>

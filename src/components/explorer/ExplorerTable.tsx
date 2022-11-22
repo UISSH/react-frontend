@@ -1,13 +1,12 @@
 import AddIcon from "@mui/icons-material/Add";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+
 import {
   alpha,
+  Breadcrumbs,
   Button,
   ButtonGroup,
   Dialog,
@@ -15,18 +14,20 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  InputAdornment,
-  OutlinedInput,
+  Link,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
 import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
+import { formatBytes } from "../../utils";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import FileMenu from "./FileMenu";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
@@ -38,13 +39,13 @@ const LABEL = "layout.explorer";
 interface IFItem {
   path: string;
   directory: string;
-  filename: string;
+  filename: any;
   inode: number;
   uid: number;
   gid: number;
   mode: string;
   device: number;
-  size: number;
+  size: any;
   block_size: number;
   atime: number;
   mtime: number;
@@ -52,6 +53,7 @@ interface IFItem {
   btime: number;
   symlink: number;
   type: "directory" | "regular" | string;
+  [name: string]: any;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -145,55 +147,26 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
-function PasswordField({
-  password,
-  readOnly,
-}: {
-  password: string;
-  readOnly?: boolean;
-}) {
-  const [show, setShow] = React.useState(false);
-
-  const handleClickShowPassword = (event: any) => {
-    event.stopPropagation();
-    setShow((state) => !state);
-  };
-
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-
-  return (
-    <OutlinedInput
-      size="small"
-      readOnly={readOnly}
-      type={show ? "text" : "password"}
-      value={password}
-      endAdornment={
-        <InputAdornment position="end">
-          <IconButton
-            aria-label="toggle password visibility"
-            onClick={handleClickShowPassword}
-            onMouseDown={handleMouseDownPassword}
-            edge="end">
-            {show ? <VisibilityOff /> : <Visibility />}
-          </IconButton>
-        </InputAdornment>
-      }
-    />
-  );
-}
-
 export default function Index() {
   const [t] = useTranslation();
   const headCells = [
     {
-      key: "filename",
+      key: "name",
       numeric: false,
       disablePadding: true,
-      label: t("database.name"),
+      label: t("exploprer.filename"),
+    },
+    {
+      key: "mode",
+      numeric: true,
+      disablePadding: false,
+      label: t("exploprer.mode"),
+    },
+    {
+      key: "size",
+      numeric: true,
+      disablePadding: false,
+      label: t("exploprer.size"),
     },
   ];
   const [globalProgress, setGlobalProgress] =
@@ -218,18 +191,20 @@ export default function Index() {
 
   const requestDelete = async () => {
     for (let i = 0; i < selected.length; i++) {
-      let fetchDataProps: fetchDataProps = {
-        apiType: ITEM,
-        init: {
-          method: "delete",
-        },
-        params: {
-          pathParam: {
-            id: selected[i],
-          },
-        },
-      };
-      await fetchData(fetchDataProps);
+      console.log(selected[i]);
+
+      // let fetchDataProps: fetchDataProps = {
+      //   apiType: ITEM,
+      //   init: {
+      //     method: "delete",
+      //   },
+      //   params: {
+      //     pathParam: {
+      //       id: selected[i],
+      //     },
+      //   },
+      // };
+      // await fetchData(fetchDataProps);
     }
     setUpdateState(updateState + 1);
     setAlertDialog({ ...alertDialog, open: false });
@@ -264,17 +239,42 @@ export default function Index() {
 
   //const { data, error } = useSWR();
 
-  let fetchDataProps: fetchDataProps = {
-    apiType: MAIN,
+  const history = useRef<string[]>([]);
+  const [searchParams] = useSearchParams();
 
+  const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>({
+    apiType: MAIN,
     params: {
       pathParam: {
         action: "query",
       },
       searchParam: {
-        directory: "/",
+        directory: searchParams.get("directory") || "/",
       },
     },
+  });
+
+  const setCurrentDirectory = (directory: string) => {
+    setFetchDataProps({
+      apiType: MAIN,
+      params: {
+        pathParam: {
+          action: "query",
+        },
+        searchParam: {
+          directory: directory,
+        },
+      },
+    });
+  };
+
+  const enterDirectory = () => {
+    let directory = "/" + history.current.join("/");
+    setCurrentDirectory(directory);
+  };
+
+  const handleBreadcrumbClick = (i: number) => {
+    setCurrentDirectory("/" + history.current.slice(0, i + 1).join("/"));
   };
 
   const { mutate } = useSWR(fetchDataProps, (props) => {
@@ -283,11 +283,30 @@ export default function Index() {
       .then((res) => res.json())
       .then((res) => {
         let c = 0;
-
         setRowsState(
           res.map((row: IFItem & { id: number }) => {
             row["id"] = c++;
-            console.log(row);
+            row.name = (
+              <div
+                className="cursor-pointer flex gap-1 justify-between items-center "
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (row.type == "directory") {
+                    history.current.push(row.filename);
+                    enterDirectory();
+                  }
+                }}>
+                <div> {row.filename}</div>
+                <div className=" invisible group-hover:visible">
+                  <FileMenu key={"id"} />
+                </div>
+              </div>
+            );
+            if (row.type == "regular") {
+              row.size = formatBytes(row.size);
+            } else {
+              row.size = "-";
+            }
             return row;
           })
         );
@@ -304,6 +323,29 @@ export default function Index() {
 
   return (
     <div>
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link
+          underline="hover"
+          color="inherit"
+          className="cursor-pointer "
+          onClick={(e) => {
+            setCurrentDirectory("/");
+            history.current = [];
+          }}>
+          <HomeIcon />
+        </Link>
+        {history.current.map((h, i) => (
+          <Link
+            underline="hover"
+            color="inherit"
+            className="cursor-pointer "
+            onClick={() => {
+              handleBreadcrumbClick(i);
+            }}>
+            {h}
+          </Link>
+        ))}
+      </Breadcrumbs>
       <Dialog open={alertDialog.open} onClose={handleClose}>
         <DialogTitle
           bgcolor={(theme) => theme.palette.primary.main}

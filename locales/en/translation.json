@@ -55,5 +55,11 @@
     "path": "path",
     "please-input-domain": "Please input domain",
     "ssl": "SSL"
+  },
+  "exploprer": {
+    "filename": "filename",
+    "size": "size",
+    "action": "action",
+    "mode": "mode"
   }
 }

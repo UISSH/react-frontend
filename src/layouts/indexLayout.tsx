@@ -204,7 +204,7 @@ export default function PersistentDrawerLeft() {
     { name: t("layout.overview"), icon: CookieIcon, to: "/dash/index" },
     { name: t("layout.website"), icon: WebIcon, to: "/dash/website" },
     { name: t("layout.database"), icon: StorageIcon, to: "/dash/database" },
-    { name: t("layout.files"), icon: FolderIcon, to: "/dash/file" },
+    { name: t("layout.files"), icon: FolderIcon, to: "/dash/explorer" },
     { name: t("layout.terminal"), icon: TerminalIcon, to: "/dash/terminal" },
     { name: t("layout.ftp"), icon: RouteIcon, to: "/dash/mount" },
   ];

@@ -21,6 +21,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
 import MoodBadIcon from "@mui/icons-material/MoodBad";
+import SuspenseLoading from "./SuspenseLoading";
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -270,6 +271,7 @@ export function EnhancedTable(props: TableDjangoProps) {
                 const labelId = `enhanced-table-checkbox-${index}`;
                 return (
                   <TableRow
+                    className="group"
                     hover
                     onClick={(event) => handleClick(event, String(row.id))}
                     role="checkbox"
@@ -279,6 +281,9 @@ export function EnhancedTable(props: TableDjangoProps) {
                     selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
+                        className={
+                          isItemSelected ? "" : "invisible group-hover:visible"
+                        }
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
@@ -331,8 +336,8 @@ export function EnhancedTable(props: TableDjangoProps) {
                   <TableCell
                     align="center"
                     colSpan={props.headCells.length + 1}>
-                    <MoodBadIcon fontSize="large"></MoodBadIcon>
-                    <div className="opacity-80 ">{t("empty-data")}</div>
+                    <SuspenseLoading className="opacity-80" color="primary" />
+                    <div className="opacity-80 ">{t("empty")}</div>
                   </TableCell>
                 </TableRow>
               )}

@@ -1,5 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    variants: {
+        extend: {
+          visibility: ["group-hover"],
+        },
+    },
     content: [
         "./index.html",
         "./src/**/*.{js,jsx,ts,tsx}",
