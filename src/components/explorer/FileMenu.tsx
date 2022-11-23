@@ -4,7 +4,13 @@ import { IconButton } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
-export default function Index(props: { id: string | number; name?: string }) {
+import { fetchData, requestData } from "../../requests/http";
+import { getApiGateway } from "../../requests/utils";
+export default function Index(props: {
+  id: string | number;
+  path: string;
+  name?: string;
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -15,7 +21,21 @@ export default function Index(props: { id: string | number; name?: string }) {
     e.stopPropagation();
     setAnchorEl(null);
   };
-  const handleDownload = () => {};
+  const handleDownload = async () => {
+    let res = await requestData({
+      url: "/api/FileBrowser/request_download_file/",
+      params: {
+        path: props.path,
+      },
+    });
+    let resJson = await res.json();
+
+    let donwloadUrl = `${getApiGateway()}/api/FileBrowser/download_file/?path=${
+      props.path
+    }&token=${resJson.msg}`;
+    window.location.href = donwloadUrl;
+    setAnchorEl(null);
+  };
 
   return (
     <div>
@@ -48,7 +68,7 @@ export default function Index(props: { id: string | number; name?: string }) {
           <div
             className="w-full h-full p-2 bg-slate-300 text-center "
             color="primary">
-            {props.name}{" "}
+            {props.name}
           </div>
         )}
         <MenuItem onClick={handleDownload}>Download</MenuItem>

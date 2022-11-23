@@ -32,7 +32,7 @@ export function hasAuthToken() {
 
   return Boolean(token);
 }
-function addHeader(ApiType: ApiType, init?: RequestInit) {
+function addHeader(ApiType: ApiType | string, init?: RequestInit) {
   let token = Cookies.get(ACCESS_TOKEN);
   let authorization = { Authorization: "token " + token };
 
@@ -58,22 +58,56 @@ interface Params {
 }
 
 export interface fetchDataProps {
-  apiType: ApiType;
+  apiType: ApiType | string;
   init?: RequestInit;
   params?: Params;
 }
 
+export interface requestDataProps {
+  url: ApiType | string;
+  headers?: Record<string, string>;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  data?: any;
+  params?: Record<string, string>;
+  paths?: {
+    id?: string;
+    action?: string;
+  };
+}
+
+export function requestData(props: requestDataProps): Promise<Response> {
+  let data: any = {
+    method: props.method ? "GET" : props.method,
+    headers: props.headers ? props.headers : {},
+    body: props.data ? JSON.stringify(props.data) : null,
+  };
+  return fetchData({
+    apiType: props.url,
+    init: data,
+    params: {
+      pathParam: props.paths,
+      searchParam: props.params,
+    },
+  });
+}
+
+// deprecated
 export function fetchData(props: fetchDataProps): Promise<Response> {
   let init = addHeader(props.apiType, props.init);
   let { pathParam, searchParam } = props.params
     ? props.params
     : { pathParam: null, searchParam: null };
-
-  let url: string | URL = getApiGateway() + api[props.apiType];
-
-  if (api[props.apiType].includes("{id}") && pathParam?.id) {
+  let url: string | URL;
+  console.log(typeof props.apiType);
+  if (api.hasOwnProperty(props.apiType)) {
+    let index = props.apiType as ApiType;
+    url = getApiGateway() + api[index];
+  } else {
+    url = getApiGateway() + props.apiType;
+  }
+  if (url.includes("{id}") && pathParam?.id) {
     if (!pathParam) {
-      throw `${api[props.apiType]} required 'id' PathParams`;
+      throw `${url} required 'id' PathParams`;
     } else {
       url = url.replace("{id}", pathParam.id);
     }

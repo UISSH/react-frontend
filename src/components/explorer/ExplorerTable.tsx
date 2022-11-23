@@ -268,9 +268,13 @@ export default function Index({ className }: { className?: string }) {
     });
   };
 
+  const getCurrentDirectory = () => {
+    let directory = "/" + history.current.join("/") + "/";
+    return directory;
+  };
+
   const enterDirectory = () => {
-    let directory = "/" + history.current.join("/");
-    setCurrentDirectory(directory);
+    setCurrentDirectory(getCurrentDirectory());
   };
 
   const handleBreadcrumbClick = (i: number) => {
@@ -305,7 +309,11 @@ export default function Index({ className }: { className?: string }) {
                     e.stopPropagation();
                   }}>
                   {row.type == "regular" && (
-                    <FileMenu id={row["id"]} name={row.filename} />
+                    <FileMenu
+                      id={row["id"]}
+                      name={row.filename}
+                      path={getCurrentDirectory() + row.filename}
+                    />
                   )}
                 </div>
               </div>
