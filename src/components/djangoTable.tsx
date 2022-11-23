@@ -252,7 +252,8 @@ export function EnhancedTable(props: TableDjangoProps) {
             customToolbar={props.enhancedTableToolbar}
           />
         }
-        <TableContainer>
+        <TableContainer
+          sx={props.maxHeight ? { maxHeight: props.maxHeight } : {}}>
           <Table
             sx={{ minWidth: 750, borderCollapse: "inherit" }}
             size={dense ? "small" : "medium"}>
@@ -393,6 +394,7 @@ interface TableDjangoProps {
   onSetPageSize?: (size: number) => void;
   enhancedTableToolbar?: (props: EnhancedTableToolbarProps) => JSX.Element;
   onAction: (action: string) => void;
+  maxHeight?: number | string;
 }
 
 export function TableDjango(props: TableDjangoProps) {

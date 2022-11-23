@@ -1,17 +1,18 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { IconButton } from "@mui/material";
+
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import MenuIcon from "@mui/icons-material/Menu";
-import { IconButton } from "@mui/material";
-export default function Index(props: { key: string }) {
+import * as React from "react";
+export default function Index(props: { id: string | number; name?: string }) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setAnchorEl(null);
   };
   const handleDownload = () => {};
@@ -19,17 +20,19 @@ export default function Index(props: { key: string }) {
   return (
     <div>
       <IconButton
-        id={props.key + "-positioned-button"}
-        aria-controls={open ? props.key + "-positioned-menu" : undefined}
+        id={props.id + "-positioned-button"}
+        aria-controls={open ? props.id + "-positioned-menu" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
         aria-expanded={open ? "true" : undefined}>
-        <MenuIcon />
+        <MoreHorizIcon />
       </IconButton>
 
       <Menu
-        id={props.key + "-positioned-menu"}
-        aria-labelledby={props.key + "-positioned-button"}
+        className="p-0 m-0"
+        sx={{ "& .MuiList-padding": { paddingTop: 0 } }}
+        id={props.id + "-positioned-menu"}
+        aria-labelledby={props.id + "-positioned-button"}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
@@ -41,8 +44,13 @@ export default function Index(props: { key: string }) {
           vertical: "top",
           horizontal: "left",
         }}>
-        <MenuItem onClick={handleDownload}>Download</MenuItem>
-        <MenuItem onClick={handleDownload}>Download</MenuItem>
+        {props.name && (
+          <div
+            className="w-full h-full p-2 bg-slate-300 text-center "
+            color="primary">
+            {props.name}{" "}
+          </div>
+        )}
         <MenuItem onClick={handleDownload}>Download</MenuItem>
       </Menu>
     </div>

@@ -147,7 +147,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
-export default function Index() {
+export default function Index({ className }: { className?: string }) {
   const [t] = useTranslation();
   const headCells = [
     {
@@ -287,18 +287,26 @@ export default function Index() {
           res.map((row: IFItem & { id: number }) => {
             row["id"] = c++;
             row.name = (
-              <div
-                className="cursor-pointer flex gap-1 justify-between items-center "
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (row.type == "directory") {
-                    history.current.push(row.filename);
-                    enterDirectory();
-                  }
-                }}>
-                <div> {row.filename}</div>
-                <div className=" invisible group-hover:visible">
-                  <FileMenu key={"id"} />
+              <div className="cursor-pointer flex gap-1 justify-between items-center ">
+                <div
+                  className="p-4"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (row.type == "directory") {
+                      history.current.push(row.filename);
+                      enterDirectory();
+                    }
+                  }}>
+                  {row.filename}
+                </div>
+                <div
+                  className="invisible group-hover:visible"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}>
+                  {row.type == "regular" && (
+                    <FileMenu id={row["id"]} name={row.filename} />
+                  )}
                 </div>
               </div>
             );
@@ -374,6 +382,7 @@ export default function Index() {
         rows={rowsState}
         headCells={headCells}
         title={LABEL}
+        maxHeight={"calc(100vh - 180px)"}
       />
     </div>
   );
