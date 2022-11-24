@@ -23,6 +23,7 @@ export let api = {
 
   //FileBrowser
   fileBrowser: "/api/FileBrowser/",
+  FileBrowserCmd: "/api/FileBrowser/cmd/",
 };
 
 export type ApiType = keyof typeof api;
@@ -77,10 +78,11 @@ export interface requestDataProps {
 
 export function requestData(props: requestDataProps): Promise<Response> {
   let data: any = {
-    method: props.method ? "GET" : props.method,
+    method: props.method ? props.method : "GET",
     headers: props.headers ? props.headers : {},
     body: props.data ? JSON.stringify(props.data) : null,
   };
+
   return fetchData({
     apiType: props.url,
     init: data,
@@ -98,7 +100,7 @@ export function fetchData(props: fetchDataProps): Promise<Response> {
     ? props.params
     : { pathParam: null, searchParam: null };
   let url: string | URL;
-  console.log(typeof props.apiType);
+
   if (api.hasOwnProperty(props.apiType)) {
     let index = props.apiType as ApiType;
     url = getApiGateway() + api[index];

@@ -3,7 +3,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
-
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import FolderIcon from "@mui/icons-material/Folder";
 import {
   alpha,
   Breadcrumbs,
@@ -21,7 +22,7 @@ import {
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { atom, useRecoilState } from "recoil";
 import useSWR from "swr";
 import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
@@ -147,6 +148,11 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
+export const UpdateExplorerTableUISignal = atom({
+  key: "UpdateExplorerTableUISignal", // unique ID (with respect to other atoms/selectors)
+  default: 1, // default value (aka initial value)
+});
+
 export default function Index({ className }: { className?: string }) {
   const [t] = useTranslation();
   const headCells = [
@@ -171,7 +177,7 @@ export default function Index({ className }: { className?: string }) {
   ];
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
-  const [updateState, setUpdateState] = useState(1);
+  const [updateState, setUpdateState] = useRecoilState(UpdateExplorerTableUISignal);
   const [rowsState, setRowsState] = useState<any>([]);
 
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -278,11 +284,15 @@ export default function Index({ className }: { className?: string }) {
   };
 
   const handleBreadcrumbClick = (i: number) => {
-    setCurrentDirectory("/" + history.current.slice(0, i + 1).join("/"));
+    let onSelecctPath = "/" + history.current.slice(0, i + 1).join("/");
+
+    history.current = onSelecctPath.split("/").filter((x) => x);
+    setCurrentDirectory(onSelecctPath);
   };
 
   const { mutate } = useSWR(fetchDataProps, (props) => {
     setGlobalProgress(true);
+    setSelected([]);
     fetchData(fetchDataProps)
       .then((res) => res.json())
       .then((res) => {
@@ -293,7 +303,7 @@ export default function Index({ className }: { className?: string }) {
             row.name = (
               <div className="cursor-pointer flex gap-1 justify-between items-center ">
                 <div
-                  className="p-4"
+                  className=" flex gap-1 items-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (row.type == "directory") {
@@ -301,7 +311,12 @@ export default function Index({ className }: { className?: string }) {
                       enterDirectory();
                     }
                   }}>
-                  {row.filename}
+                  {row.type == "directory" ? (
+                    <FolderIcon></FolderIcon>
+                  ) : (
+                    <TextSnippetIcon></TextSnippetIcon>
+                  )}
+                  <div> {row.filename}</div>
                 </div>
                 <div
                   className="invisible group-hover:visible"
@@ -312,6 +327,7 @@ export default function Index({ className }: { className?: string }) {
                     <FileMenu
                       id={row["id"]}
                       name={row.filename}
+                      directory={getCurrentDirectory()}
                       path={getCurrentDirectory() + row.filename}
                     />
                   )}
