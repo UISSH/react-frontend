@@ -27,6 +27,63 @@ export interface FileMenuProps {
   name?: string;
 }
 
+function DeleteFile(
+  props: FileMenuProps & { open: boolean; onClose: () => void }
+) {
+  const [updateState, setUpdateState] = useRecoilState(
+    UpdateExplorerTableUISignal
+  );
+
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+
+  const handleClose = () => {
+    props.onClose();
+  };
+
+  const handelDelete = async () => {
+    setGlobalLoadingAtom(true);
+    let res = await requestData({
+      url: "FileBrowserCmd",
+      method: "POST",
+      data: {
+        current_directory: props.directory,
+        operation_command: `rm ${props.name}`,
+      },
+    });
+    setGlobalLoadingAtom(false);
+    if (res.ok) {
+      enqueueSnackbar(t("delete_success"), {
+        variant: "success",
+      });
+      setUpdateState((s) => s + 1);
+      handleClose();
+    } else {
+      enqueueSnackbar(t("delete_fail"), {
+        variant: "error",
+      });
+    }
+  };
+  return (
+    <div>
+      <Dialog open={props.open} onClose={handleClose}>
+        <DialogTitle>Delete {props.name}</DialogTitle>
+        <DialogContent>
+          <div className="pt-2">
+            t("Are you sure you want to delete this file?")
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handelDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
+
 function RenameFile(
   props: FileMenuProps & { open: boolean; onClose: () => void }
 ) {
@@ -91,6 +148,7 @@ export default function Index(props: FileMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [openRename, setOpenRename] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -129,6 +187,12 @@ export default function Index(props: FileMenuProps) {
         {...props}
         open={openRename}
         onClose={handleRenameClose}></RenameFile>
+      <DeleteFile
+        {...props}
+        open={openDelete}
+        onClose={() => {
+          setOpenDelete(false);
+        }}></DeleteFile>
       <IconButton
         id={props.id + "-positioned-button"}
         aria-controls={open ? props.id + "-positioned-menu" : undefined}
@@ -163,6 +227,13 @@ export default function Index(props: FileMenuProps) {
         )}
         <MenuItem onClick={handleDownload}>Download</MenuItem>
         <MenuItem onClick={handleRename}>Rename</MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            setOpenDelete(true);
+          }}>
+          Delete
+        </MenuItem>
       </Menu>
     </div>
   );
