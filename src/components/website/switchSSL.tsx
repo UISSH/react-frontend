@@ -52,7 +52,6 @@ export function SwitchSSL({
         e.stopPropagation();
       }}
       checked={status}
-      color={status ? "success" : "default"}
       onChange={handleChange}
       inputProps={{ "aria-label": "controlled" }}
     />

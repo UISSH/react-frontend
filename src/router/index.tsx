@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, redirect } from "react-router-dom";
 
 import { loader as indexLayoutLoader } from "../layouts/indexLayout";
+//import DevelopDemo from "../pages/DevelopDemo";
 import ErrorPage from "../pages/ErrorPage";
 
 const Login = lazy(() => import("../pages/Login"));
@@ -12,6 +13,7 @@ const Database = lazy(() => import("../pages/IndexLayout/Database"));
 const File = lazy(() => import("../pages/IndexLayout/Explorer"));
 const Terminal = lazy(() => import("../pages/IndexLayout/Terminal"));
 const Mount = lazy(() => import("../pages/IndexLayout/Mount"));
+const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 
 export const router = createBrowserRouter([
   {
@@ -97,6 +99,14 @@ export const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: "dev",
+    element: (
+      <Suspense>
+        <DevelopDemo></DevelopDemo>
+      </Suspense>
+    ),
   },
   { path: "/api" },
 ]);

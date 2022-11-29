@@ -4,7 +4,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Box from "@mui/material/Box";
 import { styled, useTheme } from "@mui/material/styles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -24,6 +24,7 @@ import {
   FormGroup,
   LinearProgress,
   Modal,
+  Paper,
   Switch,
   Tab,
   Typography,
@@ -39,6 +40,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { useTranslation } from "react-i18next";
 import {
   NavLink,
+  NavLinkProps,
   Outlet,
   useLocation,
   useNavigation,
@@ -190,6 +192,43 @@ function GlobalLoading() {
   );
 }
 
+function CustomNavLink(props: {
+  item: { to: string; name: string; icon: any };
+}) {
+  type Props = { isActive: boolean; isPending: boolean };
+  const theme: any = useTheme();
+  const navState = useRef({ isActive: false, isPending: false });
+
+  const setNavState = ({ isActive, isPending }: Props) => {
+    navState.current = { isActive, isPending };
+    return " text-inherit no-underline";
+  };
+
+  return (
+    <Paper
+      className="p-0 shadow-none rounded-none"
+      sx={
+        navState.current.isActive
+          ? {
+              backgroundColor: theme.palette.error[50],
+            }
+          : {}
+      }>
+      <NavLink to={props.item.to} className={setNavState}>
+        <ListItemButton>
+          <ListItemIcon className="text-inherit">
+            <props.item.icon fontSize="large" />
+          </ListItemIcon>
+          <ListItemText
+            className="capitalize text-inherit"
+            primary={props.item.name}
+          />
+        </ListItemButton>
+      </NavLink>
+    </Paper>
+  );
+}
+
 export default function PersistentDrawerLeft() {
   const matches = useMediaQuery("(min-width:900px)");
   const theme = useTheme();
@@ -219,8 +258,10 @@ export default function PersistentDrawerLeft() {
     isActive: boolean;
     isPending: boolean;
   }) => {
+    console.log(theme.palette.primary.main);
+
     let data = isActive
-      ? "bg-gray-500 text-white"
+      ? "" + theme.palette.primary.main
       : isPending
       ? "pending"
       : "bg-gray-100 text-black";
@@ -301,7 +342,7 @@ export default function PersistentDrawerLeft() {
         variant="persistent"
         anchor="left"
         open={open}>
-        <DrawerHeader className=" bg-gray-100">
+        <DrawerHeader className=" ">
           {t("friendly-simple-and-focused-on-privacy")}
           <IconButton size="small" onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
@@ -313,25 +354,18 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
 
-        <nav className="flex-1 overflow-auto bg-gray-100 ">
-          <ul className="p-0 m-0 list-none">
+        <nav className="flex-1 overflow-auto ">
+          <ul className="p-0 m-0 list-none shadow-none">
             {listMeunData.map((item, index) => (
               <li key={index}>
-                <NavLink to={item.to} className={getNavLinkClassName}>
-                  <ListItemButton>
-                    <ListItemIcon className="text-inherit">
-                      <item.icon fontSize="large" />
-                    </ListItemIcon>
-                    <ListItemText className="capitalize" primary={item.name} />
-                  </ListItemButton>
-                </NavLink>
+                <CustomNavLink item={item} />
               </li>
             ))}
           </ul>
         </nav>
       </Drawer>
 
-      <Main open={open} className="h-screen w-full bg-slate-50 ">
+      <Main open={open} className="h-screen w-full">
         <DrawerHeader />
         <Outlet></Outlet>
       </Main>

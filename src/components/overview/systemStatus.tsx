@@ -49,12 +49,13 @@ function WithLabelCularProgress(
 ) {
   const getColor = () => {
     // "primary" | "secondary" | "error" | "info" | "success" | "warning" |
+
     if (props.value < 30) {
-      return "success";
+      return "primary";
     } else if (props.value <= 60) {
-      return "warning";
+      return "secondary";
     } else {
-      return "error";
+      return "warning";
     }
   };
   return (
@@ -71,7 +72,7 @@ function WithLabelCularProgress(
             variant="determinate"
             sx={{
               color: (theme) =>
-                theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
+                theme.palette.grey[theme.palette.mode === "light" ? 50 : 800],
             }}
             size={"6rem"}
             thickness={4}

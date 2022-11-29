@@ -1,25 +1,16 @@
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import MenuIcon from "@mui/icons-material/Menu";
+import FolderIcon from "@mui/icons-material/Folder";
 import HomeIcon from "@mui/icons-material/Home";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-import FolderIcon from "@mui/icons-material/Folder";
 import {
-  alpha,
   Breadcrumbs,
   Button,
-  ButtonGroup,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   Link,
-  Toolbar,
-  Typography,
 } from "@mui/material";
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
@@ -27,14 +18,15 @@ import useSWR from "swr";
 import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { formatBytes } from "../../utils";
-import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import { TableDjango } from "../DjangoTable";
+import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
 
 const MAIN = "fileBrowser";
-const ITEM = "databaseItem";
+const ITEM = "null";
 const LABEL = "layout.explorer";
 
 interface IFItem {
@@ -55,97 +47,6 @@ interface IFItem {
   symlink: number;
   type: "directory" | "regular" | string;
   [name: string]: any;
-}
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-  const [t] = useTranslation();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [globalProgress, setGlobalProgress] =
-    useRecoilState(GlobalProgressAtom);
-  const handleDelete = () => {
-    if (props.onAction) {
-      props.onAction("delete");
-    }
-  };
-
-  const handleReloadParent = () => {
-    if (props.onAction) {
-      props.onAction("reload");
-    }
-  };
-
-  return (
-    <>
-      <Suspense>
-        {/* <CreateDatabaseDialog
-          open={openDialog}
-          setOpen={(open) => {
-            setOpenDialog(open);
-            handleReloadParent();
-          }}></CreateDatabaseDialog> */}
-      </Suspense>
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) =>
-              alpha(
-                theme.palette.primary.main,
-                theme.palette.action.activatedOpacity
-              ),
-          }),
-        }}>
-        {numSelected > 0 ? (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
-            color="inherit"
-            variant="subtitle1"
-            component="div">
-            {numSelected} {t(LABEL)}
-          </Typography>
-        ) : (
-          <Typography
-            className="capitalize"
-            sx={{ flex: "1 1 100%" }}
-            variant="h6"
-            id="tableTitle"
-            component="div">
-            {t(LABEL)}
-          </Typography>
-        )}
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("add")}
-          </Button>
-
-          {numSelected > 0 ? (
-            <Button
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
-              {t("delete")}
-            </Button>
-          ) : (
-            <div></div>
-          )}
-          <IconButton
-            className={globalProgress ? "animate-spin" : ""}
-            color="primary"
-            onClick={handleReloadParent}>
-            <RefreshIcon />
-          </IconButton>
-        </ButtonGroup>
-      </Toolbar>
-    </>
-  );
 }
 
 export const UpdateExplorerTableUISignal = atom({
@@ -177,7 +78,9 @@ export default function Index({ className }: { className?: string }) {
   ];
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
-  const [updateState, setUpdateState] = useRecoilState(UpdateExplorerTableUISignal);
+  const [updateState, setUpdateState] = useRecoilState(
+    UpdateExplorerTableUISignal
+  );
   const [rowsState, setRowsState] = useState<any>([]);
 
   const [selected, setSelected] = useState<readonly string[]>([]);
