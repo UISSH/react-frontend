@@ -8,7 +8,9 @@ import {
   IconButton,
   TextField,
 } from "@mui/material";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useSnackbar } from "notistack";
@@ -69,7 +71,9 @@ function DeleteFile(
   return (
     <div>
       <Dialog open={props.open} onClose={handleClose}>
-        <DialogTitle>Delete {props.name}</DialogTitle>
+        <DialogTitle>
+          <span className="capitalize"> {t("delete")}</span> {props.name}
+        </DialogTitle>
         <DialogContent>
           <div className="pt-2">
             t("Are you sure you want to delete this file?")
@@ -122,7 +126,9 @@ function RenameFile(
   return (
     <div>
       <Dialog open={props.open} onClose={handleClose}>
-        <DialogTitle>Rename {props.name}</DialogTitle>
+        <DialogTitle>
+          <span>{t("exploprer.rename")}</span> {props.name}
+        </DialogTitle>
         <DialogContent>
           <div className="pt-2">
             <TextField
@@ -149,6 +155,10 @@ export default function Index(props: FileMenuProps) {
   const open = Boolean(anchorEl);
   const [openRename, setOpenRename] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -225,14 +235,23 @@ export default function Index(props: FileMenuProps) {
             {props.name}
           </div>
         )}
-        <MenuItem onClick={handleDownload}>Download</MenuItem>
-        <MenuItem onClick={handleRename}>Rename</MenuItem>
+        <MenuItem className=" capitalize" onClick={handleDownload}>
+          <FileDownloadIcon className="mr-2" />
+          {t("exploprer.download")}
+        </MenuItem>
+        <MenuItem className=" capitalize" onClick={handleRename}>
+          <DriveFileRenameOutlineIcon className="mr-2" />
+
+          {t("exploprer.rename")}
+        </MenuItem>
         <MenuItem
+          className=" capitalize bg-red-500 text-white hover:text-black"
           onClick={() => {
             setAnchorEl(null);
             setOpenDelete(true);
           }}>
-          Delete
+          <DeleteIcon className="mr-2" />
+          {t("exploprer.delete")}
         </MenuItem>
       </Menu>
     </div>

@@ -60,6 +60,9 @@
     "filename": "filename",
     "size": "size",
     "action": "action",
-    "mode": "mode"
+    "mode": "mode",
+    "rename": "rename",
+    "download": "download",
+    "delete": "delete"
   }
 }
