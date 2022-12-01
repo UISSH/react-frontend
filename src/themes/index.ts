@@ -23,7 +23,7 @@ function getTheme(rootElement?: HTMLElement | null) {
         100: "#EADDFF",
         50: "#F6EDFF",
       },
-      secondary: {
+      warning: {
         light: "#332D41",
         main: "#7A7289",
         dark: "#958DA5",
@@ -54,7 +54,7 @@ function getTheme(rootElement?: HTMLElement | null) {
         50: "#FCEEEE",
       },
 
-      warning: {
+      secondary: {
         light: "#7D5260",
         main: "#986977",
         dark: "#D29DAC",
