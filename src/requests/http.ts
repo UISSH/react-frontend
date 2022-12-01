@@ -37,7 +37,7 @@ export function hasAuthToken() {
 function addHeader(ApiType: ApiType | string, init?: RequestInit) {
   let token = Cookies.get(ACCESS_TOKEN);
   let authorization = { Authorization: "token " + token };
-  console.log(init?.body);
+
   if (init?.body instanceof FormData) {
   } else {
     if (init?.headers && !init.headers.hasOwnProperty("Content-Type")) {
@@ -67,7 +67,7 @@ export interface fetchDataProps {
   params?: Params;
 }
 
-export interface requestDataProps {
+export interface RequestDataProps {
   url: ApiType | string;
   headers?: Record<string, string>;
   method?: "GET" | "POST" | "PUT" | "DELETE";
@@ -79,7 +79,7 @@ export interface requestDataProps {
   };
 }
 
-export function requestData(props: requestDataProps): Promise<Response> {
+export function requestData(props: RequestDataProps): Promise<Response> {
   let data: any = {
     method: props.method ? props.method : "GET",
     headers: props.headers ? props.headers : {},

@@ -19,6 +19,7 @@ import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { formatBytes } from "../../utils";
 import { TableDjango } from "../DjangoTable";
+import DropFileUpload from "../DropFileUpload";
 import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
@@ -257,7 +258,14 @@ export default function Index({ className }: { className?: string }) {
   }, [updateState]);
 
   return (
-    <div>
+    <DropFileUpload
+      requestDataProps={{
+        url: "/api/FileBrowser/upload_file/",
+        method: "POST",
+        params: {
+          directory: getCurrentDirectory(),
+        },
+      }}>
       <Breadcrumbs aria-label="breadcrumb">
         <Link
           underline="hover"
@@ -311,6 +319,6 @@ export default function Index({ className }: { className?: string }) {
         title={LABEL}
         maxHeight={"calc(100vh - 180px)"}
       />
-    </div>
+    </DropFileUpload>
   );
 }
