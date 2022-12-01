@@ -52,7 +52,7 @@ function DeleteFile(
       method: "POST",
       data: {
         current_directory: props.directory,
-        operation_command: `rm ${props.name}`,
+        operation_command: `rm '${props.name}'`,
       },
     });
     setGlobalLoadingAtom(false);
