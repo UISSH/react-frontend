@@ -33,20 +33,23 @@ export function hasAuthToken() {
 
   return Boolean(token);
 }
+
 function addHeader(ApiType: ApiType | string, init?: RequestInit) {
   let token = Cookies.get(ACCESS_TOKEN);
   let authorization = { Authorization: "token " + token };
-
-  if (init?.headers && !init.headers.hasOwnProperty("Content-Type")) {
-    init.headers = { "Content-Type": "application/json" };
+  console.log(init?.body);
+  if (init?.body instanceof FormData) {
   } else {
-    init = { ...init, headers: { "Content-Type": "application/json" } };
+    if (init?.headers && !init.headers.hasOwnProperty("Content-Type")) {
+      init.headers = { "Content-Type": "application/json" };
+    } else {
+      init = { ...init, headers: { "Content-Type": "application/json" } };
+    }
   }
 
   if (ApiType !== "auth") {
     init.headers = { ...init.headers, ...authorization };
   }
-
   return init;
 }
 
@@ -80,8 +83,14 @@ export function requestData(props: requestDataProps): Promise<Response> {
   let data: any = {
     method: props.method ? props.method : "GET",
     headers: props.headers ? props.headers : {},
-    body: props.data ? JSON.stringify(props.data) : null,
+    body: {},
   };
+
+  if (props.data instanceof FormData) {
+    data.body = props.data;
+  } else {
+    data.body = JSON.stringify(props.data);
+  }
 
   return fetchData({
     apiType: props.url,

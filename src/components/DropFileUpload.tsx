@@ -16,7 +16,8 @@ export default function DropFileUpload(props: DropFileUploadProps) {
       formData.append("file", file);
     });
     const res = await requestData({
-      url: "/api/FileBrowser/upload_file",
+      url: "/api/FileBrowser/upload_file/",
+      method: "POST",
       params: {
         directory: "/tmp",
       },
