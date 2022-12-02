@@ -50,7 +50,11 @@ import {
 import packagejs from "../../package.json";
 import { fetchData, hasAuthToken } from "../requests/http";
 import { useRecoilState } from "recoil";
-import { GlobalProgressAtom, GlobalLoadingAtom } from "../store/recoilStore";
+import {
+  GlobalProgressAtom,
+  GlobalLoadingAtom,
+  AppBarOpenAtom,
+} from "../store/recoilStore";
 
 const drawerWidth = 240;
 
@@ -232,7 +236,8 @@ function CustomNavLink(props: {
 export default function PersistentDrawerLeft() {
   const matches = useMediaQuery("(min-width:900px)");
   const theme = useTheme();
-  const [open, setOpen] = useState(matches);
+  // const [open, setOpen] = useState(matches);
+  const [open, setOpen] = useRecoilState(AppBarOpenAtom);
   const { t } = useTranslation();
   const [openDebugSwitch, setOpenDebugSwitch] = useState(false);
   const navigation = useNavigation();

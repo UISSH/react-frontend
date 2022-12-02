@@ -5,10 +5,11 @@ import HostsIndex, {
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import Typography from "@mui/material/Typography";
 import * as React from "react";
+import FooterBar from "../../components/terminal/FooterBar";
 import { KVStorage } from "../../requests/utils";
-
+import CloseIcon from "@mui/icons-material/Close";
+import { IconButton } from "@mui/material";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -43,6 +44,7 @@ export default function BasicTabs() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
   const [sshClient, setSshClient] = React.useState<SSHClientInfo>({});
   const initFlag = React.useRef(true);
   React.useEffect(() => {
@@ -71,8 +73,30 @@ export default function BasicTabs() {
             onChange={handleChange}
             aria-label="terminal tabs ">
             <Tab label="Host" {...a11yProps(0)} />
-            <Tab label="Item Two" {...a11yProps(1)} />
-            <Tab label="Item Three" {...a11yProps(2)} />
+            <Tab
+              label="Item Two"
+              iconPosition="end"
+              icon={
+                <IconButton
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
+                  <CloseIcon></CloseIcon>
+                </IconButton>
+              }
+              {...a11yProps(1)}
+            />
+            <Tab
+              label="Item Three"
+              iconPosition="end"
+              icon={
+                <IconButton>
+                  <CloseIcon></CloseIcon>
+                </IconButton>
+              }
+              {...a11yProps(2)}
+            />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
@@ -85,6 +109,7 @@ export default function BasicTabs() {
           Item Three
         </TabPanel>
       </Box>
+      <FooterBar></FooterBar>
     </div>
   );
 }

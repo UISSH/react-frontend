@@ -1,8 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { json } from "react-router-dom";
-import { KVStorage } from "../../requests/utils";
-import Button from "@mui/material/Button";
 import { Divider } from "@mui/material";
+import Button from "@mui/material/Button";
 
 export interface HostsIndexProps {
   sshClientInfo: SSHClientInfo;
@@ -32,7 +29,10 @@ export default function HostsIndex(props: HostsIndexProps) {
         {props.sshClientInfo &&
           Object.keys(props.sshClientInfo).map((item) => {
             return (
-              <Button variant="contained" color="secondary">
+              <Button
+                key={props.sshClientInfo[item].hostname}
+                variant="contained"
+                color="secondary">
                 {item}
               </Button>
             );
