@@ -17,10 +17,11 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  unique: string;
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, unique, ...other } = props;
 
   return (
     <div
@@ -45,10 +46,13 @@ export interface TerminalTabs {
   name: string;
   auth: HostAuth;
   unique: string;
+  index: number;
+  terminalSession: JSX.Element;
 }
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
+  const [destoryTab, setDestoryTab] = React.useState<string[]>([]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -95,16 +99,18 @@ export default function BasicTabs() {
       auth: hostAuth,
       unique: unique,
       index: terminalTabs.length + 1,
+      terminalSession: (
+        <TerminalSession unique={unique} auth={hostAuth}></TerminalSession>
+      ),
     };
     setTerminalTabs([...terminalTabs, tab]);
     setValue(terminalTabs.length + 1);
   };
 
-  const handleRemoveTab = (unique: string) => {
-    let tabs = terminalTabs.filter((tab) => tab.unique !== unique);
-    setTerminalTabs(tabs);
-
-    setValue(tabs.length);
+  const handleRemoveTab = (tab: TerminalTabs) => {
+    setDestoryTab([...destoryTab, tab.unique]);
+    tab["terminalSession"] = <div />;
+    setValue(0);
   };
 
   return (
@@ -123,6 +129,7 @@ export default function BasicTabs() {
                 <Tab
                   component="div"
                   key={index}
+                  className={destoryTab.includes(tab.unique) ? "hidden" : ""}
                   label={
                     <span>
                       {tab.name}
@@ -132,7 +139,7 @@ export default function BasicTabs() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleRemoveTab(tab.unique);
+                          handleRemoveTab(tab);
                         }}>
                         <CloseIcon></CloseIcon>
                       </IconButton>
@@ -145,17 +152,19 @@ export default function BasicTabs() {
             })}
           </Tabs>
         </Box>
-        <TabPanel value={value} index={0}>
+        <TabPanel value={value} index={0} unique={"host"}>
           <HostsIndex
             sshClientInfo={sshClient}
             onClick={handleAddTab}></HostsIndex>
         </TabPanel>
         {terminalTabs.map((tab, index) => {
           return (
-            <TabPanel key={index} value={value} index={index + 1}>
-              <TerminalSession
-                unique={tab.unique}
-                auth={tab.auth}></TerminalSession>
+            <TabPanel
+              key={index}
+              value={value}
+              index={index + 1}
+              unique={tab.unique}>
+              {tab.terminalSession}
             </TabPanel>
           );
         })}

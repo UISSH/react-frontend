@@ -127,7 +127,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
     setWebSocket(terminalSocket);
     return () => {
       term.dispose();
-      webSocket?.close();
+      terminalSocket.close();
       console.log("TerminalSession unmount");
     };
   }, [props.auth]);
