@@ -124,7 +124,12 @@ export default function TerminalSession(props: TerminalSessionProps) {
     };
 
     terminalSocket.onmessage = function (e) {
-      setPingDelay(new Date().getTime() - sendTime);
+      let nowTime = new Date().getTime();
+      if (nowTime - sendTime !== nowTime) {
+        setPingDelay(new Date().getTime() - sendTime);
+      }
+
+      sendTime = 0;
       const data = JSON.parse(e.data);
       if (data.code === 201) {
         terminalSocket.send(
