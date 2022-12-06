@@ -7,9 +7,12 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import * as React from "react";
 import FooterBar from "../../components/terminal/FooterBar";
-import { KVStorage } from "../../requests/utils";
+import { getApiGateway, getWSGateway, KVStorage } from "../../requests/utils";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
+import TerminalSession, {
+  HostAuth,
+} from "../../components/terminal/TerminalSession";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -26,7 +29,7 @@ function TabPanel(props: TabPanelProps) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}>
-      {value === index && <div>{children}</div>}
+      {<div>{children}</div>}
     </div>
   );
 }
@@ -38,14 +41,22 @@ function a11yProps(index: number) {
   };
 }
 
+export interface TerminalTabs {
+  name: string;
+  auth: HostAuth;
+  unique: string;
+}
+
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   const [sshClient, setSshClient] = React.useState<SSHClientInfo>({});
+
+  const [terminalTabs, setTerminalTabs] = React.useState<TerminalTabs[]>([]);
+
   const initFlag = React.useRef(true);
   React.useEffect(() => {
     if (!initFlag.current) {
@@ -64,50 +75,90 @@ export default function BasicTabs() {
       initFlag.current = false;
     };
   }, []);
+
+  const getUUID4 = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  };
+
+  const handleAddTab = (name: string, hostAuth: HostAuth) => {
+    let unique = getUUID4();
+
+    let tab = {
+      name: name,
+      auth: hostAuth,
+      unique: unique,
+      index: terminalTabs.length + 1,
+    };
+    setTerminalTabs([...terminalTabs, tab]);
+    setValue(terminalTabs.length + 1);
+  };
+
+  const handleRemoveTab = (unique: string) => {
+    let tabs = terminalTabs.filter((tab) => tab.unique !== unique);
+    setTerminalTabs(tabs);
+
+    setValue(tabs.length);
+  };
+
   return (
     <div>
       <Box sx={{ width: "100%" }}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
+            sx={{ maxHeight: "48px" }}
             value={value}
             onChange={handleChange}
             aria-label="terminal tabs ">
-            <Tab label="Host" {...a11yProps(0)} />
-            <Tab
-              label="Item Two"
-              iconPosition="end"
-              icon={
-                <IconButton
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}>
-                  <CloseIcon></CloseIcon>
-                </IconButton>
-              }
-              {...a11yProps(1)}
-            />
-            <Tab
-              label="Item Three"
-              iconPosition="end"
-              icon={
-                <IconButton>
-                  <CloseIcon></CloseIcon>
-                </IconButton>
-              }
-              {...a11yProps(2)}
-            />
+            <Tab sx={{ maxHeight: "48px" }} label="Host" {...a11yProps(0)} />
+
+            {terminalTabs.map((tab, index) => {
+              return (
+                <Tab
+                  component="div"
+                  key={index}
+                  label={
+                    <span>
+                      {tab.name}
+                      <IconButton
+                        size="small"
+                        sx={{ marginLeft: "4px" }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveTab(tab.unique);
+                        }}>
+                        <CloseIcon></CloseIcon>
+                      </IconButton>
+                    </span>
+                  }
+                  iconPosition="end"
+                  sx={{ maxHeight: "48px", minHeight: "0px" }}
+                  {...a11yProps(index + 1)}></Tab>
+              );
+            })}
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <HostsIndex sshClientInfo={sshClient}></HostsIndex>
+          <HostsIndex
+            sshClientInfo={sshClient}
+            onClick={handleAddTab}></HostsIndex>
         </TabPanel>
-        <TabPanel value={value} index={1}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          Item Three
-        </TabPanel>
+        {terminalTabs.map((tab, index) => {
+          return (
+            <TabPanel key={index} value={value} index={index + 1}>
+              <TerminalSession
+                unique={tab.unique}
+                auth={tab.auth}></TerminalSession>
+            </TabPanel>
+          );
+        })}
       </Box>
       <FooterBar></FooterBar>
     </div>
