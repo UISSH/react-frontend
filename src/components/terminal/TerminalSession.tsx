@@ -1,13 +1,10 @@
+import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import { Box, Divider } from "@mui/material";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import { WebLinksAddon } from "xterm-addon-web-links";
-import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import "xterm/css/xterm.css";
 import { getWSGateway } from "../../requests/utils";
-// @ts-ignore
-import Ping from "ping.js";
 
 export interface HostAuth {
   hostname: string;
