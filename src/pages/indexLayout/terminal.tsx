@@ -1,18 +1,18 @@
 import HostsIndex, {
-  SSHClientInfo,
+  SSHClientInfo
 } from "../../components/terminal/HostsIndex";
 
+import CloseIcon from "@mui/icons-material/Close";
+import { IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import * as React from "react";
 import FooterBar from "../../components/terminal/FooterBar";
-import { getApiGateway, getWSGateway, KVStorage } from "../../requests/utils";
-import CloseIcon from "@mui/icons-material/Close";
-import { IconButton } from "@mui/material";
 import TerminalSession, {
-  HostAuth,
+  HostAuth
 } from "../../components/terminal/TerminalSession";
+import { KVStorage } from "../../requests/utils";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;

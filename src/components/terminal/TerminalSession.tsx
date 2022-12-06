@@ -1,12 +1,13 @@
 import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import { Box, Divider } from "@mui/material";
 
-import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@mui/material/styles";
+import { useEffect, useRef, useState } from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 import { getWSGateway } from "../../requests/utils";
+import DropFileUpload from "../DropFileUpload";
 
 export interface HostAuth {
   hostname: string;
@@ -48,10 +49,16 @@ const basicTheme = {
 export default function TerminalSession(props: TerminalSessionProps) {
   const termRef = useRef<Terminal>();
   const [pingDelay, setPingDelay] = useState<number>(0);
-  const [webSocket, setWebSocket] = useState<WebSocket>();
+  const webSocketRef = useRef<WebSocket>();
+  const fileRef = useRef<File>();
+  const [dropFileUploadProps, setDropFileUploadProps] = useState<{
+    formData?: FormData;
+
+    uploadSignal?: boolean;
+  }>({ formData: new FormData(), uploadSignal: false });
+
   let webSocketUrl = getWSGateway(`terminal/${props.unique.replace(/-/g, "")}`);
   const [connectStatus, setConnectStatus] = useState(true);
-  const currentWorkDir = useRef<string>("");
   const theme = useTheme();
 
   const materialTheme = {
@@ -64,6 +71,16 @@ export default function TerminalSession(props: TerminalSessionProps) {
     selectionForeground: theme.palette.text.primary,
     selectionInactiveBackground: theme.palette.warning.main,
   };
+
+  function getCurrentTerminalDir() {
+    webSocketRef.current?.send(
+      JSON.stringify({
+        message: "",
+        method: "get_work_dir",
+      })
+    );
+  }
+
   useEffect(() => {
     let terminalSize = {
       cols: 80,
@@ -91,17 +108,21 @@ export default function TerminalSession(props: TerminalSessionProps) {
     fitAddon.fit();
 
     let terminalSocket = new WebSocket(webSocketUrl);
+    webSocketRef.current = terminalSocket;
+
     terminalSocket.addEventListener("error", function (event) {
       term?.writeln("The WebSocket connection could not be established.");
     });
     terminalSocket.onopen = function (e) {
       terminalSocket.send(JSON.stringify(props.auth));
+
       setConnectStatus(true);
     };
     terminalSocket.onclose = function (e) {
       term?.writeln("\r\nThe websocket connection was closed.");
       setConnectStatus(false);
     };
+
     terminalSocket.onmessage = function (e) {
       setPingDelay(new Date().getTime() - sendTime);
       const data = JSON.parse(e.data);
@@ -115,14 +136,22 @@ export default function TerminalSession(props: TerminalSessionProps) {
       } else {
       }
       if (data.hasOwnProperty("work_dir")) {
-        currentWorkDir.current = data.work_dir;
-        if (
-          !currentWorkDir.current.startsWith("/") ||
-          currentWorkDir.current.includes(" ")
-        ) {
-          // setTimeout(getWorkDir, 1000);
+        if (!data.work_dir.startsWith("/") || data.work_dir.includes(" ")) {
+          setTimeout(getCurrentTerminalDir, 1000);
         } else {
-          //requestUploadFile();
+          console.log(data.work_dir);
+          let target_path = data.work_dir + "/" + fileRef.current?.name;
+
+          console.log(dropFileUploadProps);
+          let formData = new FormData();
+          formData.append("auth", JSON.stringify(props.auth));
+          formData.append("target_path", target_path);
+          fileRef.current && formData.append("file", fileRef.current);
+
+          setDropFileUploadProps({
+            formData: formData,
+            uploadSignal: true,
+          });
         }
       } else {
         term?.write(data.message);
@@ -138,44 +167,66 @@ export default function TerminalSession(props: TerminalSessionProps) {
       );
     });
 
-    setWebSocket(terminalSocket);
     return () => {
       term.dispose();
       terminalSocket.close();
+      webSocketRef.current?.close();
       console.log("TerminalSession unmount");
     };
   }, [props.auth]);
+
   return (
     <>
-      <Box
-        sx={{
-          backgroundColor: theme.palette.background.default,
-          color: theme.palette.text.secondary,
+      <DropFileUpload
+        uploadSignal={dropFileUploadProps.uploadSignal}
+        handleUploadSignal={(signal: boolean) => {
+          setDropFileUploadProps({
+            uploadSignal: signal,
+          });
         }}
-        className=" flex justify-between py-1 px-2">
-        <div>
-          {props.auth.username}@{props.auth.hostname}:{props.auth.port}
-        </div>
-        <div className=" flex gap-2">
-          <div> {pingDelay} ms</div>
-          {connectStatus ? (
-            <OnlinePredictionIcon
-              color="error"
-              className="animate-pulse"></OnlinePredictionIcon>
-          ) : (
-            <OnlinePredictionIcon color="error"></OnlinePredictionIcon>
-          )}
-        </div>
-      </Box>
-      <Divider />
-      <Box
-        className=" pl-2 pt-2"
-        sx={{
-          height: "calc(100vh - 220px)",
-          backgroundColor: theme.palette.background.default,
+        formData={dropFileUploadProps.formData}
+        onReciveFile={(file) => {
+          setDropFileUploadProps({
+            uploadSignal: false,
+          });
+
+          fileRef.current = file;
+          setTimeout(getCurrentTerminalDir, 1000);
+        }}
+        requestDataProps={{
+          url: "/api/Terminal/upload_file/",
+          method: "POST",
         }}>
-        <div className="w-full h-full" id={props.unique}></div>
-      </Box>
+        <Box
+          sx={{
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.secondary,
+          }}
+          className=" flex justify-between py-1 px-2">
+          <div>
+            {props.auth.username}@{props.auth.hostname}:{props.auth.port}
+          </div>
+          <div className=" flex gap-2">
+            <div> {pingDelay} ms</div>
+            {connectStatus ? (
+              <OnlinePredictionIcon
+                color="success"
+                className="animate-pulse"></OnlinePredictionIcon>
+            ) : (
+              <OnlinePredictionIcon color="error"></OnlinePredictionIcon>
+            )}
+          </div>
+        </Box>
+        <Divider />
+        <Box
+          className=" pl-2 pt-2"
+          sx={{
+            height: "calc(100vh - 220px)",
+            backgroundColor: theme.palette.background.default,
+          }}>
+          <div className="w-full h-full" id={props.unique}></div>
+        </Box>
+      </DropFileUpload>
     </>
   );
 }
