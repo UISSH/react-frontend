@@ -1,6 +1,8 @@
 import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import { Box, Divider } from "@mui/material";
+
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "@mui/material/styles";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
@@ -50,7 +52,18 @@ export default function TerminalSession(props: TerminalSessionProps) {
   let webSocketUrl = getWSGateway(`terminal/${props.unique.replace(/-/g, "")}`);
   const [connectStatus, setConnectStatus] = useState(true);
   const currentWorkDir = useRef<string>("");
+  const theme = useTheme();
 
+  const materialTheme = {
+    foreground: theme.palette.text.primary,
+    background: theme.palette.background.paper,
+    selection: "#97979b33",
+    cursor: theme.palette.primary.main,
+    cursorAccent: theme.palette.secondary.main,
+    selectionBackground: theme.palette.warning.main,
+    selectionForeground: theme.palette.text.primary,
+    selectionInactiveBackground: theme.palette.warning.main,
+  };
   useEffect(() => {
     let terminalSize = {
       cols: 80,
@@ -63,7 +76,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
     let element = document.getElementById(props.unique) as HTMLElement;
     termRef.current = new Terminal({
       fontFamily: '"Cascadia Code", Menlo, monospace',
-      theme: basicTheme,
+      theme: materialTheme,
       cursorBlink: true,
     }) as Terminal;
     let term = termRef.current;
@@ -83,6 +96,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
     });
     terminalSocket.onopen = function (e) {
       terminalSocket.send(JSON.stringify(props.auth));
+      setConnectStatus(true);
     };
     terminalSocket.onclose = function (e) {
       term?.writeln("\r\nThe websocket connection was closed.");
@@ -134,24 +148,32 @@ export default function TerminalSession(props: TerminalSessionProps) {
   return (
     <>
       <Box
-        sx={{ backgroundColor: "#282a36" }}
-        className=" text-green-400 flex justify-between py-1 px-2">
+        sx={{
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.text.secondary,
+        }}
+        className=" flex justify-between py-1 px-2">
         <div>
           {props.auth.username}@{props.auth.hostname}:{props.auth.port}
         </div>
         <div className=" flex gap-2">
           <div> {pingDelay} ms</div>
           {connectStatus ? (
-            <OnlinePredictionIcon className="text-green-400 animate-pulse"></OnlinePredictionIcon>
+            <OnlinePredictionIcon
+              color="error"
+              className="animate-pulse"></OnlinePredictionIcon>
           ) : (
-            <OnlinePredictionIcon className="text-red-400"></OnlinePredictionIcon>
+            <OnlinePredictionIcon color="error"></OnlinePredictionIcon>
           )}
         </div>
       </Box>
       <Divider />
       <Box
         className=" pl-2 pt-2"
-        sx={{ height: "calc(100vh - 220px)", backgroundColor: "#282a36" }}>
+        sx={{
+          height: "calc(100vh - 220px)",
+          backgroundColor: theme.palette.background.default,
+        }}>
         <div className="w-full h-full" id={props.unique}></div>
       </Box>
     </>

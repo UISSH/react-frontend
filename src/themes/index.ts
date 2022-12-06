@@ -94,7 +94,7 @@ function getTheme(rootElement?: HTMLElement | null) {
       },
       background: {
         paper: "#FFFBFE",
-        default: "#FFFBFE",
+        default: "#FFFFFF",
       },
     },
     components: {
