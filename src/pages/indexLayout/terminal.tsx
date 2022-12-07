@@ -17,6 +17,7 @@ import TerminalSession, {
 import { KVStorage } from "../../requests/utils";
 import { getItem } from "localforage";
 import { atom, selector, useRecoilState } from "recoil";
+import PostHost from "../../components/terminal/PostHost";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -206,6 +207,7 @@ export default function BasicTabs() {
         })}
       </Box>
       {value > 0 && <FooterBar></FooterBar>}
+      <PostHost open></PostHost>
     </div>
   );
 }

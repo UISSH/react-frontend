@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -86,7 +87,11 @@ export default function Index(props: {
     <>
       <CardDialog disableEscapeKeyDown open={props.open} onClose={handleClose}>
         <DialogTitle>{t("Create Database")}</DialogTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <Box
+          onSubmit={handleSubmit(onSubmit)}
+          component="form"
+          noValidate
+          autoComplete="off">
           <DialogContent className=" grid gap-2">
             <Controller
               name="name"
@@ -161,7 +166,7 @@ export default function Index(props: {
               {t("ok")}
             </Button>
           </DialogActions>
-        </form>
+        </Box>
       </CardDialog>
     </>
   );

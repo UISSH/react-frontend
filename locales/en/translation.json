@@ -67,6 +67,8 @@
   },
   "terminal": {
     "host": "Host",
-    "snippet": "Snippet"
+    "snippet": "Snippet",
+    "name": "name",
+    "hostname": "hostname"
   }
 }
