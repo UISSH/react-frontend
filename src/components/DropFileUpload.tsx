@@ -37,15 +37,23 @@ export default function DropFileUpload(props: DropFileUploadProps) {
     }
 
     setGlobalLoadingAtom(true);
-    const res = await requestData({
-      ...props.requestDataProps,
-      data: formData,
-    });
-    if (res.ok) {
-      enqueueSnackbar(t("upload success"), { variant: "success" });
-    } else {
-      console.log("upload failed");
-      enqueueSnackbar(t("upload failed"), { variant: "error" });
+
+    try {
+      const res = await requestData({
+        ...props.requestDataProps,
+
+        data: formData,
+      });
+      if (res.ok) {
+        enqueueSnackbar(t("upload success"), { variant: "success" });
+      } else {
+        console.log("upload failed");
+        enqueueSnackbar(t("upload failed"), { variant: "error" });
+      }
+    } catch (error) {
+      console.log(error);
+      // @ts-ignore
+      enqueueSnackbar(error.stack, { variant: "error" });
     }
     setGlobalLoadingAtom(false);
     props.handleUploadSignal && props.handleUploadSignal(false);
