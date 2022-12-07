@@ -15,3 +15,17 @@ export const AppBarOpenAtom = atom({
   key: "appBarOpen", // unique ID (with respect to other atoms/selectors)
   default: window.matchMedia("(min-width:900px)").matches, // default value (aka initial value)
 });
+
+export interface TerminalGlobalCommand {
+  uuid: string;
+  command: string;
+  uniques: string[];
+}
+export const TerminalGlobalCommandDispatchAtom = atom({
+  key: "terminalGlobalCommandAtom",
+  default: {
+    uuid: "",
+    command: "",
+    uniques: [],
+  } as TerminalGlobalCommand,
+});

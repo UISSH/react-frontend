@@ -3,11 +3,15 @@ import { Box, Divider } from "@mui/material";
 
 import { useTheme } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
+import { TerminalDestoryTabAtom } from "../../pages/IndexLayout/Terminal";
 import { getWSGateway } from "../../requests/utils";
+import { TerminalGlobalCommandDispatchAtom } from "../../store/recoilStore";
 import DropFileUpload from "../DropFileUpload";
+import { SelectedTerminalTabUniqueAtom } from "./FooterBar";
 
 export interface HostAuth {
   hostname: string;
@@ -47,10 +51,20 @@ const basicTheme = {
 };
 
 export default function TerminalSession(props: TerminalSessionProps) {
+  const destoryTabs = useRecoilValue(TerminalDestoryTabAtom);
+  const [terminalGlobalCommandDispatch, _] = useRecoilState(
+    TerminalGlobalCommandDispatchAtom
+  );
+  const terminalGlobalCommandUUID = useRef<string>();
+  const [selectedTabs, setSelectedTabs] = useRecoilState(
+    SelectedTerminalTabUniqueAtom
+  );
+
   const termRef = useRef<Terminal>();
   const [pingDelay, setPingDelay] = useState<number>(0);
   const webSocketRef = useRef<WebSocket>();
   const fileRef = useRef<File>();
+
   const [dropFileUploadProps, setDropFileUploadProps] = useState<{
     formData?: FormData;
 
@@ -80,6 +94,40 @@ export default function TerminalSession(props: TerminalSessionProps) {
       })
     );
   }
+
+  useEffect(() => {
+    if (
+      terminalGlobalCommandUUID.current !==
+        terminalGlobalCommandDispatch.uuid &&
+      terminalGlobalCommandDispatch.uniques.includes(props.unique) &&
+      webSocketRef.current?.readyState === 1
+    ) {
+      console.log(
+        "recive command------>",
+        terminalGlobalCommandDispatch.command
+      );
+      webSocketRef.current?.send(
+        JSON.stringify({
+          message: terminalGlobalCommandDispatch.command + " \r",
+        })
+      );
+      terminalGlobalCommandUUID.current = terminalGlobalCommandDispatch.uuid;
+    }
+
+    // if (
+    //   terminalGlobalCommand &&
+    //   selectedTabs.includes(props.unique) &&
+    //   webSocketRef.current?.readyState === 1
+    // ) {
+    //   console.log("recive command================>", terminalGlobalCommand);
+
+    //   webSocketRef.current?.send(
+    //     JSON.stringify({
+    //       message: terminalGlobalCommand + " \r",
+    //     })
+    //   );
+    // }
+  });
 
   useEffect(() => {
     let terminalSize = {
@@ -176,9 +224,15 @@ export default function TerminalSession(props: TerminalSessionProps) {
       term.dispose();
       terminalSocket.close();
       webSocketRef.current?.close();
-      console.log("TerminalSession unmount");
     };
   }, [props.auth]);
+
+  useEffect(() => {
+    if (destoryTabs.includes(props.unique)) {
+      termRef.current?.dispose();
+      webSocketRef.current?.close();
+    }
+  }, [destoryTabs]);
 
   return (
     <>

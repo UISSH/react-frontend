@@ -1,6 +1,10 @@
 import { Divider } from "@mui/material";
 import Button from "@mui/material/Button";
+import { useSnackbar } from "notistack";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { HostAuth } from "./TerminalSession";
 
 export interface HostsIndexProps {
@@ -25,12 +29,16 @@ interface SSHClient {
 }
 
 export default function HostsIndex(props: HostsIndexProps) {
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
   useEffect(() => {
     console.log("HostsIndex mount");
   }, []);
   return (
     <>
-      <Divider>Host</Divider>
+      <Divider>{t("terminal.host")}</Divider>
       <div className="flex gap-1">
         {props.sshClientInfo &&
           Object.keys(props.sshClientInfo).map((item) => {
@@ -56,6 +64,8 @@ export default function HostsIndex(props: HostsIndexProps) {
             );
           })}
       </div>
+
+      <Divider>{t("terminal.snippet")}</Divider>
     </>
   );
 }

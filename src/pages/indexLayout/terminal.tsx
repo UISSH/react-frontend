@@ -1,5 +1,5 @@
 import HostsIndex, {
-  SSHClientInfo
+  SSHClientInfo,
 } from "../../components/terminal/HostsIndex";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -8,11 +8,15 @@ import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import * as React from "react";
-import FooterBar from "../../components/terminal/FooterBar";
+import FooterBar, {
+  SelectedTerminalTabUniqueAtom,
+} from "../../components/terminal/FooterBar";
 import TerminalSession, {
-  HostAuth
+  HostAuth,
 } from "../../components/terminal/TerminalSession";
 import { KVStorage } from "../../requests/utils";
+import { getItem } from "localforage";
+import { atom, selector, useRecoilState } from "recoil";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -42,7 +46,7 @@ function a11yProps(index: number) {
   };
 }
 
-export interface TerminalTabs {
+export interface TerminalTab {
   name: string;
   auth: HostAuth;
   unique: string;
@@ -50,18 +54,49 @@ export interface TerminalTabs {
   terminalSession: JSX.Element;
 }
 
+export const TerminalDestoryTabAtom = atom<string[]>({
+  key: "terminalDestoryTab",
+  default: [],
+});
+
+export const TerminalTabsAtom = atom<TerminalTab[]>({
+  key: "terminalTabs",
+  default: [],
+});
+
+export const OpenedTerminalTabsAtom = selector({
+  key: "openedTerminalTabs",
+  get: ({ get }) => {
+    const terminalTabs = get(TerminalTabsAtom);
+    const destoryTab = get(TerminalDestoryTabAtom);
+    return terminalTabs.filter((item) => {
+      return !destoryTab.includes(item.unique);
+    });
+  },
+});
+
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
-  const [destoryTab, setDestoryTab] = React.useState<string[]>([]);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+  const [destoryTab, setDestoryTab] = useRecoilState(TerminalDestoryTabAtom);
+
+  const [selectedTabs, setSelectedTabs] = useRecoilState(
+    SelectedTerminalTabUniqueAtom
+  );
 
   const [sshClient, setSshClient] = React.useState<SSHClientInfo>({});
 
-  const [terminalTabs, setTerminalTabs] = React.useState<TerminalTabs[]>([]);
+  const [terminalTabs, setTerminalTab] = useRecoilState(TerminalTabsAtom);
 
   const initFlag = React.useRef(true);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+    if (newValue - 1 > 0) {
+      setSelectedTabs([terminalTabs[newValue - 1].unique]);
+    } else {
+      setSelectedTabs([]);
+    }
+  };
   React.useEffect(() => {
     if (!initFlag.current) {
       return;
@@ -77,6 +112,7 @@ export default function BasicTabs() {
     });
     return () => {
       initFlag.current = false;
+      setTerminalTab([]);
     };
   }, []);
 
@@ -103,13 +139,13 @@ export default function BasicTabs() {
         <TerminalSession unique={unique} auth={hostAuth}></TerminalSession>
       ),
     };
-    setTerminalTabs([...terminalTabs, tab]);
+    setTerminalTab([...terminalTabs, tab]);
+    setSelectedTabs([unique]);
     setValue(terminalTabs.length + 1);
   };
 
-  const handleRemoveTab = (tab: TerminalTabs) => {
+  const handleRemoveTab = (tab: TerminalTab) => {
     setDestoryTab([...destoryTab, tab.unique]);
-    tab["terminalSession"] = <div />;
     setValue(0);
   };
 
@@ -169,7 +205,7 @@ export default function BasicTabs() {
           );
         })}
       </Box>
-      <FooterBar></FooterBar>
+      {value > 0 && <FooterBar></FooterBar>}
     </div>
   );
 }

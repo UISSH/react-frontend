@@ -64,5 +64,9 @@
     "rename": "rename",
     "download": "download",
     "delete": "delete"
+  },
+  "terminal": {
+    "host": "Host",
+    "snippet": "Snippet"
   }
 }
