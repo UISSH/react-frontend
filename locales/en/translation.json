@@ -69,6 +69,7 @@
     "host": "Host",
     "snippet": "Snippet",
     "name": "name",
-    "hostname": "hostname"
+    "hostname": "hostname",
+    "addhost": "addHost"
   }
 }

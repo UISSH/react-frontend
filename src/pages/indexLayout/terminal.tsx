@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import * as React from "react";
+import { atom, selector, useRecoilState } from "recoil";
 import FooterBar, {
   SelectedTerminalTabUniqueAtom,
 } from "../../components/terminal/FooterBar";
@@ -15,9 +16,6 @@ import TerminalSession, {
   HostAuth,
 } from "../../components/terminal/TerminalSession";
 import { KVStorage } from "../../requests/utils";
-import { getItem } from "localforage";
-import { atom, selector, useRecoilState } from "recoil";
-import PostHost from "../../components/terminal/PostHost";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -84,11 +82,7 @@ export default function BasicTabs() {
     SelectedTerminalTabUniqueAtom
   );
 
-  const [sshClient, setSshClient] = React.useState<SSHClientInfo>({});
-
   const [terminalTabs, setTerminalTab] = useRecoilState(TerminalTabsAtom);
-
-  const initFlag = React.useRef(true);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -98,24 +92,6 @@ export default function BasicTabs() {
       setSelectedTabs([]);
     }
   };
-  React.useEffect(() => {
-    if (!initFlag.current) {
-      return;
-    }
-
-    let kv = new KVStorage("SSH_CLIENT");
-    kv.init().then((val) => {
-      if (val == null) {
-        setSshClient({});
-      } else {
-        setSshClient(JSON.parse(val));
-      }
-    });
-    return () => {
-      initFlag.current = false;
-      setTerminalTab([]);
-    };
-  }, []);
 
   const getUUID4 = () => {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -149,6 +125,10 @@ export default function BasicTabs() {
     setDestoryTab([...destoryTab, tab.unique]);
     setValue(0);
   };
+
+  React.useEffect(() => {
+    setTerminalTab([]);
+  }, []);
 
   return (
     <div>
@@ -190,9 +170,7 @@ export default function BasicTabs() {
           </Tabs>
         </Box>
         <TabPanel value={value} index={0} unique={"host"}>
-          <HostsIndex
-            sshClientInfo={sshClient}
-            onClick={handleAddTab}></HostsIndex>
+          <HostsIndex onClick={handleAddTab}></HostsIndex>
         </TabPanel>
         {terminalTabs.map((tab, index) => {
           return (
@@ -207,7 +185,6 @@ export default function BasicTabs() {
         })}
       </Box>
       {value > 0 && <FooterBar></FooterBar>}
-      <PostHost open></PostHost>
     </div>
   );
 }
