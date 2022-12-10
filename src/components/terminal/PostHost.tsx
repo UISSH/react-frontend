@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -7,25 +6,15 @@ import {
   FormControlLabel,
   FormGroup,
   IconButton,
-  Input,
   Switch,
   TextField,
   Tooltip,
 } from "@mui/material";
 
 import KeyIcon from "@mui/icons-material/Key";
-import { t } from "i18next";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import {
-  Control,
-  Controller,
-  FieldErrorsImpl,
-  FieldValues,
-  SubmitHandler,
-  UseControllerProps,
-  useForm,
-} from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";

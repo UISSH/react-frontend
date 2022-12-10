@@ -10,7 +10,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          axios: ["axios"],
           i18next: [
             "i18next",
             "i18next-http-backend",
