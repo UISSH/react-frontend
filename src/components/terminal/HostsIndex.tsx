@@ -1,8 +1,20 @@
 import AddIcon from "@mui/icons-material/AddCircle";
-import { Divider, IconButton, Tooltip } from "@mui/material";
+import {
+  ButtonGroup,
+  ClickAwayListener,
+  Collapse,
+  Divider,
+  Grow,
+  IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Tooltip,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import { useSnackbar } from "notistack";
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { KVStorage } from "../../requests/utils";
@@ -10,8 +22,9 @@ import { GlobalLoadingAtom } from "../../store/recoilStore";
 import PostHost from "./PostHost";
 import { HostAuth } from "./TerminalSession";
 
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 export interface HostsIndexProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   onClick?: (name: string, hostAuth: HostAuth) => void;
 }
 
@@ -27,6 +40,80 @@ interface SSHClient {
   password: string;
   private_key: string;
   private_key_password: string;
+}
+
+const options = ["Createt", "Squash", "Rebase"];
+
+interface SplitButtonProps {
+  children: ReactNode;
+  MenuList: JSX.Element;
+}
+
+export function SplitButton(props: SplitButtonProps) {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <ButtonGroup
+        variant="contained"
+        color="secondary"
+        ref={anchorRef}
+        aria-label="split button">
+        {props.children}
+
+        <Button
+          aria-controls={open ? "split-button-menu" : undefined}
+          aria-expanded={open ? "true" : undefined}
+          aria-haspopup="menu"
+          onClick={handleToggle}>
+          <ArrowDropDownIcon
+            sx={{ fontSize: "1.2rem" }}
+            className={`transition duration-500 ${open ? "rotate-180" : ""}  `}
+          />
+        </Button>
+      </ButtonGroup>
+      <Popper
+        sx={{
+          zIndex: 1,
+        }}
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        transition
+        placement="bottom-end"
+        disablePortal>
+        {({ TransitionProps, placement }) => (
+          <Grow {...TransitionProps}>
+            <Paper>
+              <ClickAwayListener onClickAway={handleClose}>
+                {props.MenuList}
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </>
+  );
 }
 
 export default function HostsIndex(props: HostsIndexProps) {
@@ -61,33 +148,54 @@ export default function HostsIndex(props: HostsIndexProps) {
         }
       });
     }
-  }, [postHostOpen]);
+  }, [sshClient]);
   return (
     <>
       <div>
         <Divider className="py-2">{t("terminal.host")}</Divider>
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-wrap	">
           {sshClient &&
             Object.keys(sshClient).map((item) => {
               return (
-                <Button
-                  onClick={() => {
-                    let auth: HostAuth = {
-                      hostname: sshClient[item].hostname,
-                      port: sshClient[item].port,
-                      username: sshClient[item].username,
-                      password: sshClient[item].password,
-                      private_key: sshClient[item].private_key,
-                      private_key_password:
-                        sshClient[item].private_key_password,
-                    };
-                    props.onClick && props.onClick(item, auth);
-                  }}
-                  key={sshClient[item].hostname}
-                  variant="contained"
-                  color="secondary">
-                  {item}
-                </Button>
+                <div key={item}>
+                  <SplitButton
+                    MenuList={
+                      <MenuList id={"split-button-menu-" + item}>
+                        <MenuItem
+                          onClick={() => {
+                            delete sshClient[item];
+                            setSshClient(JSON.parse(JSON.stringify(sshClient)));
+                            saveSSHClient();
+                          }}>
+                          {t("common.delete")}
+                        </MenuItem>
+                      </MenuList>
+                    }>
+                    <Button
+                      sx={{ minWidth: "100px" }}
+                      onClick={() => {
+                        let auth: HostAuth = {
+                          hostname: sshClient[item].hostname,
+                          port: sshClient[item].port,
+                          username: sshClient[item].username,
+                          password: sshClient[item].password,
+                          private_key: sshClient[item].private_key,
+                          private_key_password:
+                            sshClient[item].private_key_password,
+                        };
+                        props.onClick && props.onClick(item, auth);
+                      }}
+                      variant="contained"
+                      color="secondary">
+                      <Paper
+                        component="div"
+                        className="shadow-none bg-inherit text-inherit"
+                        sx={{ minWidth: "120px" }}>
+                        {item}
+                      </Paper>
+                    </Button>
+                  </SplitButton>
+                </div>
               );
             })}
 

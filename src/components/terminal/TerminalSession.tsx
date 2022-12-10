@@ -2,14 +2,20 @@ import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import { Box, Divider } from "@mui/material";
 
 import { useTheme } from "@mui/material/styles";
+import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 import { TerminalDestoryTabAtom } from "../../pages/IndexLayout/Terminal";
 import { getWSGateway } from "../../requests/utils";
-import { TerminalGlobalCommandDispatchAtom } from "../../store/recoilStore";
+import {
+  AppBarOpenAtom,
+  GlobalLoadingAtom,
+  TerminalGlobalCommandDispatchAtom,
+} from "../../store/recoilStore";
 import DropFileUpload from "../DropFileUpload";
 import { SelectedTerminalTabUniqueAtom } from "./FooterBar";
 
@@ -55,6 +61,11 @@ export default function TerminalSession(props: TerminalSessionProps) {
   const [terminalGlobalCommandDispatch, _] = useRecoilState(
     TerminalGlobalCommandDispatchAtom
   );
+
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
   const terminalGlobalCommandUUID = useRef<string>();
   const [selectedTabs, setSelectedTabs] = useRecoilState(
     SelectedTerminalTabUniqueAtom
@@ -74,7 +85,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
   let webSocketUrl = getWSGateway(`terminal/${props.unique.replace(/-/g, "")}`);
   const [connectStatus, setConnectStatus] = useState(true);
   const theme = useTheme();
-
+  const fitAddon = useRef(new FitAddon());
   const materialTheme = {
     foreground: theme.palette.text.primary,
     background: theme.palette.background.paper,
@@ -87,6 +98,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
   };
 
   function getCurrentTerminalDir() {
+    setGlobalLoadingAtom(true);
     webSocketRef.current?.send(
       JSON.stringify({
         message: "",
@@ -102,10 +114,6 @@ export default function TerminalSession(props: TerminalSessionProps) {
       terminalGlobalCommandDispatch.uniques.includes(props.unique) &&
       webSocketRef.current?.readyState === 1
     ) {
-      console.log(
-        "recive command------>",
-        terminalGlobalCommandDispatch.command
-      );
       webSocketRef.current?.send(
         JSON.stringify({
           message: terminalGlobalCommandDispatch.command + " \r",
@@ -113,20 +121,6 @@ export default function TerminalSession(props: TerminalSessionProps) {
       );
       terminalGlobalCommandUUID.current = terminalGlobalCommandDispatch.uuid;
     }
-
-    // if (
-    //   terminalGlobalCommand &&
-    //   selectedTabs.includes(props.unique) &&
-    //   webSocketRef.current?.readyState === 1
-    // ) {
-    //   console.log("recive command================>", terminalGlobalCommand);
-
-    //   webSocketRef.current?.send(
-    //     JSON.stringify({
-    //       message: terminalGlobalCommand + " \r",
-    //     })
-    //   );
-    // }
   });
 
   useEffect(() => {
@@ -137,7 +131,8 @@ export default function TerminalSession(props: TerminalSessionProps) {
     let sendTime = new Date().getTime();
 
     console.log("TerminalSession mount");
-    const fitAddon = new FitAddon();
+    let terminalSocket = new WebSocket(webSocketUrl);
+
     let element = document.getElementById(props.unique) as HTMLElement;
     termRef.current = new Terminal({
       fontFamily: '"Cascadia Code", Menlo, monospace',
@@ -145,7 +140,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
       cursorBlink: true,
     }) as Terminal;
     let term = termRef.current;
-    term.loadAddon(fitAddon);
+    term.loadAddon(fitAddon.current);
     term.open(element);
 
     term.onResize((size) => {
@@ -153,9 +148,8 @@ export default function TerminalSession(props: TerminalSessionProps) {
       terminalSize.rows = size.rows;
     });
 
-    fitAddon.fit();
+    fitAddon.current.fit();
 
-    let terminalSocket = new WebSocket(webSocketUrl);
     webSocketRef.current = terminalSocket;
 
     terminalSocket.addEventListener("error", function (event) {
@@ -163,7 +157,6 @@ export default function TerminalSession(props: TerminalSessionProps) {
     });
     terminalSocket.onopen = function (e) {
       terminalSocket.send(JSON.stringify(props.auth));
-
       setConnectStatus(true);
     };
     terminalSocket.onclose = function (e) {
@@ -192,10 +185,8 @@ export default function TerminalSession(props: TerminalSessionProps) {
         if (!data.work_dir.startsWith("/") || data.work_dir.includes(" ")) {
           setTimeout(getCurrentTerminalDir, 1000);
         } else {
-          console.log(data.work_dir);
           let target_path = data.work_dir + "/" + fileRef.current?.name;
 
-          console.log(dropFileUploadProps);
           let formData = new FormData();
           formData.append("auth", JSON.stringify(props.auth));
           formData.append("target_path", target_path);
@@ -250,7 +241,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
           });
 
           fileRef.current = file;
-          setTimeout(getCurrentTerminalDir, 1000);
+          getCurrentTerminalDir();
         }}
         requestDataProps={{
           url: "/api/Terminal/upload_file/",

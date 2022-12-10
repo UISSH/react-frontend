@@ -62,25 +62,29 @@ export default function PostHost(props: PostHostProps) {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log(data.private_key_file);
-    // read file
+    let propsData = {
+      username: data.username,
+      hostname: data.hostname,
+      port: data.port,
+      password: data.password ? data.password : "",
+      private_key: "",
+      private_key_password: data.private_key_password,
+    };
+
     if (data.private_key_file && data.private_key_file.length > 0) {
       // read file
       const reader = new FileReader();
       reader.onload = (e) => {
         console.log(e.target?.result);
-        let propsData = {
-          username: data.username,
-          hostname: data.hostname,
-          port: data.port,
-          password: data.password ? data.password : "",
+        propsData = {
+          ...propsData,
           private_key: e.target?.result as string,
-          private_key_password: data.private_key_password,
         };
-        console.log(propsData);
         props.onAdd && props.onAdd(data.name, propsData);
       };
       reader.readAsText(data.private_key_file[0]);
+    } else {
+      props.onAdd && props.onAdd(data.name, propsData);
     }
   };
 
