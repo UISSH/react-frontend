@@ -43,7 +43,7 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 function WithLabelCularProgress(
   props: CircularProgressProps & {
     value: number;
-    label?: string;
+    label?: string | null;
     tooltip?: React.ReactNode;
   }
 ) {
