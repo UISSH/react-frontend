@@ -15,6 +15,8 @@ const Terminal = lazy(() => import("../pages/IndexLayout/Terminal"));
 const Mount = lazy(() => import("../pages/IndexLayout/Mount"));
 const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 
+const PlainTextEditing = lazy(() => import("../pages/TextEditing"));
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -98,6 +100,14 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "editing",
+        element: (
+          <Suspense>
+            <PlainTextEditing></PlainTextEditing>
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -108,5 +118,6 @@ export const router = createBrowserRouter([
       </Suspense>
     ),
   },
+
   { path: "/api" },
 ]);

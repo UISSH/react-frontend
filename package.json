@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview ",
+    "preview": "vite preview  ",
     "pretty": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\""
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.10.16",
     "@mui/lab": "^5.0.0-alpha.110",
     "@mui/material": "^5.10.13",
+    "ace-builds": "^1.13.2",
     "axios": "^1.2.0",
     "i18next": "^22.0.3",
     "i18next-browser-languagedetector": "^7.0.0",
@@ -25,6 +26,7 @@
     "match-sorter": "^6.3.1",
     "notistack": "^2.0.8",
     "react": "^18.2.0",
+    "react-ace": "^10.1.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.40.0",

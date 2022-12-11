@@ -7,5 +7,9 @@ export default defineConfig({
     host: "localhost",
     port: 8080,
   },
+  preview: {
+    host: "localhost",
+    port: 8080,
+  },
   plugins: [react()],
 });
