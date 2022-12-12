@@ -17,7 +17,7 @@
     "@mui/icons-material": "^5.10.16",
     "@mui/lab": "^5.0.0-alpha.110",
     "@mui/material": "^5.10.13",
-    "ace-builds": "^1.13.2",
+    "ace-builds": "^1.14.0",
     "axios": "^1.2.0",
     "i18next": "^22.0.3",
     "i18next-browser-languagedetector": "^7.0.0",
