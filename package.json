@@ -13,6 +13,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@material/material-color-utilities": "^0.2.0",
+    "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.10.16",
     "@mui/lab": "^5.0.0-alpha.110",
     "@mui/material": "^5.10.13",

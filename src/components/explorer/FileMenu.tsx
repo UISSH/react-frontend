@@ -22,6 +22,7 @@ import { getApiGateway } from "../../requests/utils";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { UpdateExplorerTableUISignal } from "./ExplorerTable";
 import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate } from "react-router-dom";
 export interface FileMenuProps {
   id: string | number;
   path: string;
@@ -163,12 +164,22 @@ export default function Index(props: FileMenuProps) {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
+  const navigate = useNavigate();
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     setAnchorEl(null);
   };
   const handleRenameClose = () => {
     setOpenRename(false);
+  };
+
+  const handleEdit = () => {
+    navigate(`/dash/editor/`, {
+      state: {
+        type: "vim",
+        path: props.path,
+      },
+    });
   };
   const handleDownload = async () => {
     let res = await requestData({
@@ -235,7 +246,7 @@ export default function Index(props: FileMenuProps) {
             {props.name}
           </div>
         )}
-        <MenuItem className=" capitalize" onClick={handleDownload}>
+        <MenuItem className=" capitalize" onClick={handleEdit}>
           <EditIcon className="mr-2" />
           {t("exploprer.edit")}
         </MenuItem>

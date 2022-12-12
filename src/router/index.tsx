@@ -15,7 +15,7 @@ const Terminal = lazy(() => import("../pages/IndexLayout/Terminal"));
 const Mount = lazy(() => import("../pages/IndexLayout/Mount"));
 const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 
-const PlainTextEditing = lazy(() => import("../pages/TextEditing"));
+const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
 
 export const router = createBrowserRouter([
   {
@@ -101,10 +101,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "editing",
+        path: "editor",
         element: (
           <Suspense>
-            <PlainTextEditing></PlainTextEditing>
+            <MonacoEditorPage></MonacoEditorPage>
           </Suspense>
         ),
       },

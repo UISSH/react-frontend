@@ -170,7 +170,7 @@ export default function Index({ className }: { className?: string }) {
   }, [searchParams]);
 
   const getCurrentDirectory = () => {
-    let directory = "/" + history.current.join("/") + "/";
+    let directory = searchParams.get("directory") + "/" || "/";
     return directory.replace(/\/\//g, "/");
   };
 
