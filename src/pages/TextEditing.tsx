@@ -10,10 +10,12 @@ import LazyMode, { ModeAceType } from "../components/acemode/Index";
 import ModeAce from "../components/acemode/ModeAce";
 
 export interface TextEditingProps {
+  onLoad?: () => string;
+  onSave?: (text: string) => void;
   children?: ReactNode;
 }
 
-export default function TextEditing() {
+export default function TextEditing(props: TextEditingProps) {
   const [searchParams] = useSearchParams();
   let mode = searchParams.get("mode");
   if (mode === null) {
@@ -26,9 +28,12 @@ export default function TextEditing() {
     mode = mode.toLowerCase();
   }
 
-  const [value, setValue] = useState<ModeAceType>(mode as ModeAceType);
+  const [aceMode, setAceMode] = useState<ModeAceType>(mode as ModeAceType);
   const onLoad = () => {
     console.log("i've loaded");
+    if (props.onLoad) {
+      props.onLoad();
+    }
   };
 
   const onChange = (newValue: string) => {
@@ -45,15 +50,16 @@ export default function TextEditing() {
               color: (theme) => theme.palette.text.primary,
             }}
             className=" flex justify-between py-2 px-2">
-            <div>mode:{value}</div>
+            <div>mode:{aceMode}</div>
           </Box>
           <div className=" rounded-md">
-            <LazyMode mode={value}>
+            <LazyMode mode={aceMode}>
               <AceEditor
+                value={props.onLoad ? props.onLoad() : ""}
                 width="100%"
                 height="calc(100vh - 120px)"
                 placeholder="Placeholder Text"
-                mode={value.toLowerCase()}
+                mode={aceMode.toLowerCase()}
                 theme="github"
                 name="blah2"
                 onLoad={onLoad}

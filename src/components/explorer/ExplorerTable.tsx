@@ -102,19 +102,6 @@ export default function Index({ className }: { className?: string }) {
   const requestDelete = async () => {
     for (let i = 0; i < selected.length; i++) {
       console.log(selected[i]);
-
-      // let fetchDataProps: fetchDataProps = {
-      //   apiType: ITEM,
-      //   init: {
-      //     method: "delete",
-      //   },
-      //   params: {
-      //     pathParam: {
-      //       id: selected[i],
-      //     },
-      //   },
-      // };
-      // await fetchData(fetchDataProps);
     }
     setUpdateState(updateState + 1);
     setAlertDialog({ ...alertDialog, open: false });
@@ -150,7 +137,7 @@ export default function Index({ className }: { className?: string }) {
   //const { data, error } = useSWR();
 
   const history = useRef<string[]>([]);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>({
     apiType: MAIN,
@@ -164,34 +151,37 @@ export default function Index({ className }: { className?: string }) {
     },
   });
 
-  const setCurrentDirectory = (directory: string) => {
-    setFetchDataProps({
-      apiType: MAIN,
-      params: {
-        pathParam: {
-          action: "query",
+  useEffect(() => {
+    if (searchParams.get("directory")) {
+      console.log(searchParams.get("directory"));
+
+      setFetchDataProps({
+        apiType: MAIN,
+        params: {
+          pathParam: {
+            action: "query",
+          },
+          searchParam: {
+            directory: searchParams.get("directory") || "/",
+          },
         },
-        searchParam: {
-          directory: directory,
-        },
-      },
-    });
-  };
+      });
+    }
+  }, [searchParams]);
 
   const getCurrentDirectory = () => {
     let directory = "/" + history.current.join("/") + "/";
-    return directory;
-  };
-
-  const enterDirectory = () => {
-    setCurrentDirectory(getCurrentDirectory());
+    return directory.replace(/\/\//g, "/");
   };
 
   const handleBreadcrumbClick = (i: number) => {
     let onSelecctPath = "/" + history.current.slice(0, i + 1).join("/");
 
     history.current = onSelecctPath.split("/").filter((x) => x);
-    setCurrentDirectory(onSelecctPath);
+
+    setSearchParams({
+      directory: onSelecctPath,
+    });
   };
 
   const { mutate } = useSWR(fetchDataProps, (props) => {
@@ -211,8 +201,9 @@ export default function Index({ className }: { className?: string }) {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (row.type == "directory") {
-                      history.current.push(row.filename);
-                      enterDirectory();
+                      setSearchParams({
+                        directory: getCurrentDirectory() + row.filename,
+                      });
                     }
                   }}>
                   {row.type == "directory" ? (
@@ -248,6 +239,12 @@ export default function Index({ className }: { className?: string }) {
         );
       })
       .finally(() => {
+        if (fetchDataProps.params?.searchParam) {
+          history.current =
+            fetchDataProps.params.searchParam.directory.split("/");
+          history.current = history.current.filter((x) => x);
+        }
+
         setGlobalProgress(false);
       });
   });
@@ -272,7 +269,9 @@ export default function Index({ className }: { className?: string }) {
           color="inherit"
           className="cursor-pointer "
           onClick={(e) => {
-            setCurrentDirectory("/");
+            setSearchParams({
+              directory: "/",
+            });
             history.current = [];
           }}>
           <HomeIcon />

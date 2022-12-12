@@ -21,7 +21,7 @@ import { fetchData, requestData } from "../../requests/http";
 import { getApiGateway } from "../../requests/utils";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { UpdateExplorerTableUISignal } from "./ExplorerTable";
-
+import EditIcon from "@mui/icons-material/Edit";
 export interface FileMenuProps {
   id: string | number;
   path: string;
@@ -236,12 +236,15 @@ export default function Index(props: FileMenuProps) {
           </div>
         )}
         <MenuItem className=" capitalize" onClick={handleDownload}>
+          <EditIcon className="mr-2" />
+          {t("exploprer.edit")}
+        </MenuItem>
+        <MenuItem className=" capitalize" onClick={handleDownload}>
           <FileDownloadIcon className="mr-2" />
           {t("exploprer.download")}
         </MenuItem>
-        <MenuItem className=" capitalize" onClick={handleRename}>
+        <MenuItem className="capitalize" onClick={handleRename}>
           <DriveFileRenameOutlineIcon className="mr-2" />
-
           {t("exploprer.rename")}
         </MenuItem>
         <MenuItem

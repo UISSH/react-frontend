@@ -38,5 +38,8 @@
   },
   "common": {
     "delete": "delete"
+  },
+  "exploprer": {
+    "edit": "edit"
   }
 }
