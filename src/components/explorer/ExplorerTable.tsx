@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
 import useSWR from "swr";
 import { fetchData, fetchDataProps } from "../../requests/http";
@@ -94,6 +94,8 @@ export default function Index({ className }: { className?: string }) {
     title: "",
     content: "",
   });
+
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setAlertDialog({ ...alertDialog, open: false });
@@ -197,6 +199,13 @@ export default function Index({ className }: { className?: string }) {
                       setSearchParams({
                         directory: getCurrentDirectory() + row.filename,
                       });
+                    } else {
+                      navigate(`/dash/editor/`, {
+                        state: {
+                          type: "vim",
+                          path: getCurrentDirectory() + row.filename,
+                        },
+                      });
                     }
                   }}>
                   {row.type == "directory" ? (
@@ -206,11 +215,7 @@ export default function Index({ className }: { className?: string }) {
                   )}
                   <div> {row.filename}</div>
                 </div>
-                <div
-                  className="invisible group-hover:visible"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}>
+                <div className="invisible group-hover:visible">
                   {row.type == "regular" && (
                     <FileMenu
                       id={row["id"]}

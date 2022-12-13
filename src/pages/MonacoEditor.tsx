@@ -1,14 +1,29 @@
 //https://monaco-react.surenatoyan.com/
 
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 
 import Editor, { Monaco } from "@monaco-editor/react";
-import { Box, Card, CardContent, TextField } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Switch,
+  TextField,
+} from "@mui/material";
 import { editor as MonacoEditor } from "monaco-editor/esm/vs/editor/editor.api";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
+import SaveIcon from "@mui/icons-material/Save";
 import { requestData } from "../requests/http";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
+import { useRecoilState } from "recoil";
+import { AppBarOpenAtom } from "../store/recoilStore";
 
 // import * as monaco from "monaco-editor";
 // import { loader } from "@monaco-editor/react";
@@ -23,19 +38,49 @@ export interface MonacoEditorProps {
 export default function MonacoEditorPage(props: MonacoEditorProps) {
   const [searchParams] = useSearchParams();
   const [value, setValue] = useState<string>("");
+  const lastestValue = useRef<string>("");
   const [t] = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [darkTheme, setDarkTheme] = useState<boolean>(false);
+  const handle = useFullScreenHandle();
+  const [languageID, setLanguageID] = useState<string>("plaintext");
+
+  const [appBarOpenAtom, setAppBarOpenAtom] = useRecoilState(AppBarOpenAtom);
 
   const location = useLocation();
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor>();
+
+  const onSave = () => {
+    if (location.state.type == "vim" && location.state.path) {
+      requestData({
+        url: "/api/FileBrowser/file_text_operating/",
+        method: "POST",
+        params: {
+          abs_path: location.state.path,
+        },
+        data: {
+          path: location.state.path,
+          text: lastestValue.current,
+        },
+      }).then(async (res) => {
+        if (res.ok) {
+          let json = await res.json();
+          enqueueSnackbar("ok", { variant: "success" });
+        } else {
+          let json = await res.json();
+          enqueueSnackbar("error", { variant: "error" });
+        }
+      });
+    }
+  };
 
   function handleEditorDidMount(
     editor: MonacoEditor.IStandaloneCodeEditor,
     monaco: Monaco
   ) {
     editorRef.current = editor;
+    setLanguageID(editor.getModel()?.getLanguageId() || "plaintext");
   }
 
   useEffect(() => {
@@ -48,7 +93,8 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
       }).then(async (res) => {
         if (res.ok) {
           let json = await res.json();
-          setValue(json.text);
+          lastestValue.current = json.text;
+          setValue(lastestValue.current);
         } else {
           let json = await res.json();
           enqueueSnackbar(json.detail, { variant: "error" });
@@ -57,42 +103,94 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
     }
   }, [location.state]);
 
-  const onChange = (newValue: string) => {
-    console.log("change", newValue);
-  };
-
   return (
     <>
-      <Card sx={{ height: "calc(100vh - 80px)" }}>
-        <CardContent sx={{ padding: 0 }}>
-          <Box
-            sx={{
-              backgroundColor: (theme) => theme.palette.secondary.main,
-              color: (theme) => theme.palette.text.disabled,
-            }}
-            className=" flex justify-between py-2 px-2">
-            <div>
-              <span className="p-1">{location.state.path}</span>
-            </div>
-
-            <div> 1</div>
-          </Box>
-          <div className=" rounded-md">
-            <Editor
-              options={{
-                minimap: {
-                  enabled: false,
-                },
+      <Card
+        sx={{ height: "calc(100vh - 65px)" }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (e.key == "s" && e.ctrlKey) {
+            onSave();
+          }
+        }}>
+        <FullScreen handle={handle}>
+          <CardContent sx={{ padding: 0 }}>
+            <Box
+              sx={{
+                backgroundColor: (theme) =>
+                  darkTheme ? "black" : theme.palette.grey[50],
+                color: (theme) =>
+                  darkTheme ? "white" : theme.palette.text.primary,
               }}
-              theme={darkTheme ? "vs-dark" : "vs-light"}
-              defaultPath={location.state.path}
-              height="calc(100vh - 120px)"
-              value={value}
-              onChange={(newValue) => {}}
-              onMount={handleEditorDidMount}
-            />
-          </div>
-        </CardContent>
+              className=" flex justify-between py-2 px-2 items-center">
+              <div>
+                <span className="p-1">{location.state.path}</span>
+              </div>
+
+              <div className="flex flex-wrap gap-1">
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        value={darkTheme}
+                        onChange={() => {
+                          setDarkTheme(!darkTheme);
+                        }}
+                      />
+                    }
+                    label="Dark"
+                  />
+                </FormGroup>
+                <IconButton size="small" color="inherit" onClick={onSave}>
+                  <SaveIcon />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  onClick={() => {
+                    handle.active ? handle.exit() : handle.enter();
+                  }}>
+                  {handle.active ? (
+                    <ZoomInMapIcon></ZoomInMapIcon>
+                  ) : (
+                    <ZoomOutMapIcon />
+                  )}
+                </IconButton>
+              </div>
+            </Box>
+
+            <Box
+              className=" rounded-md"
+              sx={{
+                width: handle.active
+                  ? "100%"
+                  : appBarOpenAtom
+                  ? "calc(100vw - 240px)"
+                  : "100%",
+                height: handle.active
+                  ? "calc(100vh - 60px)"
+                  : "calc(100vh - 120px)",
+              }}>
+              <Editor
+                options={{
+                  minimap: {
+                    enabled: languageID == "plaintext" ? false : true,
+                  },
+                }}
+                theme={darkTheme ? "vs-dark" : "vs-light"}
+                defaultPath={location.state.path}
+                value={value}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    lastestValue.current = newValue;
+                  }
+                }}
+                onMount={handleEditorDidMount}
+              />
+            </Box>
+          </CardContent>
+        </FullScreen>
       </Card>
     </>
   );

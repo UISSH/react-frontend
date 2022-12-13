@@ -63,7 +63,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
-  padding: theme.spacing(1),
+  padding: theme.spacing(0),
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -256,24 +256,6 @@ export default function PersistentDrawerLeft() {
   ];
   const handleDrawerOpen = () => {
     setOpen(true);
-  };
-
-  const getNavLinkClassName = ({
-    isActive,
-    isPending,
-  }: {
-    isActive: boolean;
-    isPending: boolean;
-  }) => {
-    console.log(theme.palette.primary.main);
-
-    let data = isActive
-      ? "" + theme.palette.primary.main
-      : isPending
-      ? "pending"
-      : "bg-gray-100 text-black";
-    data = data + " flex items-center justify-between 	no-underline gap-1";
-    return data;
   };
 
   const handleDrawerClose = () => {

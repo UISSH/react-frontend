@@ -311,7 +311,7 @@ export default function SystemStatus() {
           <Typography className="uppercase" variant="h6" component="div">
             {t("overview.status.status")}
           </Typography>
-          <div className="flex w-full  justify-around">
+          <div className="flex flex-wrap p-4 w-full gap-2 justify-between">
             <WithLabelCularProgress
               tooltip={loadAverageStatus.info.map((item) => (
                 <div key={item.period} className="flex justify-between ">
