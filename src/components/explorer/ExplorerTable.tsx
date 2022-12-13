@@ -139,22 +139,10 @@ export default function Index({ className }: { className?: string }) {
   const history = useRef<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>({
-    apiType: MAIN,
-    params: {
-      pathParam: {
-        action: "query",
-      },
-      searchParam: {
-        directory: searchParams.get("directory") || "/",
-      },
-    },
-  });
+  const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>();
 
   useEffect(() => {
     if (searchParams.get("directory")) {
-      console.log(searchParams.get("directory"));
-
       setFetchDataProps({
         apiType: MAIN,
         params: {
@@ -165,6 +153,10 @@ export default function Index({ className }: { className?: string }) {
             directory: searchParams.get("directory") || "/",
           },
         },
+      });
+    } else {
+      setSearchParams({
+        directory: "/",
       });
     }
   }, [searchParams]);
@@ -185,6 +177,7 @@ export default function Index({ className }: { className?: string }) {
   };
 
   const { mutate } = useSWR(fetchDataProps, (props) => {
+    if (fetchDataProps == undefined) return;
     setGlobalProgress(true);
     setSelected([]);
     fetchData(fetchDataProps)

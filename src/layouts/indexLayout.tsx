@@ -43,6 +43,7 @@ import {
   NavLinkProps,
   Outlet,
   useLocation,
+  useNavigate,
   useNavigation,
   useParams,
   useSearchParams,
@@ -243,6 +244,7 @@ export default function PersistentDrawerLeft() {
   const navigation = useNavigation();
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
+  const navigate = useNavigate();
 
   const listMeunData = [
     { name: t("layout.overview"), icon: CookieIcon, to: "/dash/index" },
@@ -304,7 +306,12 @@ export default function PersistentDrawerLeft() {
               sx={{ ...(open && { display: "none" }) }}>
               <MenuIcon />
             </IconButton>
-            <IconButton color="inherit" sx={{ mr: 2 }}>
+            <IconButton
+              color="inherit"
+              sx={{ mr: 2 }}
+              onClick={() => {
+                navigate(-1);
+              }}>
               <ArrowBack></ArrowBack>
             </IconButton>
           </div>
