@@ -13,7 +13,6 @@ import "./index.css";
 import { router } from "./router";
 import getTheme from "./themes";
 const rootElement = document.getElementById("root");
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 ReactDOM.createRoot(rootElement as HTMLElement).render(
   <React.StrictMode>
@@ -29,8 +28,3 @@ ReactDOM.createRoot(rootElement as HTMLElement).render(
     </RecoilRoot>
   </React.StrictMode>
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://cra.link/PWA
-serviceWorkerRegistration.unregister();
