@@ -41,5 +41,8 @@
   },
   "exploprer": {
     "edit": "edit"
+  },
+  "terminal": {
+    "snippetNameRequired": "Snippet name required."
   }
 }

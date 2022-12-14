@@ -23,6 +23,7 @@ import PostHost from "./PostHost";
 import { HostAuth } from "./TerminalSession";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Snippets from "./Snippets";
 export interface HostsIndexProps {
   children?: ReactNode;
   onClick?: (name: string, hostAuth: HostAuth) => void;
@@ -148,7 +149,7 @@ export default function HostsIndex(props: HostsIndexProps) {
         }
       });
     }
-  }, [sshClient]);
+  }, [postHostOpen]);
   return (
     <>
       <div>
@@ -211,6 +212,7 @@ export default function HostsIndex(props: HostsIndexProps) {
         </div>
 
         <Divider className="py-2">{t("terminal.snippet")}</Divider>
+        <Snippets></Snippets>
         <PostHost
           open={postHostOpen}
           onAdd={(name, hostAuth) => {
