@@ -7,8 +7,17 @@ import FileEditor from "../components/explorer/FileEditor";
 import SnippetEditor from "../components/terminal/SnippetEditor";
 
 import { loader } from "@monaco-editor/react";
-import * as monaco from "monaco-editor";
-loader.config({ monaco });
+
+let ChinaOptimization = true;
+
+const ChinaOptimizationVs =
+  "https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/monaco-editor/0.33.0-dev.20220228/min/vs";
+
+if (ChinaOptimization) {
+  loader.config({
+    paths: { vs: ChinaOptimizationVs },
+  });
+}
 
 export interface MonacoEditorProps {
   onLoad?: () => string;
