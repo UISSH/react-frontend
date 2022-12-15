@@ -37,12 +37,13 @@
     "please-input-domain": "请填入域名"
   },
   "common": {
-    "delete": "delete"
+    "delete": "删除"
   },
   "exploprer": {
-    "edit": "edit"
+    "edit": "编辑"
   },
   "terminal": {
-    "snippetNameRequired": "Snippet name required."
+    "snippetNameRequired": "片段名称不能为空",
+    "addsnippet": "新建片段"
   }
 }

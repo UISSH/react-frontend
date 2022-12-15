@@ -58,9 +58,42 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor>();
 
-  const onSave = () => {
-    if (!snippetName) {
+  useEffect(() => {
+    console.log(location.state);
+    setSnippetName(location.state.name);
+    setNewSnippet(location.state.newSnippet);
+  }, [location.state]);
+  const { mutate } = useSWR([location], (_location) => {
+    if (_location.state.newSnippet) {
+      setSnippetName("");
+      setValue("");
+    } else {
+      if (!_location.state.name) return;
+      getKV(`${TERMINAL_SNIPPET_PREFIX}${location.state.name}`)
+        .then((res) => res.json())
+        .then((res) => {
+          setValue(res.value);
+        });
+    }
+  });
+
+  // vaildate snippet name
+  const validateSnippetName = (name: string | null | undefined) => {
+    if (!name || name.trim() === "") {
       setSnippetError(t("terminal.snippetNameRequired"));
+      return false;
+    }
+    // 只能包含英文数字下划线
+    if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+      setSnippetError(t("terminal.snippetNameInvalid"));
+      return false;
+    }
+
+    return true;
+  };
+
+  const onSave = () => {
+    if (!validateSnippetName(snippetName)) {
       return;
     }
     let requestInstance;
@@ -97,28 +130,6 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
     setLanguageID(editor.getModel()?.getLanguageId() || "plaintext");
   }
 
-  const { mutate } = useSWR(
-    [newSnippet, snippetName],
-    (_newSnippet, _snippetName) => {
-      if (_newSnippet) {
-        setSnippetName("");
-        setValue("");
-      } else {
-        if (!snippetName) return;
-        getKV(`${TERMINAL_SNIPPET_PREFIX}${snippetName}`)
-          .then((res) => res.json())
-          .then((res) => {
-            setValue(res.value);
-          });
-      }
-    }
-  );
-  useEffect(() => {
-    location.state?.name && setSnippetName(location.state.name || "");
-    location.state?.newSnippet &&
-      setNewSnippet(location.state.newSnippet || true);
-  }, [location.state]);
-
   return (
     <>
       <Card
@@ -143,6 +154,7 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                 <span className="p-1">
                   <TextField
                     size="small"
+                    label={t("terminal.snippetName")}
                     helperText={snippetError}
                     variant="standard"
                     error={!!snippetError}

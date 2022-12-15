@@ -1,15 +1,10 @@
 {
-  "back-home": "back home",
-  "empty-data": "Empty data",
-  "friendly-simple-and-focused-on-privacy": "friendly, simple, and focused on privacy.",
-  "key": "hello world",
-  "network-error": "Network Error",
   "Not Found": "Not Found",
   "Oops": "Oops",
-  "permission denied": "Permission denied",
-  "rows-per-page": "Rows per page",
-  "sorry-an-unexpected-error-has-occurred": "Sorry, an unexpected error has occurred.",
-  "the-domain-name-has-not-yet-resolved-to-the-server-public-ip": "The domain name has not yet resolved to the server public IP",
+  "back-home": "back home",
+  "common": {
+    "delete": "delete"
+  },
   "database": {
     "are-you-sure-to-delete-the-databse": "Are you sure to delete the databse?",
     "name": "name",
@@ -18,15 +13,28 @@
     "type": "type",
     "username": "username"
   },
+  "empty-data": "Empty data",
+  "exploprer": {
+    "action": "action",
+    "delete": "delete",
+    "download": "download",
+    "edit": "edit",
+    "filename": "filename",
+    "mode": "mode",
+    "rename": "rename",
+    "size": "size"
+  },
+  "friendly-simple-and-focused-on-privacy": "friendly, simple, and focused on privacy.",
+  "key": "hello world",
   "layout": {
     "database": "database",
+    "explorer": "explorer",
     "files": "files",
     "ftp": "FTP",
     "overview": "overview",
     "selected": "selected",
     "terminal": "terminal",
-    "website": "website",
-    "explorer": "explorer"
+    "website": "website"
   },
   "login": {
     "login": "Login",
@@ -34,6 +42,7 @@
     "remember-me": "remember me",
     "username": "username"
   },
+  "network-error": "Network Error",
   "overview": {
     "status": {
       "cpu": "CPU",
@@ -44,6 +53,20 @@
       "system-info": "system info"
     }
   },
+  "permission denied": "Permission denied",
+  "rows-per-page": "Rows per page",
+  "sorry-an-unexpected-error-has-occurred": "Sorry, an unexpected error has occurred.",
+  "terminal": {
+    "addhost": "add Host",
+    "addsnippet": "add Snippet",
+    "click-to-send-to-the-selected-terminal": "Click to send to the selected terminal",
+    "host": "Host",
+    "hostname": "hostname",
+    "name": "name",
+    "snippet": "Snippet",
+    "snippetNameRequired": "Snippet name is required"
+  },
+  "the-domain-name-has-not-yet-resolved-to-the-server-public-ip": "The domain name has not yet resolved to the server public IP",
   "website": {
     "add": "add",
     "application": "application",
@@ -55,21 +78,5 @@
     "path": "path",
     "please-input-domain": "Please input domain",
     "ssl": "SSL"
-  },
-  "exploprer": {
-    "filename": "filename",
-    "size": "size",
-    "action": "action",
-    "mode": "mode",
-    "rename": "rename",
-    "download": "download",
-    "delete": "delete"
-  },
-  "terminal": {
-    "host": "Host",
-    "snippet": "Snippet",
-    "name": "name",
-    "hostname": "hostname",
-    "addhost": "addHost"
   }
 }

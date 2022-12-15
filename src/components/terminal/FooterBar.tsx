@@ -2,11 +2,13 @@ import AddIcon from "@mui/icons-material/Add";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import SendIcon from "@mui/icons-material/Send";
 import {
+  Button,
   Checkbox,
   Divider,
   FormControlLabel,
   FormGroup,
   Input,
+  Typography,
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -30,6 +32,8 @@ import Popover from "@mui/material/Popover";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { SnippetListAtom } from "./Snippets";
+import { TERMINAL_SNIPPET_PREFIX } from "../../constant";
 
 export const SelectedTerminalTabUniqueAtom = atom<string[]>({
   key: "selectedTerminalTabUnique",
@@ -41,6 +45,10 @@ export function TeminalMenuPopover() {
   const { enqueueSnackbar } = useSnackbar();
   const [globalLoadingAtom, setGlobalLoadingAtom] =
     useRecoilState(GlobalLoadingAtom);
+  const snippetListAtom = useRecoilValue(SnippetListAtom);
+  const [_, sendTerminalCommandDispatch] = useRecoilState(
+    TerminalGlobalCommandDispatchAtom
+  );
   const tabs = useRecoilValue(OpenedTerminalTabsAtom);
   const [selectedTabs, setSelectedTabs] = useRecoilState(
     SelectedTerminalTabUniqueAtom
@@ -132,7 +140,35 @@ export function TeminalMenuPopover() {
               </FormGroup>
             </div>
           )}
-          {/* todo <Divider>{t("terminal.snippet")}</Divider> */}
+          <Divider>{t("terminal.snippet")}</Divider>
+
+          <Typography
+            color={(theme) => {
+              return theme.palette.text.secondary;
+            }}
+            variant="caption"
+            display="block"
+            gutterBottom>
+            {t("terminal.click-to-send-to-the-selected-terminal")}
+          </Typography>
+          <div className="flex flex-wrap gap-1">
+            {snippetListAtom.map((snippet) => {
+              return (
+                <Button
+                  color="secondary"
+                  key={snippet.key}
+                  onClick={() => {
+                    sendTerminalCommandDispatch({
+                      command: snippet.value || "",
+                      uuid: new Date().getTime().toString(),
+                      uniques: selectedTabs,
+                    });
+                  }}>
+                  {snippet.key.replace(TERMINAL_SNIPPET_PREFIX, "")}
+                </Button>
+              );
+            })}
+          </div>
         </div>
       </Popover>
     </div>

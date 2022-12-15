@@ -1,16 +1,16 @@
-import { Button, MenuItem, MenuList } from "@mui/material";
+import { Button, IconButton, MenuItem, MenuList, Tooltip } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { atom, useRecoilState } from "recoil";
 import useSWR from "swr";
 import { TERMINAL_SNIPPET_PREFIX } from "../../constant";
-import { requestData, RequestDataProps } from "../../requests/http";
 import { deleteKV, getKVList, GetKVListParams } from "../../requests/kvstorage";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { SplitButton } from "./HostsIndex";
+import AddIcon from "@mui/icons-material/AddCircle";
 
 interface Pagination {
   total_pages: number;
@@ -28,13 +28,19 @@ interface Result {
   value?: string;
 }
 
+export const SnippetListAtom = atom<Result[]>({
+  key: "SnippetListAtom",
+  default: [],
+});
+
 export default function Snippets() {
   const [t] = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [globalLoadingAtom, setGlobalLoadingAtom] =
     useRecoilState(GlobalLoadingAtom);
   const [pageSize, setPageSize] = useState(5);
-  const [result, setResult] = useState<Result[]>([]);
+
+  const [snippetListAtom, setSnippetListAtom] = useRecoilState(SnippetListAtom);
   const navigate = useNavigate();
   const [pagination, setPagination] = useState<Pagination>({
     total_pages: 0,
@@ -62,14 +68,14 @@ export default function Snippets() {
       .then((res) => res.json())
       .then((res) => {
         setPagination(res.pagination);
-        setResult(res.results);
+        setSnippetListAtom(res.results);
       });
   });
 
   return (
     <>
-      <div className="p-4 flex flex-wrap gap-2">
-        {result.map((item) => {
+      <div className="flex flex-wrap gap-2">
+        {snippetListAtom.map((item) => {
           return (
             <SplitButton
               MenuList={
@@ -110,6 +116,22 @@ export default function Snippets() {
             </SplitButton>
           );
         })}
+
+        <Tooltip title={t("terminal.addsnippet")}>
+          <IconButton
+            color="primary"
+            onClick={() => {
+              // setPostHostOpen(true);
+              navigate(`/dash/editor/`, {
+                state: {
+                  type: "snippet",
+                  newSnippet: true,
+                },
+              });
+            }}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
       </div>
       <TablePagination
         labelRowsPerPage={t("rows-per-page")}

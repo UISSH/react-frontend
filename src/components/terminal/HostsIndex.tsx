@@ -152,9 +152,9 @@ export default function HostsIndex(props: HostsIndexProps) {
   }, [postHostOpen]);
   return (
     <>
-      <div>
+      <div className="px-4">
         <Divider className="py-2">{t("terminal.host")}</Divider>
-        <div className="flex gap-1 flex-wrap	">
+        <div className="flex gap-1 flex-wrap">
           {sshClient &&
             Object.keys(sshClient).map((item) => {
               return (

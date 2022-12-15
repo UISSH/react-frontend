@@ -1,4 +1,3 @@
-import { useMediaQuery } from "@mui/material";
 import { atom } from "recoil";
 
 export const GlobalProgressAtom = atom({
