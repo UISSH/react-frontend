@@ -16,7 +16,7 @@
     "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.10.16",
     "@mui/lab": "^5.0.0-alpha.110",
-    "@mui/material": "^5.10.13",
+    "@mui/material": "^5.11.0",
     "ace-builds": "^1.13.2",
     "axios": "^1.2.0",
     "i18next": "^22.4.4",
