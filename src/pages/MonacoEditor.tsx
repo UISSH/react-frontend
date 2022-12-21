@@ -8,12 +8,11 @@ import SnippetEditor from "../components/terminal/SnippetEditor";
 
 import { loader } from "@monaco-editor/react";
 
-let ChinaOptimization = true;
-
 const ChinaOptimizationVs =
   "https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/monaco-editor/0.33.0-dev.20220228/min/vs";
 
-if (ChinaOptimization) {
+if (/^zh-CN\b/.test(navigator.language)) {
+  console.log("Using China Optimization");
   loader.config({
     paths: { vs: ChinaOptimizationVs },
   });

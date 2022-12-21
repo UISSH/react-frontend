@@ -101,11 +101,11 @@ const AppBar = styled(MuiAppBar, {
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
-
   alignItems: "center",
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
+  //...theme.mixins.toolbar,
+  minHeight: "48px",
   justifyContent: "flex-end",
 }));
 
@@ -278,7 +278,7 @@ export default function PersistentDrawerLeft() {
       </Modal>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar className="flex justify-between ">
+        <Toolbar variant="dense" className="flex justify-between ">
           <div className="flex">
             <IconButton
               color="inherit"
