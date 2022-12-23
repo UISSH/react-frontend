@@ -12,7 +12,6 @@ import "xterm/css/xterm.css";
 import { TerminalDestoryTabAtom } from "../../pages/IndexLayout/Terminal";
 import { getWSGateway } from "../../requests/utils";
 import {
-  AppBarOpenAtom,
   GlobalLoadingAtom,
   TerminalGlobalCommandDispatchAtom,
 } from "../../store/recoilStore";
@@ -75,7 +74,10 @@ export default function TerminalSession(props: TerminalSessionProps) {
   const [pingDelay, setPingDelay] = useState<number>(0);
   const webSocketRef = useRef<WebSocket>();
   const fileRef = useRef<File>();
-
+  let terminalSizeRef = useRef({
+    cols: 80,
+    rows: 80,
+  });
   const [dropFileUploadProps, setDropFileUploadProps] = useState<{
     formData?: FormData;
 
@@ -124,17 +126,13 @@ export default function TerminalSession(props: TerminalSessionProps) {
   });
 
   useEffect(() => {
-    let terminalSize = {
-      cols: 80,
-      rows: 80,
-    };
     let sendTime = new Date().getTime();
 
-    console.log("TerminalSession mount");
     let terminalSocket = new WebSocket(webSocketUrl);
-
+    let terminalSize = terminalSizeRef.current;
     let element = document.getElementById(props.unique) as HTMLElement;
     termRef.current = new Terminal({
+      scrollOnUserInput: false,
       fontFamily: '"Cascadia Code", Menlo, monospace',
       theme: materialTheme,
       cursorBlink: true,
@@ -271,7 +269,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
         <Box
           className=" pl-2 pt-2"
           sx={{
-            height: "calc(100vh - 220px)",
+            height: "calc(100vh - 196px)",
             backgroundColor: theme.palette.background.default,
           }}>
           <div className="w-full h-full" id={props.unique}></div>
