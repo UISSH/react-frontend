@@ -1,8 +1,10 @@
 import AddIcon from "@mui/icons-material/Add";
-import RefreshIcon from "@mui/icons-material/Refresh";
-
+import DatasetIcon from "@mui/icons-material/Dataset";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import PublicIcon from "@mui/icons-material/Public";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   alpha,
   Button,
@@ -12,11 +14,14 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { fetchData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
@@ -153,6 +158,7 @@ export default function WebsiteTable() {
       label: t("website.ssl"),
     },
   ];
+  const navigate = useNavigate();
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
   const [updateState, setUpdateState] = useState(1);
@@ -233,6 +239,11 @@ export default function WebsiteTable() {
     }
   };
 
+  const openInNewTab = (url: string) => {
+    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
+  };
+
   useEffect(() => {
     setGlobalProgress(true);
     setSelected([]);
@@ -253,9 +264,20 @@ export default function WebsiteTable() {
       .then((res) => {
         setRowsState(
           res.results.map((row: any) => {
+            let domain = row.domain;
+
             row.domain = (
-              <div className="flex content-center gap-1">
-                {row.domain}{" "}
+              <div
+                className="flex content-center gap-1 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  let url = `http://${domain}`;
+                  if (row.ssl_enable) {
+                    url = `https://${domain}`;
+                  }
+                  openInNewTab(url);
+                }}>
+                {domain}
                 <PublicIcon
                   fontSize="small"
                   color={
@@ -263,12 +285,65 @@ export default function WebsiteTable() {
                   }></PublicIcon>{" "}
               </div>
             );
-            row.database_id = row.database_id ? row.database_id : "-";
+
+            let web_server_type_text = row.web_server_type_text;
+            row.web_server_type_text = (
+              <div
+                className="flex flex-nowrap gap-2 justify-end items-center cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}>
+                <div>{web_server_type_text}</div>
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    // todo navigate to web server
+                  }}>
+                  <SettingsIcon></SettingsIcon>
+                </IconButton>
+              </div>
+            );
             row.ssl_enable = (
               <SwitchSSL
                 id={row.id}
                 status={row.ssl_enable}
                 onUpdate={handleUpdate}></SwitchSSL>
+            );
+            let _index_root = row.index_root;
+            let database_id = row.database_id;
+            row.database_id = (
+              <IconButton
+                disabled={database_id == null}
+                onClick={(e) => {
+                  // todo navigate to database
+                }}>
+                <DatasetIcon
+                  color={database_id ? "primary" : "disabled"}></DatasetIcon>
+              </IconButton>
+            );
+            row.index_root = (
+              <TextField
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                variant="standard"
+                value={row.index_root}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(`/dash/explorer/?directory=${_index_root}`);
+                        }}>
+                        <FolderOpenIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}></TextField>
             );
             return row;
           })
