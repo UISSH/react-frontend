@@ -15,6 +15,7 @@ import {
   FormGroup,
   IconButton,
   Switch,
+  TextField,
 } from "@mui/material";
 import { editor as MonacoEditor } from "monaco-editor/esm/vs/editor/editor.api";
 import { useSnackbar } from "notistack";
@@ -120,16 +121,24 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                 color: (theme) =>
                   darkTheme ? "white" : theme.palette.text.primary,
               }}
-              className=" flex justify-between py-2 px-2 items-center">
-              <div>
-                <span className="p-1">{location.state.path}</span>
+              className=" flex flex-nowrap justify-between py-2 px-2 items-center">
+              <div className="grow mr-8">
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  size="small"
+                  inputProps={{
+                    style: { color: darkTheme ? "white" : "inherit" },
+                  }}
+                  value={location.state.path}></TextField>
               </div>
 
-              <div className="flex flex-wrap gap-1">
+              <div className="flex  flex-nowrap gap-1 content-baseline items-center">
                 <FormGroup>
                   <FormControlLabel
                     control={
                       <Switch
+                        size="small"
                         value={darkTheme}
                         onChange={() => {
                           setDarkTheme(!darkTheme);

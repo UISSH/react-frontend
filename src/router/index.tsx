@@ -69,6 +69,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "website/:id",
+        element: (
+          <Suspense>
+            <Website></Website>
+          </Suspense>
+        ),
+      },
+      {
         path: "database",
         element: (
           <Suspense>
