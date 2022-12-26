@@ -117,22 +117,26 @@ function WebsiteSSLSettings(props: { id: string }) {
       {data && (
         <div className=" grid gap-4 ">
           <TextField
+            inputProps={{ readOnly: true }}
             value={data.issued_common_name}
             fullWidth
             size="small"
             label="issued_common_name"></TextField>
           <div className="flex gap-2">
             <TextField
+              inputProps={{ readOnly: true }}
               value={data.issuer_common_name}
               fullWidth
               size="small"
               label="issuer_common_name"></TextField>
             <TextField
+              inputProps={{ readOnly: true }}
               value={data.issuer_country_name}
               fullWidth
               size="small"
               label="issuer_country_name"></TextField>
             <TextField
+              inputProps={{ readOnly: true }}
               value={data.issuer_organization_name}
               fullWidth
               size="small"
@@ -140,28 +144,33 @@ function WebsiteSSLSettings(props: { id: string }) {
           </div>
 
           <TextField
+            inputProps={{ readOnly: true }}
             value={data.subject_alt_name}
             fullWidth
             size="small"
             label="subject_alt_name"></TextField>
           <div className="flex gap-2">
             <TextField
+              inputProps={{ readOnly: true }}
               value={data.not_before}
               fullWidth
               size="small"
               label="not_before"></TextField>
             <TextField
+              inputProps={{ readOnly: true }}
               value={data.not_after}
               fullWidth
               size="small"
               label="not_after"></TextField>
           </div>
           <TextField
+            inputProps={{ readOnly: true }}
             value={data.signature_algorithm}
             fullWidth
             size="small"
             label="signature_algorithm"></TextField>
           <TextField
+            inputProps={{ readOnly: true }}
             value={data.serial_number_hex}
             fullWidth
             size="small"
