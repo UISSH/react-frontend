@@ -1,12 +1,19 @@
-import * as React from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
+import { OpenInBrowser } from "@mui/icons-material";
+import SaveIcon from "@mui/icons-material/Save";
+import { Divider, IconButton, InputAdornment, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import * as React from "react";
 import useSWR from "swr";
 import { requestData } from "../../requests/http";
-import { TextField } from "@mui/material";
-
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
+import { useNavigate } from "react-router-dom";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -166,15 +173,50 @@ function WebsiteSSLSettings(props: { id: string }) {
 }
 
 function WebsiteBasicSettings(props: { id: string }) {
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+  const navigate = useNavigate();
+  const [domain, setDomain] = React.useState<string>("");
+
+  const [extraDomain, setExtraDomain] = React.useState<string>("");
   const { data, mutate, error } = useSWR<WebsiteObject>(
     `/api/Website/${props.id}/`,
     async (url) => {
       const res = await requestData({
         url: url,
       });
-      return await res.json();
+      let resJson = await res.json();
+      setDomain(resJson.domain);
+      setExtraDomain(resJson.extra_domain);
+      return resJson;
     }
   );
+
+  const updateDomain = () => {
+    setGlobalLoadingAtom(true);
+    requestData({
+      url: `/api/Website/${props.id}/update_domain/`,
+      method: "POST",
+      data: {
+        domain: domain,
+        extra_domain: extraDomain,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        enqueueSnackbar(t("success"), {
+          variant: "success",
+        });
+        mutate();
+      } else {
+        enqueueSnackbar(t("error"), {
+          variant: "error",
+        });
+      }
+      setGlobalLoadingAtom(false);
+    });
+  };
   return (
     <>
       {data && (
@@ -183,27 +225,68 @@ function WebsiteBasicSettings(props: { id: string }) {
             value={data.name}
             fullWidth
             size="small"
+            InputProps={{
+              readOnly: true,
+            }}
             label="name"></TextField>
           <TextField
             value={data.web_server_type_text}
             fullWidth
+            InputProps={{
+              readOnly: true,
+            }}
             size="small"
             label="web server"></TextField>
-          <TextField
-            value={data.domain}
-            fullWidth
-            size="small"
-            label="domain"></TextField>
-          <TextField
-            value={data.extra_domain ? data.extra_domain : ""}
-            fullWidth
-            size="small"
-            label="extra domain"></TextField>
-          <TextField
-            value={data.index_root}
-            fullWidth
-            size="small"
-            label="path"></TextField>
+          <div className="text-right">
+            <Divider className="pb-2"> domain settings </Divider>
+
+            <div className="grid gap-4">
+              <TextField
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                fullWidth
+                size="small"
+                label="domain"></TextField>
+
+              <TextField
+                multiline
+                helperText="separate by line"
+                value={extraDomain}
+                onChange={(e) => setExtraDomain(e.target.value)}
+                fullWidth
+                size="small"
+                label="extra domain"></TextField>
+            </div>
+            <IconButton color="secondary" onClick={updateDomain}>
+              <SaveIcon></SaveIcon>
+            </IconButton>
+          </div>
+
+          <div>
+            <Divider className="pb-2"> index root </Divider>
+
+            <TextField
+              value={data.index_root}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      color="secondary"
+                      onClick={() => {
+                        navigate(
+                          `/dash/explorer/?directory=${data.index_root}`
+                        );
+                      }}>
+                      <OpenInNewIcon></OpenInNewIcon>
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              size="small"
+              label="path"></TextField>
+          </div>
         </div>
       )}
     </>

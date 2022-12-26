@@ -298,6 +298,7 @@ export default function WebsiteTable() {
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
+                    navigate(`/dash/website/${row.id}`);
                     // todo navigate to web server
                   }}>
                   <SettingsIcon></SettingsIcon>
