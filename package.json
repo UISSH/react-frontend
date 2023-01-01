@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/js-cookie": "^3.0.2",
     "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.9",
+    "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.0.0",
     "autoprefixer": "^10.4.13",
     "envify": "^4.1.0",
