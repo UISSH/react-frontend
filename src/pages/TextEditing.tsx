@@ -6,7 +6,7 @@ import { Box, Card, CardContent } from "@mui/material";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-github";
 import { useLocation, useNavigation, useSearchParams } from "react-router-dom";
-import LazyMode, { ModeAceType } from "../components/acemode/Index";
+import LazyMode, { ModeAceType } from "../components/acemode/LazyAceEditor";
 import ModeAce from "../components/acemode/ModeAce";
 import { fetchData, requestData } from "../requests/http";
 import { useSnackbar } from "notistack";

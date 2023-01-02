@@ -16,6 +16,7 @@ const Mount = lazy(() => import("../pages/IndexLayout/Mount"));
 const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 
 const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
+const HappyNewYear = lazy(() => import("../pages/HappyNewYear"));
 
 export const router = createBrowserRouter([
   {
@@ -123,6 +124,14 @@ export const router = createBrowserRouter([
     element: (
       <Suspense>
         <DevelopDemo></DevelopDemo>
+      </Suspense>
+    ),
+  },
+  {
+    path: "hny",
+    element: (
+      <Suspense>
+        <HappyNewYear></HappyNewYear>
       </Suspense>
     ),
   },

@@ -14,10 +14,12 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { useNavigate } from "react-router-dom";
+import NginxConfigEditor from "./NginxConfigEditor";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  padding?: number;
 }
 
 export interface WebsiteObject {
@@ -76,7 +78,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}>
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: props.padding != undefined ? props.padding : 3 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -324,8 +326,8 @@ export default function BasicTabs(props: { id: string }) {
       <TabPanel value={value} index={0}>
         <WebsiteBasicSettings id={props.id}></WebsiteBasicSettings>
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
+      <TabPanel value={value} index={1} padding={0}>
+        <NginxConfigEditor id={props.id} text={"loading..."} />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <WebsiteSSLSettings id={props.id}></WebsiteSSLSettings>

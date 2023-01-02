@@ -91,6 +91,7 @@ const AppBar = styled(MuiAppBar, {
   }),
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
+    boxShadow: "none",
     marginLeft: `${drawerWidth}px`,
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
@@ -336,13 +337,25 @@ export default function PersistentDrawerLeft() {
         variant="persistent"
         anchor="left"
         open={open}>
-        <DrawerHeader className=" ">
-          {t("friendly-simple-and-focused-on-privacy")}
+        <DrawerHeader
+          sx={{
+            color: "primary.contrastText",
+            bgcolor: "primary.main",
+          }}>
+          {t("left-top-tips")}
           <IconButton size="small" onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon
+                sx={{
+                  color: "primary.contrastText",
+                }}
+              />
             ) : (
-              <ChevronRightIcon />
+              <ChevronRightIcon
+                sx={{
+                  color: "primary.contrastText",
+                }}
+              />
             )}
           </IconButton>
         </DrawerHeader>
