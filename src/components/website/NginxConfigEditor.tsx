@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AceEditor from "react-ace";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
-import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/theme-tomorrow";
+import "ace-builds/src-noconflict/theme-monokai";
 import SaveIcon from "@mui/icons-material/Save";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
@@ -20,7 +20,6 @@ import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import { requestData } from "../../requests/http";
 import LazyMode from "../acemode/LazyAceEditor";
-import { WebsiteObject } from "./WebsiteSettingsTab";
 
 export interface NginxConfigEditorProps {
   id: string;
