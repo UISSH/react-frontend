@@ -78,6 +78,7 @@ export default function Snippets() {
         {snippetListAtom.map((item) => {
           return (
             <SplitButton
+              key={item.id}
               MenuList={
                 <MenuList id={"split-button-menu-" + item}>
                   <MenuItem

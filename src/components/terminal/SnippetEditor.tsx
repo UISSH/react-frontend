@@ -133,7 +133,7 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
   return (
     <>
       <Card
-        sx={{ height: "calc(100vh - 65px)" }}
+        sx={{ height: "calc(100vh - 50px)", boxShadow: "none" }}
         onKeyDown={(e) => {
           if (e.key == "s" && e.ctrlKey) {
             e.preventDefault();

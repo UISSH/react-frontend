@@ -12,7 +12,7 @@ const Website = lazy(() => import("../pages/IndexLayout/Website"));
 const Database = lazy(() => import("../pages/IndexLayout/Database"));
 const File = lazy(() => import("../pages/IndexLayout/Explorer"));
 const Terminal = lazy(() => import("../pages/IndexLayout/Terminal"));
-const Mount = lazy(() => import("../pages/IndexLayout/Mount"));
+const FileSystem = lazy(() => import("../pages/IndexLayout/FileSystem"));
 const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 
 const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
@@ -105,7 +105,7 @@ export const router = createBrowserRouter([
         path: "mount",
         element: (
           <Suspense>
-            <Mount></Mount>
+            <FileSystem></FileSystem>
           </Suspense>
         ),
       },

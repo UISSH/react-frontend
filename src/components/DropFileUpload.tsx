@@ -84,7 +84,10 @@ export default function DropFileUpload(props: DropFileUploadProps) {
   return (
     <Dropzone noClick onDrop={(acceptedFiles) => handleFile(acceptedFiles)}>
       {({ getRootProps, getInputProps }) => (
-        <Paper>
+        <Paper
+          sx={{
+            boxShadow: "none",
+          }}>
           <div {...getRootProps()}>
             <input {...getInputProps()} />
             {props.children}

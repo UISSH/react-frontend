@@ -200,27 +200,28 @@ function GlobalLoading() {
 
 function CustomNavLink(props: {
   item: { to: string; name: string; icon: any };
+  isActive: boolean;
+  onChange: ({
+    isActive,
+    isPending,
+  }: {
+    isActive: boolean;
+    isPending: boolean;
+  }) => string;
 }) {
-  type Props = { isActive: boolean; isPending: boolean };
   const theme: any = useTheme();
-  const navState = useRef({ isActive: false, isPending: false });
-
-  const setNavState = ({ isActive, isPending }: Props) => {
-    navState.current = { isActive, isPending };
-    return " text-inherit no-underline";
-  };
 
   return (
     <Paper
       className="p-0 shadow-none rounded-none"
       sx={
-        navState.current.isActive
+        props.isActive
           ? {
               backgroundColor: theme.palette.error[50],
             }
           : {}
       }>
-      <NavLink to={props.item.to} className={setNavState}>
+      <NavLink to={props.item.to} className={props.onChange}>
         <ListItemButton>
           <ListItemIcon className="text-inherit">
             <props.item.icon fontSize="large" />
@@ -247,13 +248,39 @@ export default function PersistentDrawerLeft() {
     useRecoilState(GlobalProgressAtom);
   const navigate = useNavigate();
 
+  const [active, setActive] = useState(0);
+
   const listMeunData = [
-    { name: t("layout.overview"), icon: CookieIcon, to: "/dash/index" },
-    { name: t("layout.website"), icon: WebIcon, to: "/dash/website" },
-    { name: t("layout.database"), icon: StorageIcon, to: "/dash/database" },
-    { name: t("layout.files"), icon: FolderIcon, to: "/dash/explorer" },
-    { name: t("layout.terminal"), icon: TerminalIcon, to: "/dash/terminal" },
-    { name: t("layout.ftp"), icon: RouteIcon, to: "/dash/mount" },
+    {
+      name: t("layout.overview"),
+      icon: CookieIcon,
+      to: "/dash/index",
+    },
+    {
+      name: t("layout.website"),
+      icon: WebIcon,
+      to: "/dash/website",
+    },
+    {
+      name: t("layout.database"),
+      icon: StorageIcon,
+      to: "/dash/database",
+    },
+    {
+      name: t("layout.files"),
+      icon: FolderIcon,
+      to: "/dash/explorer",
+    },
+    {
+      name: t("layout.terminal"),
+      icon: TerminalIcon,
+      to: "/dash/terminal",
+    },
+    {
+      name: t("layout.ftp"),
+      icon: RouteIcon,
+      to: "/dash/mount",
+    },
   ];
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -365,7 +392,16 @@ export default function PersistentDrawerLeft() {
           <ul className="p-0 m-0 list-none shadow-none">
             {listMeunData.map((item, index) => (
               <li key={index}>
-                <CustomNavLink item={item} />
+                <CustomNavLink
+                  item={item}
+                  isActive={active === index}
+                  onChange={({ isActive, isPending }) => {
+                    if (isActive) {
+                      setActive(index);
+                    }
+                    return " text-inherit no-underline";
+                  }}
+                />
               </li>
             ))}
           </ul>

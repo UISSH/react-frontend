@@ -243,7 +243,7 @@ export function EnhancedTable(props: TableDjangoProps) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2, minHeight: 300 }}>
+      <Paper sx={{ width: "100%", mb: 2, minHeight: 300, boxShadow: "none" }}>
         {
           <EnhancedTableToolbar
             numSelected={selected.length}

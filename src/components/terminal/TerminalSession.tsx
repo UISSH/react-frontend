@@ -269,7 +269,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
         <Box
           className=" pl-2 pt-2"
           sx={{
-            height: "calc(100vh - 196px)",
+            height: "calc(100vh - 190px)",
             backgroundColor: theme.palette.background.default,
           }}>
           <div className="w-full h-full" id={props.unique}></div>

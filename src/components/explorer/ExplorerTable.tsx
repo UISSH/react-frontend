@@ -314,7 +314,7 @@ export default function Index({ className }: { className?: string }) {
         rows={rowsState}
         headCells={headCells}
         title={LABEL}
-        maxHeight={"calc(100vh - 180px)"}
+        maxHeight={"calc(100vh - 143px)"}
       />
     </DropFileUpload>
   );

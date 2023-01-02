@@ -24,18 +24,19 @@
     "rename": "rename",
     "size": "size"
   },
-  "left-top-tips": "friendly, simple, and focused on privacy.",
   "key": "hello world",
   "layout": {
     "database": "database",
     "explorer": "explorer",
     "files": "files",
+    "filesystem": "File System",
     "ftp": "FTP",
     "overview": "overview",
     "selected": "selected",
     "terminal": "terminal",
     "website": "website"
   },
+  "left-top-tips": "friendly, simple, and focused on privacy.",
   "login": {
     "login": "Login",
     "password": "password",
