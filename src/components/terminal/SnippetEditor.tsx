@@ -63,7 +63,7 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
     setSnippetName(location.state.name);
     setNewSnippet(location.state.newSnippet);
   }, [location.state]);
-  const { mutate } = useSWR([location], (_location) => {
+  const { mutate } = useSWR(location, (_location) => {
     if (_location.state.newSnippet) {
       setSnippetName("");
       setValue("");
