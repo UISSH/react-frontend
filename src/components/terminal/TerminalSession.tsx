@@ -254,7 +254,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
           <div>
             {props.auth.username}@{props.auth.hostname}:{props.auth.port}
           </div>
-          <div className=" flex gap-2">
+          <div className="flex gap-2">
             <div> {pingDelay} ms</div>
             {connectStatus ? (
               <OnlinePredictionIcon
@@ -267,9 +267,9 @@ export default function TerminalSession(props: TerminalSessionProps) {
         </Box>
         <Divider />
         <Box
-          className=" pl-2 pt-2"
+          className="pl-2 pt-2"
           sx={{
-            height: "calc(100vh - 190px)",
+            height: "calc(100vh - 195px)",
             backgroundColor: theme.palette.background.default,
           }}>
           <div className="w-full h-full" id={props.unique}></div>

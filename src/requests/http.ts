@@ -1,4 +1,3 @@
-import { CreateDatabase } from "./../components/website/interface";
 import Cookies from "js-cookie";
 
 import { ACCESS_TOKEN } from "../constant";

@@ -2,13 +2,19 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  Alert,
   alpha,
+  Box,
   Button,
   ButtonGroup,
   IconButton,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import SyncIcon from "@mui/icons-material/Sync";
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
+import StopCircleIcon from "@mui/icons-material/StopCircle";
 import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -16,6 +22,8 @@ import useSWR from "swr";
 import { requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import AddDialog from "./AddDialog";
+import FTPServerStatus from "./FTPServerStatus";
 
 const API_URL = "/api/FtpServer/";
 
@@ -30,7 +38,7 @@ interface RowIF {
   file_system: string;
   params: string;
 }
-export interface DemoTableProps {}
+export interface FSTableProps {}
 
 interface RequestDataProps {
   url: string;
@@ -47,6 +55,11 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
+  const [renderCount, setRenderCount] = useState(0);
+  const [FTPServerStatusData, setFTPServerStatusData] = useState<{
+    installed: boolean;
+    run_status: boolean;
+  }>({ installed: false, run_status: false });
   const handleDelete = () => {
     if (props.onAction) {
       props.onAction("delete");
@@ -56,19 +69,49 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const handleReloadParent = () => {
     if (props.onAction) {
       props.onAction("reload");
+      setRenderCount(renderCount + 1);
     }
   };
 
+  const handleSyncAccount = () => {
+    requestData({
+      url: API_URL + "sync_account/",
+      method: "POST",
+    }).then((res) => {
+      handleReloadParent();
+    });
+  };
+
+  const handleControlFTPServer = () => {
+    if (FTPServerStatusData.run_status) {
+      setGlobalProgress(true);
+      requestData({
+        url: API_URL + "stop_service/",
+        method: "POST",
+      }).then((res) => {
+        setGlobalProgress(false);
+        handleReloadParent();
+      });
+    } else {
+      setGlobalProgress(true);
+      requestData({
+        url: API_URL + "start_service/",
+        method: "POST",
+      }).then((res) => {
+        setGlobalProgress(false);
+        handleReloadParent();
+      });
+    }
+  };
   return (
     <>
-      <Suspense>
-        {/* <CreateDatabaseDialog
-            open={openDialog}
-            setOpen={(open) => {
-              setOpenDialog(open);
-              handleReloadParent();
-            }}></CreateDatabaseDialog> */}
-      </Suspense>
+      <AddDialog
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false);
+          handleReloadParent();
+        }}></AddDialog>
+
       <Toolbar
         sx={{
           pl: { sm: 2 },
@@ -90,15 +133,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
-          <Typography
-            className="capitalize"
-            sx={{ flex: "1 1 100%" }}
-            variant="h6"
-            id="tableTitle"
-            component="div">
-            {t(LABEL)}
-          </Typography>
+          <Box sx={{ flex: "1 1 100%" }}>
+            <FTPServerStatus
+              renderCount={renderCount}
+              onChange={(value) => {
+                setFTPServerStatusData(value);
+              }}></FTPServerStatus>
+          </Box>
         )}
+
         <ButtonGroup
           variant="contained"
           aria-label="outlined primary button group">
@@ -120,6 +163,24 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           ) : (
             <div></div>
           )}
+          <Tooltip title="sync">
+            <IconButton onClick={handleSyncAccount}>
+              <SyncIcon color="primary"></SyncIcon>
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={FTPServerStatusData.run_status ? "turn off" : "turn on"}>
+            <IconButton onClick={handleControlFTPServer}>
+              {FTPServerStatusData.run_status && (
+                <StopCircleIcon color="primary"></StopCircleIcon>
+              )}
+
+              {!FTPServerStatusData.run_status && (
+                <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
+              )}
+            </IconButton>
+          </Tooltip>
+
           <IconButton
             className={globalProgress ? "animate-spin" : ""}
             color="primary"
@@ -131,19 +192,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </>
   );
 }
-export default function DemoTable(props: DemoTableProps) {
+export default function FSTable(props: FSTableProps) {
   const [t] = useTranslation();
   const headCells = [
     {
-      key: "id",
+      key: "username",
       numeric: false,
       disablePadding: true,
-      label: "ID",
-    },
-    {
-      key: "username",
-      numeric: true,
-      disablePadding: false,
       label: "Username",
     },
     {
@@ -172,6 +227,21 @@ export default function DemoTable(props: DemoTableProps) {
   const handleAction = (action: string) => {
     if (action === "reload") {
       setUpdateState(updateState + 1);
+    } else if (action === "delete") {
+      setGlobalProgress(true);
+      selected.forEach(async (id) => {
+        await requestData({
+          url: API_URL + id + "/",
+          method: "DELETE",
+        });
+      });
+      requestData({
+        url: API_URL + "sync_account/",
+        method: "POST",
+      }).then((res) => {
+        setUpdateState(updateState + 1);
+        setGlobalProgress(false);
+      });
     }
   };
   const handleSetpageSize = (size: number) => {
@@ -241,6 +311,8 @@ export default function DemoTable(props: DemoTableProps) {
         headCells={headCells}
         title={LABEL}
         pagination={paginationState}></TableDjango>
+
+      <Alert severity="info">{t("filesystem.ftp-alert")}</Alert>
     </>
   );
 }
