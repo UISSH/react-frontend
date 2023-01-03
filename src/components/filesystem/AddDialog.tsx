@@ -60,7 +60,7 @@ export default function PostHost(props: AddProps) {
 
   const [fileSystemType, setFileSystemType] = useState<"os" | "s3">("os");
   const [params, setParams] = useState<string>(
-    JSON.stringify(defaultValues.os)
+    JSON.stringify(defaultValues.os, null, 2)
   );
 
   const {

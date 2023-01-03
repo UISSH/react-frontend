@@ -1,12 +1,14 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
 import {
   Alert,
   alpha,
   Box,
   Button,
   ButtonGroup,
+  Icon,
   IconButton,
   Toolbar,
   Tooltip,
@@ -124,70 +126,80 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               ),
           }),
         }}>
-        {numSelected > 0 ? (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
+        {
+          <div className="flex flex-1 w-full">
+            <Typography
+              className={numSelected > 0 ? "visible" : "invisible  w-0 h-0"}
+              sx={{ flex: numSelected > 0 ? "1 1 100%" : "0 0 0%" }}
+              color="inherit"
+              variant="subtitle1"
+              component="div">
+              {numSelected} {t(LABEL)}
+            </Typography>
+
+            <Box
+              className={numSelected <= 0 ? "visible" : "invisible w-0 h-0"}
+              sx={{ flex: numSelected <= 0 ? "1 1 100%" : "0 0 0%" }}>
+              <FTPServerStatus
+                renderCount={renderCount}
+                onChange={(value) => {
+                  setFTPServerStatusData(value);
+                }}></FTPServerStatus>
+            </Box>
+          </div>
+        }
+
+        <div className=" bg-white">
+          <ButtonGroup
+            variant="contained"
             color="inherit"
-            variant="subtitle1"
-            component="div">
-            {numSelected} {t(LABEL)}
-          </Typography>
-        ) : (
-          <Box sx={{ flex: "1 1 100%" }}>
-            <FTPServerStatus
-              renderCount={renderCount}
-              onChange={(value) => {
-                setFTPServerStatusData(value);
-              }}></FTPServerStatus>
-          </Box>
-        )}
+            size="small"
+            aria-label="outlined primary button group">
+            <Tooltip title={t("add")}>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  setOpenDialog(true);
+                }}>
+                <AddIcon></AddIcon>
+              </IconButton>
+            </Tooltip>
 
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("add")}
-          </Button>
+            {numSelected > 0 ? (
+              <Tooltip title={t("delete")}>
+                <IconButton color="error" onClick={handleDelete}>
+                  <DeleteIcon></DeleteIcon>
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <div></div>
+            )}
+            <Tooltip title="sync">
+              <IconButton onClick={handleSyncAccount}>
+                <SyncIcon color="primary"></SyncIcon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip
+              title={FTPServerStatusData.run_status ? "turn off" : "turn on"}>
+              <IconButton onClick={handleControlFTPServer}>
+                {FTPServerStatusData.run_status && (
+                  <StopCircleIcon color="primary"></StopCircleIcon>
+                )}
 
-          {numSelected > 0 ? (
-            <Button
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
-              {t("delete")}
-            </Button>
-          ) : (
-            <div></div>
-          )}
-          <Tooltip title="sync">
-            <IconButton onClick={handleSyncAccount}>
-              <SyncIcon color="primary"></SyncIcon>
+                {!FTPServerStatusData.run_status && (
+                  <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
+                )}
+              </IconButton>
+            </Tooltip>
+
+            <IconButton
+              className={globalProgress ? "animate-spin" : ""}
+              color="primary"
+              onClick={handleReloadParent}>
+              <RefreshIcon />
             </IconButton>
-          </Tooltip>
-          <Tooltip
-            title={FTPServerStatusData.run_status ? "turn off" : "turn on"}>
-            <IconButton onClick={handleControlFTPServer}>
-              {FTPServerStatusData.run_status && (
-                <StopCircleIcon color="primary"></StopCircleIcon>
-              )}
-
-              {!FTPServerStatusData.run_status && (
-                <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
-              )}
-            </IconButton>
-          </Tooltip>
-
-          <IconButton
-            className={globalProgress ? "animate-spin" : ""}
-            color="primary"
-            onClick={handleReloadParent}>
-            <RefreshIcon />
-          </IconButton>
-        </ButtonGroup>
+          </ButtonGroup>
+        </div>
       </Toolbar>
     </>
   );
