@@ -54,6 +54,7 @@ import {
   GlobalLoadingAtom,
   GlobalProgressAtom,
 } from "../store/recoilStore";
+import useLongPress from "../hooks/useLongPress";
 
 const drawerWidth = 240;
 
@@ -204,28 +205,21 @@ function GlobalLoading() {
 
 function CustomNavLink(props: {
   item: { to: string; name: string; icon: any };
-  isActive: boolean;
-  onChange: ({
-    isActive,
-    isPending,
-  }: {
-    isActive: boolean;
-    isPending: boolean;
-  }) => string;
 }) {
   const theme: any = useTheme();
+  const location = useLocation();
 
   return (
     <Paper
       className="p-0 shadow-none rounded-none"
       sx={
-        props.isActive
+        location.pathname.includes(props.item.to)
           ? {
               backgroundColor: theme.palette.error[50],
             }
           : {}
       }>
-      <NavLink to={props.item.to} className={props.onChange}>
+      <NavLink to={props.item.to} className="text-inherit no-underline">
         <ListItemButton>
           <ListItemIcon className="text-inherit">
             <props.item.icon fontSize="large" />
@@ -241,18 +235,24 @@ function CustomNavLink(props: {
 }
 
 export default function PersistentDrawerLeft() {
-  const matches = useMediaQuery("(min-width:900px)");
   const theme = useTheme();
   // const [open, setOpen] = useState(matches);
   const [open, setOpen] = useRecoilState(AppBarOpenAtom);
   const { t } = useTranslation();
   const [openDebugSwitch, setOpenDebugSwitch] = useState(false);
-  const navigation = useNavigation();
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
   const navigate = useNavigate();
 
-  const [active, setActive] = useState(0);
+  const onLongPress = () => {
+    setOpenDebugSwitch(!openDebugSwitch);
+  };
+  const onClick = () => {};
+
+  const longPressEvent = useLongPress(onLongPress, onClick, {
+    shouldPreventDefault: true,
+    delay: 500,
+  });
 
   const listMeunData = [
     {
@@ -331,25 +331,9 @@ export default function PersistentDrawerLeft() {
           </div>
 
           <div className="w-full flex justify-end">
-            <div>
-              <FormGroup>
-                <FormControlLabel
-                  label={t("params")}
-                  control={
-                    <Switch
-                      size="small"
-                      color="secondary"
-                      checked={openDebugSwitch}
-                      onChange={() => {
-                        setOpenDebugSwitch(!openDebugSwitch);
-                      }}
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  }
-                />
-              </FormGroup>
+            <div className="cursor-pointer" {...longPressEvent}>
+              {packagejs.version}
             </div>
-            {packagejs.version}
           </div>
         </Toolbar>
         {globalProgress && <LinearProgress />}
@@ -396,16 +380,7 @@ export default function PersistentDrawerLeft() {
           <ul className="p-0 m-0 list-none shadow-none">
             {listMeunData.map((item, index) => (
               <li key={index}>
-                <CustomNavLink
-                  item={item}
-                  isActive={active === index}
-                  onChange={({ isActive, isPending }) => {
-                    if (isActive) {
-                      setActive(index);
-                    }
-                    return " text-inherit no-underline";
-                  }}
-                />
+                <CustomNavLink item={item} />
               </li>
             ))}
           </ul>
