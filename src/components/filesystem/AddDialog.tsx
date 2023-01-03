@@ -6,26 +6,20 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
-  FormGroup,
-  FormLabel,
-  IconButton,
   Radio,
   RadioGroup,
-  Switch,
   TextField,
-  Tooltip,
 } from "@mui/material";
 
-import KeyIcon from "@mui/icons-material/Key";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
+import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import CardDialog from "../CardDialog";
-import { PanoramaSharp } from "@mui/icons-material";
 
 export interface AddProps {
   children?: React.ReactNode;
@@ -77,6 +71,30 @@ export default function PostHost(props: AddProps) {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     console.log({ ...data, file_system: fileSystemType, params: params });
+    setGlobalLoadingAtom(true);
+    requestData({
+      url: "/api/FtpServer/",
+      method: "POST",
+      data: { ...data, file_system: fileSystemType, params: params },
+    }).then(async (res) => {
+      if (res.status === 201) {
+        enqueueSnackbar(t("filesystem.add-success"), {
+          variant: "success",
+        });
+        await requestData({
+          url: "/api/FtpServer/sync_account/",
+          method: "POST",
+        });
+
+        props.onOk && props.onOk();
+        props.onClose && props.onClose();
+      } else {
+        enqueueSnackbar(t("filesystem.add-failed"), {
+          variant: "error",
+        });
+      }
+      setGlobalLoadingAtom(false);
+    });
   };
 
   useEffect(() => {
