@@ -4,7 +4,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Box from "@mui/material/Box";
 import { styled, useTheme } from "@mui/material/styles";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -18,7 +18,6 @@ import {
   CssBaseline,
   Dialog,
   DialogContent,
-  DialogTitle,
   Drawer,
   FormControlLabel,
   FormGroup,
@@ -40,7 +39,6 @@ import Toolbar from "@mui/material/Toolbar";
 import { useTranslation } from "react-i18next";
 import {
   NavLink,
-  NavLinkProps,
   Outlet,
   useLocation,
   useNavigate,
@@ -48,13 +46,13 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import packagejs from "../../package.json";
 import { fetchData, hasAuthToken } from "../requests/http";
-import { useRecoilState } from "recoil";
 import {
-  GlobalProgressAtom,
-  GlobalLoadingAtom,
   AppBarOpenAtom,
+  GlobalLoadingAtom,
+  GlobalProgressAtom,
 } from "../store/recoilStore";
 
 const drawerWidth = 240;
@@ -114,11 +112,17 @@ export async function loader() {
   if (!hasAuthToken()) {
     throw new Response("permission denied", { status: 404 });
   }
-  let data = await fetchData({ apiType: "version" });
-  if (data.status == 403) {
-    throw new Response("permission denied", { status: 404 });
+
+  let version = sessionStorage.getItem("version");
+  if (!version) {
+    let data = await fetchData({ apiType: "version" });
+    if (data.status == 403) {
+      throw new Response("permission denied", { status: 404 });
+    }
+    sessionStorage.setItem("version", "ok");
   }
-  return data;
+
+  return null;
 }
 
 function LabTabs() {
