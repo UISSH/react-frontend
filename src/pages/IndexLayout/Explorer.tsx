@@ -1,4 +1,3 @@
-import DropFileUpload from "../../components/DropFileUpload";
 import ExplorerTable from "../../components/explorer/ExplorerTable";
 
 export default function Index() {

@@ -25,12 +25,16 @@
     "size": "size"
   },
   "filesystem": {
+    "add-failed": "Add failed",
+    "add-success": "Add success",
     "file-system-settings": "File System Settings",
     "ftp-account": "FTP Account",
     "ftp-alert": "It is strongly recommended to use a client that supports the FTPS protocol, using Window explorer is not secure.",
     "install": "Install",
     "password": "password",
+    "password-is-required": "password is required",
     "username": "username",
+    "username-is-required": "username is required",
     "you-need-to-install-an-ftp-server-to-enable-this-feature": "You need to install an ftp server to enable this feature."
   },
   "key": "hello world",

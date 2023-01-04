@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -7,7 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { fetchData, fetchDataProps } from "../../requests/http";
 import { generateRandom } from "../../utils";
@@ -25,7 +24,7 @@ export default function Index(props: {
   const { enqueueSnackbar } = useSnackbar();
 
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors },
     reset,
@@ -87,13 +86,52 @@ export default function Index(props: {
     <>
       <CardDialog disableEscapeKeyDown open={props.open} onClose={handleClose}>
         <DialogTitle>{t("Create Database")}</DialogTitle>
-        <Box
-          onSubmit={handleSubmit(onSubmit)}
-          component="form"
-          noValidate
-          autoComplete="off">
-          <DialogContent className=" grid gap-2">
-            <Controller
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogContent className="grid gap-2">
+            <TextField
+              {...register("name", {
+                required: true,
+                pattern: {
+                  // don't allow numbers at the beginning of the string
+                  value: /^[a-zA-Z][a-zA-Z0-9]*$/,
+                  message: t("Invalid database name"),
+                },
+              })}
+              size="small"
+              required
+              error={errors.name ? true : false}
+              helperText={errors.name?.message}
+              label={t("database.name")}></TextField>
+
+            <TextField
+              {...register("username", {
+                required: true,
+                minLength: {
+                  value: 3,
+                  message: "min length is 3",
+                },
+              })}
+              defaultValue={generateRandom(8)}
+              required
+              size="small"
+              error={errors.username ? true : false}
+              helperText={errors.username?.message}
+              autoComplete="username"
+              label={t("database.username")}></TextField>
+
+            <TextField
+              {...register("password", {
+                required: true,
+              })}
+              required
+              size="small"
+              defaultValue={generateRandom(16)}
+              error={errors.password ? true : false}
+              helperText={errors.password?.message}
+              label={t("database.password")}
+              autoComplete="new-password"></TextField>
+
+            {/* <Controller
               name="name"
               defaultValue={""}
               rules={{
@@ -152,7 +190,7 @@ export default function Index(props: {
                   {...field}
                 />
               )}
-            />
+            /> */}
           </DialogContent>
 
           <DialogActions>
@@ -166,7 +204,7 @@ export default function Index(props: {
               {t("ok")}
             </Button>
           </DialogActions>
-        </Box>
+        </form>
       </CardDialog>
     </>
   );

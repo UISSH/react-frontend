@@ -5,6 +5,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Visibility from "@mui/icons-material/Visibility";
+import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   alpha,
@@ -27,9 +28,8 @@ import useSWR from "swr";
 import { fetchData, fetchDataProps } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
-//import CreateDatabaseDialog from "./CreateDatabaseDialog";
-
-// const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
+import AddDialog from "./AddDialog";
+import { useNavigate } from "react-router-dom";
 
 const MAIN = "database";
 const ITEM = "databaseItem";
@@ -56,12 +56,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   return (
     <>
       <Suspense>
-        {/* <CreateDatabaseDialog
+        <AddDialog
           open={openDialog}
           setOpen={(open) => {
             setOpenDialog(open);
             handleReloadParent();
-          }}></CreateDatabaseDialog> */}
+          }}></AddDialog>
       </Suspense>
       <Toolbar
         sx={{
@@ -169,12 +169,37 @@ function PasswordField({
 
 export default function Index() {
   const [t] = useTranslation();
+
+  const [globalProgress, setGlobalProgress] =
+    useRecoilState(GlobalProgressAtom);
+  const [updateState, setUpdateState] = useState(1);
+  const [rowsState, setRowsState] = useState<any>([]);
+  const [paginationState, setPaginationState] = useState();
+  const [pageState, setPageState] = useState(1);
+  const [orederState, setOrederState] = useState("-id");
+  const [pageSizeState, setPageSizeState] = useState(5);
+  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [alertDialog, setAlertDialog] = useState<{
+    open: boolean;
+    title: string | React.ReactNode;
+    content: string | React.ReactNode;
+  }>({
+    open: false,
+    title: "",
+    content: "",
+  });
   const headCells = [
+    // {
+    //   key: "id",
+    //   numeric: false,
+    //   disablePadding: true,
+    //   label: "ID",
+    // },
     {
-      key: "id",
+      key: "settings",
       numeric: false,
       disablePadding: true,
-      label: "ID",
+      label: "settings",
     },
     {
       key: "name",
@@ -207,25 +232,7 @@ export default function Index() {
       label: t("database.type"),
     },
   ];
-  const [globalProgress, setGlobalProgress] =
-    useRecoilState(GlobalProgressAtom);
-  const [updateState, setUpdateState] = useState(1);
-  const [rowsState, setRowsState] = useState<any>([]);
-  const [paginationState, setPaginationState] = useState();
-  const [pageState, setPageState] = useState(1);
-  const [orederState, setOrederState] = useState("-id");
-  const [pageSizeState, setPageSizeState] = useState(5);
-  const [selected, setSelected] = useState<readonly string[]>([]);
-  const [alertDialog, setAlertDialog] = useState<{
-    open: boolean;
-    title: string | React.ReactNode;
-    content: string | React.ReactNode;
-  }>({
-    open: false,
-    title: "",
-    content: "",
-  });
-
+  const navigate = useNavigate();
   const handleClose = () => {
     setAlertDialog({ ...alertDialog, open: false });
   };
@@ -309,6 +316,15 @@ export default function Index() {
       .then((res) => {
         setRowsState(
           res.results.map((row: any) => {
+            row.settings = (
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  navigate(`/dash/database/${row.id}`);
+                }}>
+                <SettingsIcon></SettingsIcon>
+              </IconButton>
+            );
             row.password = (
               <PasswordField
                 password={row.password}

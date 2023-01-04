@@ -69,7 +69,7 @@ export interface fetchDataProps {
 export interface RequestDataProps {
   url: ApiType | string;
   headers?: Record<string, string>;
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   data?: any;
   params?: Record<string, string>;
   paths?: {

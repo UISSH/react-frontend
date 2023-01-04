@@ -115,7 +115,7 @@ export default function PostHost(props: AddProps) {
                 {...register("username", {
                   required: {
                     value: true,
-                    message: "username is required",
+                    message: t("filesystem.username-is-required"),
                   },
                 })}
                 label={t("filesystem.username")}
@@ -126,7 +126,10 @@ export default function PostHost(props: AddProps) {
               />
               <TextField
                 {...register("password", {
-                  required: { value: true, message: "password is required" },
+                  required: {
+                    value: true,
+                    message: t("filesystem.password-is-required"),
+                  },
                 })}
                 label={t("filesystem.password")}
                 fullWidth
