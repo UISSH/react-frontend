@@ -1,18 +1,18 @@
 import { atom } from "recoil";
 
 export const GlobalProgressAtom = atom({
-  key: "globalProgress", // unique ID (with respect to other atoms/selectors)
-  default: false, // default value (aka initial value)
+  key: "globalProgress",
+  default: false,
 });
 
 export const GlobalLoadingAtom = atom({
-  key: "globalLoading", // unique ID (with respect to other atoms/selectors)
-  default: false, // default value (aka initial value)
+  key: "globalLoading",
+  default: false,
 });
 
 export const AppBarOpenAtom = atom({
-  key: "appBarOpen", // unique ID (with respect to other atoms/selectors)
-  default: window.matchMedia("(min-width:900px)").matches, // default value (aka initial value)
+  key: "appBarOpen",
+  default: window.matchMedia("(min-width:900px)").matches,
 });
 
 export interface TerminalGlobalCommand {

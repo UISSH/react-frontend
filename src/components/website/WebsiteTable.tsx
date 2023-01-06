@@ -318,6 +318,8 @@ export default function WebsiteTable() {
                 disabled={database_id == null}
                 onClick={(e) => {
                   // todo navigate to database
+                  e.stopPropagation();
+                  navigate(`/dash/database/${database_id}`);
                 }}>
                 <DatasetIcon
                   color={database_id ? "primary" : "disabled"}></DatasetIcon>

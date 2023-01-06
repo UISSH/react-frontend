@@ -1,5 +1,9 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, redirect } from "react-router-dom";
+import {
+  createBrowserRouter,
+  redirect,
+  createHashRouter,
+} from "react-router-dom";
 
 import { loader as indexLayoutLoader } from "../layouts/indexLayout";
 //import DevelopDemo from "../pages/DevelopDemo";
@@ -18,7 +22,7 @@ const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
 const HappyNewYear = lazy(() => import("../pages/HappyNewYear"));
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     errorElement: <ErrorPage />,

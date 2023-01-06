@@ -1,3 +1,4 @@
+import DoneIcon from "@mui/icons-material/Done";
 import FolderIcon from "@mui/icons-material/Folder";
 import HomeIcon from "@mui/icons-material/Home";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
@@ -8,14 +9,17 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
+  InputAdornment,
   Link,
+  TextField,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
 import useSWR from "swr";
-import { fetchData, fetchDataProps } from "../../requests/http";
+import { fetchData, fetchDataProps, requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { formatBytes } from "../../utils";
 import { TableDjango } from "../DjangoTable";
@@ -35,7 +39,7 @@ interface IFItem {
   directory: string;
   filename: any;
   inode: number;
-  uid: number;
+  uid: number | string;
   gid: number;
   mode: string;
   device: number;
@@ -65,6 +69,18 @@ export default function Index({ className }: { className?: string }) {
       label: t("exploprer.filename"),
     },
     {
+      key: "owner",
+      numeric: true,
+      disablePadding: false,
+      label: t("exploprer.owner"),
+    },
+    {
+      key: "group",
+      numeric: true,
+      disablePadding: false,
+      label: t("exploprer.group"),
+    },
+    {
       key: "mode",
       numeric: true,
       disablePadding: false,
@@ -83,7 +99,7 @@ export default function Index({ className }: { className?: string }) {
     UpdateExplorerTableUISignal
   );
   const [rowsState, setRowsState] = useState<any>([]);
-
+  const [pathInputShow, setPathInputShow] = useState<boolean>(false);
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
@@ -94,7 +110,14 @@ export default function Index({ className }: { className?: string }) {
     title: "",
     content: "",
   });
+  const history = useRef<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPath, setCurrentPath] = useState<string | null>(
+    searchParams.get("directory")
+  );
 
+  const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>();
+  const [uidArray, setUidArray] = useState<{ [x: string]: string }>();
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -138,11 +161,22 @@ export default function Index({ className }: { className?: string }) {
 
   //const { data, error } = useSWR();
 
-  const history = useRef<string[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const getCurrentDirectory = () => {
+    let directory = searchParams.get("directory") + "/" || "/";
+    directory = directory.replace(/\/\//g, "/");
 
-  const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>();
+    return directory;
+  };
 
+  const handleBreadcrumbClick = (i: number) => {
+    let onSelecctPath = "/" + history.current.slice(0, i + 1).join("/");
+
+    history.current = onSelecctPath.split("/").filter((x) => x);
+
+    setSearchParams({
+      directory: onSelecctPath,
+    });
+  };
   useEffect(() => {
     if (searchParams.get("directory")) {
       setFetchDataProps({
@@ -162,26 +196,21 @@ export default function Index({ className }: { className?: string }) {
       });
     }
   }, [searchParams]);
-
-  const getCurrentDirectory = () => {
-    let directory = searchParams.get("directory") + "/" || "/";
-    return directory.replace(/\/\//g, "/");
-  };
-
-  const handleBreadcrumbClick = (i: number) => {
-    let onSelecctPath = "/" + history.current.slice(0, i + 1).join("/");
-
-    history.current = onSelecctPath.split("/").filter((x) => x);
-
-    setSearchParams({
-      directory: onSelecctPath,
-    });
-  };
-
-  const { mutate } = useSWR(fetchDataProps, (props) => {
+  const { mutate } = useSWR(fetchDataProps, async (props) => {
     if (fetchDataProps == undefined) return;
     setGlobalProgress(true);
     setSelected([]);
+    if (!uidArray) {
+      let uidData = await requestData({
+        url: "/api/FileBrowser/get_users/",
+      }).then((res) => res.json());
+
+      let uidArray: { [x: string]: string } = {};
+      uidData.forEach((x: { uid: string; username: string }) => {
+        uidArray[x.uid] = x.username;
+      });
+      setUidArray(uidArray);
+    }
     fetchData(fetchDataProps)
       .then((res) => res.json())
       .then((res) => {
@@ -196,6 +225,7 @@ export default function Index({ className }: { className?: string }) {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (row.type == "directory") {
+                      setCurrentPath(getCurrentDirectory() + row.filename);
                       setSearchParams({
                         directory: getCurrentDirectory() + row.filename,
                       });
@@ -232,6 +262,9 @@ export default function Index({ className }: { className?: string }) {
             } else {
               row.size = "-";
             }
+
+            row.owner = uidArray ? uidArray[row.uid] : row.uid;
+            row.group = uidArray ? uidArray[row.gid] : row.gid;
             return row;
           })
         );
@@ -242,7 +275,6 @@ export default function Index({ className }: { className?: string }) {
             fetchDataProps.params.searchParam.directory.split("/");
           history.current = history.current.filter((x) => x);
         }
-
         setGlobalProgress(false);
       });
   });
@@ -261,31 +293,83 @@ export default function Index({ className }: { className?: string }) {
           directory: getCurrentDirectory(),
         },
       }}>
-      <Breadcrumbs aria-label="breadcrumb">
-        <Link
-          underline="hover"
-          color="inherit"
-          className="cursor-pointer "
+      {pathInputShow ? (
+        <div className="p-2">
+          <TextField
+            size="small"
+            value={currentPath ? currentPath : "/"}
+            autoFocus
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={(e) => {
+                      console.log(currentPath);
+
+                      setPathInputShow(false);
+                      setSearchParams({
+                        directory: currentPath as string,
+                      });
+                    }}>
+                    <DoneIcon></DoneIcon>
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            onBlur={(e) => {
+              setTimeout(() => {
+                setPathInputShow(false);
+              }, 100);
+            }}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                setPathInputShow(false);
+                setSearchParams({
+                  directory: currentPath as string,
+                });
+              }
+            }}
+            onChange={(e) => {
+              setCurrentPath(e.target.value);
+            }}></TextField>
+        </div>
+      ) : (
+        <Breadcrumbs
           onClick={(e) => {
-            setSearchParams({
-              directory: "/",
-            });
-            history.current = [];
-          }}>
-          <HomeIcon />
-        </Link>
-        {history.current.map((h, i) => (
+            setPathInputShow(true);
+          }}
+          aria-label="breadcrumb"
+          className="p-2 cursor-pointer ">
           <Link
             underline="hover"
             color="inherit"
             className="cursor-pointer "
-            onClick={() => {
-              handleBreadcrumbClick(i);
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSearchParams({
+                directory: "/",
+              });
+              history.current = [];
             }}>
-            {h}
+            <HomeIcon />
           </Link>
-        ))}
-      </Breadcrumbs>
+          {history.current.map((h, i) => (
+            <Link
+              key={i}
+              underline="hover"
+              color="inherit"
+              className="cursor-pointer "
+              onClick={(e) => {
+                e.stopPropagation();
+                handleBreadcrumbClick(i);
+              }}>
+              {h}
+            </Link>
+          ))}
+        </Breadcrumbs>
+      )}
       <Dialog open={alertDialog.open} onClose={handleClose}>
         <DialogTitle
           bgcolor={(theme) => theme.palette.primary.main}
@@ -314,7 +398,7 @@ export default function Index({ className }: { className?: string }) {
         rows={rowsState}
         headCells={headCells}
         title={LABEL}
-        maxHeight={"calc(100vh - 143px)"}
+        maxHeight={"calc(100vh - 160px)"}
       />
     </DropFileUpload>
   );

@@ -25,7 +25,9 @@
     "download": "download",
     "edit": "edit",
     "filename": "filename",
+    "group": "group",
     "mode": "mode",
+    "owner": "owner",
     "rename": "rename",
     "size": "size"
   },

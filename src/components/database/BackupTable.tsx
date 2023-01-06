@@ -138,16 +138,6 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             </IconButton>
           </Tooltip>
 
-          {numSelected > 0 ? (
-            <Button
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
-              {t("delete")}
-            </Button>
-          ) : (
-            <div></div>
-          )}
           <IconButton
             className={globalProgress ? "animate-spin" : ""}
             color="primary"
@@ -292,8 +282,9 @@ export default function BackupTable(props: BackupTableProps) {
                   params: {
                     path: row.path,
                   },
-                }).then((res) => {
-                  if (res.ok) {
+                }).then(async (res) => {
+                  let resJson = await res.json();
+                  if (res.ok && resJson.result.result == 1) {
                     enqueueSnackbar(t("database.restore-backup-success"), {
                       variant: "success",
                     });
@@ -397,6 +388,7 @@ export default function BackupTable(props: BackupTableProps) {
       />
 
       <TableDjango
+        maxHeight={"calc(100vh - 180px)"}
         onAction={handleAction}
         enhancedTableToolbar={EnhancedTableToolbar}
         selectedState={[selected, setSelected]}

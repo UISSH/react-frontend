@@ -30,6 +30,7 @@ import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import AddDialog from "./AddDialog";
 import { useNavigate } from "react-router-dom";
+import { getApiGateway } from "../../requests/utils";
 
 const MAIN = "database";
 const ITEM = "databaseItem";
@@ -90,7 +91,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             variant="h6"
             id="tableTitle"
             component="div">
-            {t("layout.database")}
+            <Button
+              variant="contained"
+              type="a"
+              target={"_blank"}
+              href={getApiGateway() + ":8080"}>
+              phpMyAdmin
+            </Button>
           </Typography>
         )}
         <ButtonGroup
