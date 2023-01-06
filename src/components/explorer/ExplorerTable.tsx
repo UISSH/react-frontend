@@ -117,7 +117,7 @@ export default function Index({ className }: { className?: string }) {
   );
 
   const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>();
-  const [uidArray, setUidArray] = useState<{ [x: string]: string }>();
+  const uidArray = useRef<{ [x: string]: string }>();
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -200,16 +200,16 @@ export default function Index({ className }: { className?: string }) {
     if (fetchDataProps == undefined) return;
     setGlobalProgress(true);
     setSelected([]);
-    if (!uidArray) {
+    if (!uidArray.current) {
       let uidData = await requestData({
         url: "/api/FileBrowser/get_users/",
       }).then((res) => res.json());
 
-      let uidArray: { [x: string]: string } = {};
+      let _uidArray: { [x: string]: string } = {};
       uidData.forEach((x: { uid: string; username: string }) => {
-        uidArray[x.uid] = x.username;
+        _uidArray[x.uid] = x.username;
       });
-      setUidArray(uidArray);
+      uidArray.current = _uidArray;
     }
     fetchData(fetchDataProps)
       .then((res) => res.json())
@@ -263,8 +263,8 @@ export default function Index({ className }: { className?: string }) {
               row.size = "-";
             }
 
-            row.owner = uidArray ? uidArray[row.uid] : row.uid;
-            row.group = uidArray ? uidArray[row.gid] : row.gid;
+            row.owner = uidArray.current ? uidArray.current[row.uid] : row.uid;
+            row.group = uidArray.current ? uidArray.current[row.gid] : row.gid;
             return row;
           })
         );
