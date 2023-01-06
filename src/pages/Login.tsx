@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
 import LoadingButton from "@mui/lab/LoadingButton";
-
+import packagejs from "../../package.json";
 import {
   Alert,
+  Box,
   Card,
   CardActions,
   CardContent,
@@ -138,89 +139,103 @@ function Login() {
 
   return (
     <ScopedCssBaseline enableColorScheme>
-      <div className=" p-0  m-0 w-screen  h-screen bg-cover bg-center bg-[url('/assets/background.jpg')]">
-        <div
-          className={
-            "h-full flex items-center justify-center backdrop-blur-xl "
-          }>
-          <Card className="rounded-2xl  text-center w-96  shadow-2xl">
-            <CardHeader
-              title="Login Server"
-              className="text-center"></CardHeader>
-            {netError.msg ? <Alert severity="error">{netError.msg}</Alert> : ""}
+      <Box
+        className=" p-0  m-0 w-screen  h-screen "
+        sx={{
+          bgcolor: "background.paper",
+        }}>
+        <div className={"h-full flex items-center justify-center  "}>
+          <div>
+            <Card className=" rounded-2xl text-center w-96  shadow-xl bg-white">
+              <CardHeader
+                title="Login Server"
+                sx={{
+                  color: "primary.contrastText",
+                  bgcolor: "primary.main",
+                }}
+                className="text-center"></CardHeader>
+              {netError.msg ? (
+                <Alert severity="error">{netError.msg}</Alert>
+              ) : (
+                ""
+              )}
 
-            <CardContent className="flex flex-col">
-              <input autoComplete="new-password" hidden type="password" />
-              <Stack spacing={2} direction="column">
-                <TextField
-                  required
-                  value={url}
-                  onChange={updateUrl}
-                  helperText="'https://domain.com' or '/'"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SecurityOutlined
-                          color={
-                            url.includes("https://") ? "success" : "inherit"
-                          }
-                        />
-                      </InputAdornment>
-                    ),
-                  }}
-                  label="api"></TextField>
+              <CardContent className="flex flex-col">
+                <input autoComplete="new-password" hidden type="password" />
+                <Stack spacing={2} direction="column">
+                  <TextField
+                    required
+                    value={url}
+                    onChange={updateUrl}
+                    helperText="'https://domain.com' or '/'"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SecurityOutlined
+                            color={
+                              url.includes("https://") ? "success" : "inherit"
+                            }
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                    label="api"></TextField>
 
-                <FormTextField
-                  label={t("login.username")}
-                  value={userInfo.username}
-                  type={"text"}
-                  netError={netError.item?.username}
-                  setStatus={setUsername}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SupervisorAccountOutlined />
-                      </InputAdornment>
-                    ),
-                  }}></FormTextField>
+                  <FormTextField
+                    label={t("login.username")}
+                    value={userInfo.username}
+                    type={"text"}
+                    netError={netError.item?.username}
+                    setStatus={setUsername}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SupervisorAccountOutlined />
+                        </InputAdornment>
+                      ),
+                    }}></FormTextField>
 
-                <FormTextField
-                  label={t("login.password")}
-                  value={userInfo.password}
-                  type={"password"}
-                  netError={netError.item?.password}
-                  setStatus={setPassword}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Password />
-                      </InputAdornment>
-                    ),
-                  }}></FormTextField>
-              </Stack>
-            </CardContent>
-            <CardActions color={""} className={"flex justify-end px-4"}>
-              <FormControlLabel
-                label={t("login.remember-me")}
-                control={
-                  <Checkbox
-                    checked={userInfo.remember_me}
-                    onChange={setRememberMe}
-                    inputProps={{ "aria-label": "controlled" }}
-                  />
-                }
-              />
+                  <FormTextField
+                    label={t("login.password")}
+                    value={userInfo.password}
+                    type={"password"}
+                    netError={netError.item?.password}
+                    setStatus={setPassword}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Password />
+                        </InputAdornment>
+                      ),
+                    }}></FormTextField>
+                </Stack>
+              </CardContent>
+              <CardActions color={""} className={"flex justify-end px-4"}>
+                <FormControlLabel
+                  label={t("login.remember-me")}
+                  control={
+                    <Checkbox
+                      checked={userInfo.remember_me}
+                      onChange={setRememberMe}
+                      inputProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
 
-              <LoadingButton
-                loading={loading}
-                variant={"contained"}
-                onClick={onLogin}>
-                {t("login.login")}
-              </LoadingButton>
-            </CardActions>
-          </Card>
+                <LoadingButton
+                  loading={loading}
+                  variant={"contained"}
+                  onClick={onLogin}>
+                  {t("login.login")}
+                </LoadingButton>
+              </CardActions>
+            </Card>
+            <div className=" text-center mt-2 opacity-30 text-sm">
+              version: {packagejs.version}
+            </div>
+          </div>
         </div>
-      </div>
+      </Box>
     </ScopedCssBaseline>
   );
 }

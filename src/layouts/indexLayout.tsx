@@ -19,15 +19,11 @@ import {
   Dialog,
   DialogContent,
   Drawer,
-  FormControlLabel,
-  FormGroup,
   LinearProgress,
   Modal,
   Paper,
-  Switch,
   Tab,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Divider from "@mui/material/Divider";
@@ -42,19 +38,18 @@ import {
   Outlet,
   useLocation,
   useNavigate,
-  useNavigation,
   useParams,
   useSearchParams,
 } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import packagejs from "../../package.json";
+import useLongPress from "../hooks/useLongPress";
 import { fetchData, hasAuthToken } from "../requests/http";
 import {
   AppBarOpenAtom,
   GlobalLoadingAtom,
   GlobalProgressAtom,
 } from "../store/recoilStore";
-import useLongPress from "../hooks/useLongPress";
 
 const drawerWidth = 240;
 
