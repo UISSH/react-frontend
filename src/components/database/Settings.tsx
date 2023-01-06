@@ -1,20 +1,20 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
+import { LoadingButton } from "@mui/lab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import { TextField } from "@mui/material";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
 import { useSnackbar } from "notistack";
+import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { GlobalLoadingAtom } from "../../store/recoilStore";
 import useSWR from "swr";
 import { requestData } from "../../requests/http";
-import { Button, TextField } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
+import BackupTable from "./BackupTable";
 export interface SettingsProps {
   id: string;
-
   children?: React.ReactNode;
 }
 
@@ -129,7 +129,11 @@ export default function Settings(props: SettingsProps) {
             </div>
           )}
         </TabPanel>
-        <TabPanel value="2">todo backup table</TabPanel>
+        <TabPanel className={"p-0 "} value="2">
+          {dbData && (
+            <BackupTable id={dbData.id} dbName={dbData.name}></BackupTable>
+          )}
+        </TabPanel>
       </TabContext>
     </Box>
   );
