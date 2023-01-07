@@ -15,6 +15,9 @@ export default function Shortcut(props: ShortcutProps) {
   const [globalLoadingAtom, setGlobalLoadingAtom] =
     useRecoilState(GlobalLoadingAtom);
 
-  const { mutate } = useSWR();
+  /* 
+ todo
+ const { mutate } = useSWR(); 
+ */
   return <></>;
 }
