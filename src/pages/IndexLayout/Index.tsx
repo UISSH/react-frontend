@@ -6,7 +6,7 @@ export default function Index() {
   const navigate = useNavigate();
   return (
     <>
-      <Button
+      {/* <Button
         onClick={() => {
           navigate("/dash/terminal", {
             state: {
@@ -15,7 +15,7 @@ export default function Index() {
           });
         }}>
         test
-      </Button>
+      </Button> */}
       <SystemStatus></SystemStatus>
     </>
   );
