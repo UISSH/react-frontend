@@ -64,6 +64,7 @@
     "remember-me": "remember me",
     "username": "username"
   },
+  "login-server": "Login Server",
   "network-error": "Network Error",
   "overview": {
     "status": {

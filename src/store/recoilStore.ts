@@ -28,3 +28,10 @@ export const TerminalGlobalCommandDispatchAtom = atom({
     uniques: [],
   } as TerminalGlobalCommand,
 });
+
+export interface ShortCut {}
+// todo get from backend, and save to backend
+export const ShortCutAtom = atom({
+  key: "shortCutAtom",
+  default: {} as ShortCut,
+});

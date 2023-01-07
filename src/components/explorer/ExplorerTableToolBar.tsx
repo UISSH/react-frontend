@@ -60,24 +60,29 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               ),
           }),
         }}>
-        {numSelected > 0 ? (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
-            color="inherit"
-            variant="subtitle1"
-            component="div">
-            {numSelected} {t(LABEL)}
-          </Typography>
-        ) : (
-          <Typography
-            className="capitalize"
-            sx={{ flex: "1 1 100%" }}
-            variant="h6"
-            id="tableTitle"
-            component="div">
-            {t(LABEL)}
-          </Typography>
-        )}
+        {
+          <div className="flex flex-1 w-full">
+            <Typography
+              className={numSelected > 0 ? "visible" : "invisible  w-0 h-0"}
+              sx={{ flex: numSelected > 0 ? "1 1 100%" : "0 0 0%" }}
+              color="inherit"
+              variant="subtitle1"
+              component="div">
+              {numSelected} {t(LABEL)}
+            </Typography>
+
+            <Typography
+              className={
+                numSelected <= 0 ? "visible capitalize" : "invisible w-0 h-0"
+              }
+              sx={{ flex: numSelected <= 0 ? "1 1 100%" : "0 0 0%" }}
+              variant="h6"
+              id="tableTitle"
+              component="div">
+              {t(LABEL)}
+            </Typography>
+          </div>
+        }
         <ButtonGroup
           variant="contained"
           aria-label="outlined primary button group">

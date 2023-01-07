@@ -24,6 +24,12 @@ import { HostAuth } from "./TerminalSession";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Snippets from "./Snippets";
+import { useLocation } from "react-router-dom";
+
+export interface LocationState {
+  name: string;
+}
+
 export interface HostsIndexProps {
   children?: ReactNode;
   onClick?: (name: string, hostAuth: HostAuth) => void;
@@ -42,8 +48,6 @@ interface SSHClient {
   private_key: string;
   private_key_password: string;
 }
-
-const options = ["Createt", "Squash", "Rebase"];
 
 interface SplitButtonProps {
   children: ReactNode;
@@ -133,21 +137,48 @@ export default function HostsIndex(props: HostsIndexProps) {
   function saveSSHClient() {
     sshClientKV.current?.setItem(JSON.stringify(sshClient));
   }
+  const location = useLocation();
+
+  const handleOpenSSHSession = (
+    name: string,
+    sshClientInfo?: SSHClientInfo
+  ) => {
+    if (sshClientInfo == undefined) {
+      sshClientInfo = sshClient;
+    }
+
+    let auth: HostAuth = {
+      hostname: sshClientInfo[name].hostname,
+      port: sshClientInfo[name].port,
+      username: sshClientInfo[name].username,
+      password: sshClientInfo[name].password,
+      private_key: sshClientInfo[name].private_key,
+      private_key_password: sshClientInfo[name].private_key_password,
+    };
+    props.onClick && props.onClick(name, auth);
+  };
 
   useEffect(() => {
+    let state = location.state as LocationState;
     if (postHostOpen == false) {
       if (!sshClientKV.current) {
         let kv = new KVStorage("SSH_CLIENT");
         sshClientKV.current = kv;
       }
-      console.info("load ssh client");
       sshClientKV.current.init().then((val) => {
         if (val == null) {
           setSshClient({});
         } else {
           setSshClient(JSON.parse(val));
+          if (state && state.name) {
+            handleOpenSSHSession(state.name, JSON.parse(val));
+          }
         }
       });
+    } else {
+      if (state && state.name) {
+        handleOpenSSHSession(state.name);
+      }
     }
   }, [postHostOpen]);
   return (
@@ -175,16 +206,7 @@ export default function HostsIndex(props: HostsIndexProps) {
                     <Button
                       sx={{ minWidth: "100px" }}
                       onClick={() => {
-                        let auth: HostAuth = {
-                          hostname: sshClient[item].hostname,
-                          port: sshClient[item].port,
-                          username: sshClient[item].username,
-                          password: sshClient[item].password,
-                          private_key: sshClient[item].private_key,
-                          private_key_password:
-                            sshClient[item].private_key_password,
-                        };
-                        props.onClick && props.onClick(item, auth);
+                        handleOpenSSHSession(item);
                       }}
                       variant="contained"
                       color="secondary">

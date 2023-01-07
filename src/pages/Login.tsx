@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-
+import packageJson from "../../package.json";
 import LoadingButton from "@mui/lab/LoadingButton";
-import packagejs from "../../package.json";
+
 import {
   Alert,
-  Box,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   Checkbox,
-  Container,
   FormControlLabel,
   InputAdornment,
   ScopedCssBaseline,
@@ -63,7 +61,7 @@ export interface NetErrorValue {
   msg: string;
 }
 function Login() {
-  const { t, i18n } = useTranslation();
+  const [t] = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const [netError, setNetError] = useState<NetErrorValue>({
@@ -139,20 +137,15 @@ function Login() {
 
   return (
     <ScopedCssBaseline enableColorScheme>
-      <Box
-        className=" p-0  m-0 w-screen  h-screen "
-        sx={{
-          bgcolor: "background.paper",
-        }}>
-        <div className={"h-full flex items-center justify-center  "}>
+      <div className=" p-0  m-0 w-screen  h-screen bg-cover bg-center bg-[url('/assets/background.jpg')]">
+        <div
+          className={
+            "h-full flex items-center justify-center backdrop-blur-xl "
+          }>
           <div>
-            <Card className=" rounded-2xl text-center w-96  shadow-xl bg-white">
+            <Card className="rounded-2xl  text-center w-96  shadow-2xl">
               <CardHeader
-                title="Login Server"
-                sx={{
-                  color: "primary.contrastText",
-                  bgcolor: "primary.main",
-                }}
+                title={t("login-server")}
                 className="text-center"></CardHeader>
               {netError.msg ? (
                 <Alert severity="error">{netError.msg}</Alert>
@@ -210,7 +203,7 @@ function Login() {
                     }}></FormTextField>
                 </Stack>
               </CardContent>
-              <CardActions color={""} className={"flex justify-end px-4"}>
+              <CardActions className={"flex justify-end px-4"}>
                 <FormControlLabel
                   label={t("login.remember-me")}
                   control={
@@ -230,12 +223,12 @@ function Login() {
                 </LoadingButton>
               </CardActions>
             </Card>
-            <div className=" text-center mt-2 opacity-30 text-sm">
-              version: {packagejs.version}
+            <div className="text-center mt-1 opacity-30 text-sm">
+              version: {packageJson.version}
             </div>
           </div>
         </div>
-      </Box>
+      </div>
     </ScopedCssBaseline>
   );
 }
