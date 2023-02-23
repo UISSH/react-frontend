@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Shortcut from "../../components/overview/Shortcut";
 import SystemStatus from "../../components/overview/SystemStatus";
 
 export default function Index() {
@@ -16,6 +17,7 @@ export default function Index() {
         }}>
         test
       </Button> */}
+      <Shortcut></Shortcut>
       <SystemStatus></SystemStatus>
     </>
   );

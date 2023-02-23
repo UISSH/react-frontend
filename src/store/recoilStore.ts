@@ -1,4 +1,5 @@
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
+import { fetchData, requestData } from "../requests/http";
 
 export const GlobalProgressAtom = atom({
   key: "globalProgress",
@@ -29,9 +30,43 @@ export const TerminalGlobalCommandDispatchAtom = atom({
   } as TerminalGlobalCommand,
 });
 
-export interface ShortCut {}
-// todo get from backend, and save to backend
-export const ShortCutAtom = atom({
-  key: "shortCutAtom",
-  default: {} as ShortCut,
+export interface SHORTCUT_DATA_V1_Object {
+  id: number;
+  create_at: string;
+  update_at: string;
+  key: string;
+  value: string;
+}
+const ShortCutListAtom = selector({
+  key: "ShortCutListAtom111111",
+  get: async ({ get }) => {
+    // get from backend
+    let res = await requestData({
+      url: "/api/KVStorage/SHORTCUT_DATA_V1/",
+    });
+    if (res.ok) {
+      let data: SHORTCUT_DATA_V1_Object = await res.json();
+      return JSON.parse(data.value);
+    } else {
+      return {};
+    }
+  },
+  set: async ({ set }, newValue) => {
+    // sync to backend
+    let res = await requestData({
+      url: "/api/KVStorage/SHORTCUT_DATA_V1/",
+      method: "PUT",
+      data: {
+        key: "SHORTCUT_DATA_V1",
+        value: JSON.stringify(newValue),
+      },
+    });
+  },
 });
+
+//export const selectorServerShortCutListAtom = selector({});
+
+// export const ServerShortCutListAtom = selector({
+//   key: "shortCutAtom",
+//   get: ({ get }) => {},
+// });

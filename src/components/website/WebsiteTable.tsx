@@ -5,6 +5,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import PublicIcon from "@mui/icons-material/Public";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SettingsIcon from "@mui/icons-material/Settings";
+import RemoveIcon from "@mui/icons-material/Remove";
 import {
   alpha,
   Button,
@@ -299,7 +300,6 @@ export default function WebsiteTable() {
                     e.stopPropagation();
                     e.preventDefault();
                     navigate(`/dash/website/${row.id}`);
-                    // todo navigate to web server
                   }}>
                   <SettingsIcon></SettingsIcon>
                 </IconButton>
@@ -313,17 +313,19 @@ export default function WebsiteTable() {
             );
             let _index_root = row.index_root;
             let database_id = row.database_id;
-            row.database_id = (
+            row.database_id = database_id ? (
               <IconButton
-                disabled={database_id == null}
                 onClick={(e) => {
-                  // todo navigate to database
                   e.stopPropagation();
                   navigate(`/dash/database/${database_id}`);
                 }}>
                 <DatasetIcon
                   color={database_id ? "primary" : "disabled"}></DatasetIcon>
               </IconButton>
+            ) : (
+              <div className="pr-2 pl-2">
+                <RemoveIcon color="disabled"></RemoveIcon>
+              </div>
             );
             row.index_root = (
               <TextField

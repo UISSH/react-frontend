@@ -26,6 +26,8 @@ import { TableDjango } from "../DjangoTable";
 import DropFileUpload from "../DropFileUpload";
 import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
+import { useLocation } from "react-router-dom";
+
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
@@ -195,7 +197,9 @@ export default function Index({ className }: { className?: string }) {
         directory: "/",
       });
     }
+    console.log(location);
   }, [searchParams]);
+
   const { mutate } = useSWR(fetchDataProps, async (props) => {
     if (fetchDataProps == undefined) return;
     setGlobalProgress(true);
@@ -304,7 +308,9 @@ export default function Index({ className }: { className?: string }) {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={(e) => {
+                    onClick={(
+                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                    ) => {
                       console.log(currentPath);
 
                       setPathInputShow(false);
@@ -317,12 +323,14 @@ export default function Index({ className }: { className?: string }) {
                 </InputAdornment>
               ),
             }}
-            onBlur={(e) => {
+            onBlur={(
+              e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>
+            ) => {
               setTimeout(() => {
                 setPathInputShow(false);
               }, 100);
             }}
-            onKeyDown={(e) => {
+            onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
               if (e.key == "Enter") {
                 setPathInputShow(false);
                 setSearchParams({
@@ -330,13 +338,15 @@ export default function Index({ className }: { className?: string }) {
                 });
               }
             }}
-            onChange={(e) => {
+            onChange={(
+              e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+            ) => {
               setCurrentPath(e.target.value);
             }}></TextField>
         </div>
       ) : (
         <Breadcrumbs
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             setPathInputShow(true);
           }}
           aria-label="breadcrumb"
@@ -345,7 +355,7 @@ export default function Index({ className }: { className?: string }) {
             underline="hover"
             color="inherit"
             className="cursor-pointer "
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
               e.preventDefault();
               e.stopPropagation();
               setSearchParams({
@@ -361,7 +371,7 @@ export default function Index({ className }: { className?: string }) {
               underline="hover"
               color="inherit"
               className="cursor-pointer "
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
                 e.stopPropagation();
                 handleBreadcrumbClick(i);
               }}>
@@ -372,8 +382,8 @@ export default function Index({ className }: { className?: string }) {
       )}
       <Dialog open={alertDialog.open} onClose={handleClose}>
         <DialogTitle
-          bgcolor={(theme) => theme.palette.primary.main}
-          color={(theme) => theme.palette.text.disabled}>
+          bgcolor={(theme: any) => theme.palette.primary.main}
+          color={(theme: any) => theme.palette.text.disabled}>
           {alertDialog.title}
         </DialogTitle>
         <DialogContent>{alertDialog.content}</DialogContent>

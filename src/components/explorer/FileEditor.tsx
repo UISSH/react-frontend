@@ -83,6 +83,7 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
   }
 
   useEffect(() => {
+    console.log(location);
     if (location.state.type == "vim" && location.state.path) {
       requestData({
         url: "/api/FileBrowser/file_text_operating/",
