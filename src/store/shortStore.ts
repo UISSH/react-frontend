@@ -1,4 +1,5 @@
 import type { Location } from "@remix-run/router";
+import { NavigateFunction } from "react-router-dom";
 import { SHORTCUT_UNIQUE } from "../constant";
 import { requestData } from "../requests/http";
 
@@ -11,19 +12,27 @@ cate = {
 
 */
 
+export type ShortCutCategoryIF =
+  | "terminal"
+  | "database"
+  | "terminal"
+  | "website"
+  | "folder"
+  | "text";
+
 interface CateIF {
-  name: string;
+  name: ShortCutCategoryIF;
   description: string;
 }
 
 interface ShortcutIF {
-  [key: string]: ItemIF[];
+  [key: string]: ShortcutItemIF[];
 }
 
-interface ItemIF {
+export interface ShortcutItemIF {
   name: string;
-  unique: string;
-  cate: string;
+  unique: string; // uuid4 without -
+  cate: CateIF["name"];
   router: Location;
 }
 
@@ -56,13 +65,13 @@ export const getShortcut = async (): Promise<ShortcutIF> => {
   }
 };
 
-const shortcutExist = (data: ItemIF) => {
+export const shortcutExist = (data: ShortcutItemIF) => {
   let shortcut = localStorage.getItem(SHORTCUT_UNIQUE);
   if (shortcut) {
     let shortcutObj = JSON.parse(shortcut);
     if (shortcutObj[data.cate]) {
       return shortcutObj[data.cate].some(
-        (item: ItemIF) => item.unique === data.unique
+        (item: ShortcutItemIF) => item.unique === data.unique
       );
     } else {
       return false;
@@ -72,7 +81,7 @@ const shortcutExist = (data: ItemIF) => {
   }
 };
 
-export const addShortcut = (data: ItemIF) => {
+export const addShortcut = (data: ShortcutItemIF) => {
   let shortcut = localStorage.getItem(SHORTCUT_UNIQUE);
   if (shortcut) {
     let shortcutObj = JSON.parse(shortcut);
@@ -98,7 +107,7 @@ export const removeShortcut = (unique: string) => {
     let shortcutObj = JSON.parse(shortcut);
     for (let key in shortcutObj) {
       shortcutObj[key] = shortcutObj[key].filter(
-        (item: ItemIF) => item.unique !== unique
+        (item: ShortcutItemIF) => item.unique !== unique
       );
     }
     localStorage.setItem(SHORTCUT_UNIQUE, JSON.stringify(shortcutObj));
@@ -106,12 +115,12 @@ export const removeShortcut = (unique: string) => {
   }
 };
 
-export const updateShortcut = (data: ItemIF) => {
+export const updateShortcut = (data: ShortcutItemIF) => {
   let shortcut = localStorage.getItem(SHORTCUT_UNIQUE);
   if (shortcut) {
     let shortcutObj = JSON.parse(shortcut);
     for (let key in shortcutObj) {
-      shortcutObj[key] = shortcutObj[key].map((item: ItemIF) => {
+      shortcutObj[key] = shortcutObj[key].map((item: ShortcutItemIF) => {
         if (item.unique === data.unique) {
           return data;
         } else {
@@ -122,6 +131,16 @@ export const updateShortcut = (data: ItemIF) => {
     localStorage.setItem(SHORTCUT_UNIQUE, JSON.stringify(shortcutObj));
     return true;
   }
+};
+
+// 根据 location 导航
+export const navigateByLocation = (
+  navigate: NavigateFunction,
+  location: Location
+) => {
+  navigate(location.pathname, {
+    state: location.state,
+  });
 };
 
 export const syncShortcut = async (): Promise<Boolean> => {

@@ -3,7 +3,16 @@
   "Oops": "Oops",
   "back-home": "back home",
   "common": {
-    "delete": "delete"
+    "all": "all",
+    "save": "save",
+    "database": "database",
+    "terminal": "terminal",
+    "website": "website",
+    "folder": "folder",
+    "text": "text",
+    "delete": "delete",
+    "add-to-shortcut": "add to shortcut",
+    "remove-from-shortcut": "remove from shortcut"
   },
   "database": {
     "are-you-sure-to-delete-the-databse": "Are you sure to delete the databse?",

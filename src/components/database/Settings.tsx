@@ -1,17 +1,27 @@
+import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import { LoadingButton } from "@mui/lab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { TextField } from "@mui/material";
+import { IconButton, TextField, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import { useSnackbar } from "notistack";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
 import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
+import {
+  addShortcut,
+  removeShortcut,
+  shortcutExist,
+  ShortcutItemIF,
+  syncShortcut,
+} from "../../store/shortStore";
 import BackupTable from "./BackupTable";
 export interface SettingsProps {
   id: string;
@@ -43,15 +53,36 @@ export default function Settings(props: SettingsProps) {
   const { enqueueSnackbar } = useSnackbar();
   const [globalLoadingAtom, setGlobalLoadingAtom] =
     useRecoilState(GlobalLoadingAtom);
+  const location = useLocation();
   const [saveLoading, setSaveLoading] = React.useState(false);
   const [dbData, setDbData] = React.useState<DataBaseFields>();
+  const [shortcutData, setShortcutData] = React.useState<ShortcutItemIF>();
   const { mutate } = useSWR(`/api/DataBase/${props.id}/`, (url) => {
     requestData({
       url: url,
     }).then(async (res) => {
-      setDbData(await res.json());
+      let data = await res.json();
+      setDbData(data);
+      setShortcutData({
+        name: data.name,
+        unique: `db-${data.id}`,
+        cate: "database",
+        router: location,
+      });
     });
   });
+
+  const handleAddShortcut = () => {
+    if (shortcutData && addShortcut(shortcutData)) {
+      mutate();
+    }
+  };
+
+  const handleRemoveShortcut = () => {
+    if (shortcutData && removeShortcut(shortcutData.unique)) {
+      mutate();
+    }
+  };
 
   const handleSave = () => {
     setSaveLoading(true);
@@ -79,6 +110,12 @@ export default function Settings(props: SettingsProps) {
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+
+  React.useEffect(() => {
+    return () => {
+      syncShortcut();
+    };
+  }, []);
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
@@ -118,12 +155,26 @@ export default function Settings(props: SettingsProps) {
                 label={t("password")}
                 value={dbData.password}></TextField>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-x-2">
+                {shortcutData && shortcutExist(shortcutData) ? (
+                  <Tooltip title={t("common.remove-from-shortcut")}>
+                    <IconButton color="primary" onClick={handleRemoveShortcut}>
+                      <BookmarkOutlinedIcon></BookmarkOutlinedIcon>
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <Tooltip title={t("common.add-to-shortcut")}>
+                    <IconButton color="inherit" onClick={handleAddShortcut}>
+                      <BookmarkBorderOutlinedIcon></BookmarkBorderOutlinedIcon>
+                    </IconButton>
+                  </Tooltip>
+                )}
+
                 <LoadingButton
                   loading={saveLoading}
                   variant="contained"
                   onClick={handleSave}>
-                  {t("save")}
+                  {t("common.save")}
                 </LoadingButton>
               </div>
             </div>

@@ -7,16 +7,6 @@ export default function Index() {
   const navigate = useNavigate();
   return (
     <>
-      {/* <Button
-        onClick={() => {
-          navigate("/dash/terminal", {
-            state: {
-              name: "uissh",
-            },
-          });
-        }}>
-        test
-      </Button> */}
       <Shortcut></Shortcut>
       <SystemStatus></SystemStatus>
     </>
