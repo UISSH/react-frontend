@@ -1,21 +1,29 @@
+import TerminalIcon from "@mui/icons-material/Terminal";
+import WebIcon from "@mui/icons-material/Web";
+import { Button, Card, CardContent } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { GlobalLoadingAtom } from "../../store/recoilStore";
 import useSWR from "swr";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 import {
   getShortcut,
-  ShortCutCategoryIF,
+  navigateByLocation,
+  ShortcutIF,
+  ShortcutItemIF,
   syncShortcut,
 } from "../../store/shortStore";
-import { Card, CardContent, CardHeader } from "@mui/material";
 
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
+import FolderIcon from "@mui/icons-material/Folder";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SourceIcon from "@mui/icons-material/Source";
+import StorageIcon from "@mui/icons-material/Storage";
 import Box from "@mui/material/Box";
-import { useEffect, useState } from "react";
-
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
+import { ReactElement, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 export interface ShortcutProps {
   className?: string;
   children?: React.ReactNode;
@@ -51,6 +59,76 @@ function a11yProps(index: number) {
     "aria-controls": `cate-tabpanel-${index}`,
   };
 }
+export function ShortcutItem(props: { value: ShortcutItemIF[] }): ReactElement {
+  const navigate = useNavigate();
+
+  const getIcon = (item: ShortcutItemIF) => {
+    switch (item.cate) {
+      case "database":
+        return <StorageIcon></StorageIcon>;
+      case "terminal":
+        return <TerminalIcon></TerminalIcon>;
+      case "website":
+        return <WebIcon></WebIcon>;
+      case "folder":
+        return <FolderIcon></FolderIcon>;
+      case "text":
+        return <SourceIcon></SourceIcon>;
+      default:
+        return <HelpOutlineIcon></HelpOutlineIcon>;
+    }
+  };
+
+  return (
+    <>
+      {props.value.map((item) => {
+        return (
+          <Button
+            variant="contained"
+            startIcon={getIcon(item)}
+            onClick={() => {
+              navigateByLocation(navigate, item.router);
+            }}
+            sx={{
+              textTransform: "none",
+            }}>
+            {item.name}
+          </Button>
+        );
+      })}
+    </>
+  );
+}
+
+export function CateShortcutTabPanel(props: { value?: ShortcutIF }) {
+  if (!props.value) {
+    return (
+      <>
+        <div>empty data</div>
+      </>
+    );
+  }
+  const cuteNameList = Object.keys(props.value);
+  if (cuteNameList.length <= 0) {
+    return (
+      <>
+        <div>empty data</div>
+      </>
+    );
+  }
+  return (
+    <>
+      <div>
+        {cuteNameList.map((cuteName) => {
+          return (
+            <ShortcutItem
+              value={props.value ? props.value[cuteName] : []}></ShortcutItem>
+          );
+        })}
+      </div>
+    </>
+  );
+}
 export default function Shortcut(props: ShortcutProps) {
   const [t] = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -73,55 +151,78 @@ export default function Shortcut(props: ShortcutProps) {
     };
   }, []);
 
+  const getCateItems = (cate: string): ShortcutIF => {
+    if (!data) return {};
+
+    if (cate in data) {
+      return { cate: data[cate] };
+    } else {
+      return {};
+    }
+  };
+
   if (error) return <div>"An error has occurred."</div>;
   if (isLoading) return <div>"Loading..."</div>;
-
-  return (
-    <>
-      <Card className=" mb-1 shadow-sm">
-        <CardContent>
-          <Box sx={{ width: "100%" }}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tabs
-                variant="scrollable"
-                scrollButtons
-                allowScrollButtonsMobile
-                value={value}
-                onChange={handleChange}
-                aria-label="shortcut tabs">
-                <Tab label={t("common.all")} {...a11yProps(0)} />
-                <Tab label={t("common.database")} {...a11yProps(1)} />
-                <Tab label={t("common.terminal")} {...a11yProps(2)} />
-                <Tab label={t("common.website")} {...a11yProps(3)} />
-                <Tab label={t("common.folder")} {...a11yProps(4)} />
-                <Tab label={t("common.text")} {...a11yProps(5)} />
-              </Tabs>
+  if (data) {
+    return (
+      <>
+        <Card className=" mb-1 shadow-sm">
+          <CardContent>
+            <Box sx={{ width: "100%" }}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Tabs
+                  variant="scrollable"
+                  scrollButtons
+                  allowScrollButtonsMobile
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="shortcut tabs">
+                  <Tab label={t("common.all")} {...a11yProps(0)} />
+                  <Tab label={t("common.database")} {...a11yProps(1)} />
+                  <Tab label={t("common.terminal")} {...a11yProps(2)} />
+                  <Tab label={t("common.website")} {...a11yProps(3)} />
+                  <Tab label={t("common.folder")} {...a11yProps(4)} />
+                  <Tab label={t("common.text")} {...a11yProps(5)} />
+                </Tabs>
+              </Box>
+              <TabPanel value={value} index={0}>
+                <CateShortcutTabPanel value={data} />
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                <CateShortcutTabPanel value={getCateItems("database")} />
+              </TabPanel>
+              <TabPanel value={value} index={2}>
+                <CateShortcutTabPanel value={getCateItems("terminal")} />
+              </TabPanel>
+              <TabPanel value={value} index={3}>
+                <CateShortcutTabPanel value={getCateItems("website")} />
+              </TabPanel>
+              <TabPanel value={value} index={4}>
+                <CateShortcutTabPanel value={getCateItems("folder")} />
+              </TabPanel>
+              <TabPanel value={value} index={5}>
+                <CateShortcutTabPanel value={getCateItems("text")} />
+              </TabPanel>
             </Box>
-            <TabPanel value={value} index={0}>
-              {/* {JSON.stringify(data)} */}
-            </TabPanel>
-            <TabPanel value={value} index={1}></TabPanel>
-            <TabPanel value={value} index={2}></TabPanel>
-            <TabPanel value={value} index={3}></TabPanel>
-            <TabPanel value={value} index={4}></TabPanel>
-            <TabPanel value={value} index={5}></TabPanel>
-          </Box>
-        </CardContent>
-        {/* 生成一个 tabs 组件 */}
-        {/* <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example"
-        >
-          {data.map((item) => (
-            <Tab label={item.name} {...a11yProps(item.id)} />
-          ))} 
-        </Tabs> */}
-      </Card>
-    </>
-  );
+          </CardContent>
+          {/* 生成一个 tabs 组件 */}
+          {/* <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example"
+          >
+            {data.map((item) => (
+              <Tab label={item.name} {...a11yProps(item.id)} />
+            ))} 
+          </Tabs> */}
+        </Card>
+      </>
+    );
+  } else {
+    return <></>;
+  }
 }

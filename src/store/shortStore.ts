@@ -25,7 +25,7 @@ interface CateIF {
   description: string;
 }
 
-interface ShortcutIF {
+export interface ShortcutIF {
   [key: string]: ShortcutItemIF[];
 }
 
