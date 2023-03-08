@@ -16,24 +16,25 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
 import useSWR from "swr";
 import { fetchData, fetchDataProps, requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
-import { formatBytes } from "../../utils";
+import { ShortcutItemIF } from "../../store/shortStore";
+import { calcMD5, formatBytes } from "../../utils";
 import { TableDjango } from "../DjangoTable";
 import DropFileUpload from "../DropFileUpload";
+import ShortcutBook from "../overview/ShortcutBook";
 import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
-import { useLocation } from "react-router-dom";
 
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
 
 const MAIN = "fileBrowser";
-const ITEM = "null";
+
 const LABEL = "layout.explorer";
 
 interface IFItem {
@@ -117,7 +118,7 @@ export default function Index({ className }: { className?: string }) {
   const [currentPath, setCurrentPath] = useState<string | null>(
     searchParams.get("directory")
   );
-
+  const location = useLocation();
   const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>();
   const uidArray = useRef<{ [x: string]: string }>();
   const navigate = useNavigate();
@@ -197,7 +198,6 @@ export default function Index({ className }: { className?: string }) {
         directory: "/",
       });
     }
-    console.log(location);
   }, [searchParams]);
 
   const { mutate } = useSWR(fetchDataProps, async (props) => {
@@ -345,40 +345,44 @@ export default function Index({ className }: { className?: string }) {
             }}></TextField>
         </div>
       ) : (
-        <Breadcrumbs
-          onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            setPathInputShow(true);
-          }}
-          aria-label="breadcrumb"
-          className="p-2 cursor-pointer ">
-          <Link
-            underline="hover"
-            color="inherit"
-            className="cursor-pointer "
-            onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setSearchParams({
-                directory: "/",
-              });
-              history.current = [];
-            }}>
-            <HomeIcon />
-          </Link>
-          {history.current.map((h, i) => (
+        <div className="flex justify-between">
+          <Breadcrumbs
+            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              setPathInputShow(true);
+            }}
+            aria-label="breadcrumb"
+            className="p-2 cursor-pointer ">
             <Link
-              key={i}
               underline="hover"
               color="inherit"
               className="cursor-pointer "
               onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+                e.preventDefault();
                 e.stopPropagation();
-                handleBreadcrumbClick(i);
+                setSearchParams({
+                  directory: "/",
+                });
+                history.current = [];
               }}>
-              {h}
+              <HomeIcon />
             </Link>
-          ))}
-        </Breadcrumbs>
+            {history.current.map((h, i) => (
+              <Link
+                key={i}
+                underline="hover"
+                color="inherit"
+                className="cursor-pointer "
+                onClick={(
+                  e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+                ) => {
+                  e.stopPropagation();
+                  handleBreadcrumbClick(i);
+                }}>
+                {h}
+              </Link>
+            ))}
+          </Breadcrumbs>
+        </div>
       )}
       <Dialog open={alertDialog.open} onClose={handleClose}>
         <DialogTitle

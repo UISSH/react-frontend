@@ -18,7 +18,9 @@ export default function Index() {
       {id ? (
         <WebsiteSettingsTab id={id}></WebsiteSettingsTab>
       ) : (
-        <WebsiteTable />
+        <div>
+          <WebsiteTable />
+        </div>
       )}
     </div>
   );

@@ -9,11 +9,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { GlobalProgressAtom } from "../../store/recoilStore";
+import { ShortcutItemIF } from "../../store/shortStore";
+import { calcMD5 } from "../../utils";
 import { EnhancedTableToolbarProps } from "../DjangoTable";
+import ShortcutBook from "../overview/ShortcutBook";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
@@ -22,6 +26,10 @@ const LABEL = "layout.explorer";
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
+  const [shortcutData, setShortcutData] = useState<ShortcutItemIF>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
   const [t] = useTranslation();
   const [openDialog, setOpenDialog] = useState(false);
   const [globalProgress, setGlobalProgress] =
@@ -38,6 +46,15 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     }
   };
 
+  useEffect(() => {
+    let data = {
+      name: searchParams.get("directory")?.split("/").pop() || "/",
+      unique: "folder-" + calcMD5(searchParams.get("directory") || "/"),
+      cate: "folder",
+      router: location,
+    } as ShortcutItemIF;
+    setShortcutData(data);
+  }, [searchParams.get("directory"), location]);
   return (
     <>
       <Suspense>
@@ -93,6 +110,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             }}>
             {t("add")}
           </Button>
+          {shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>}
 
           {numSelected > 0 ? (
             <Button

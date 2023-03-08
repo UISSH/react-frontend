@@ -1,3 +1,4 @@
+import md5 from "crypto-js/md5";
 export function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return "0 Bytes";
 
@@ -45,4 +46,8 @@ export function getUUID4() {
       v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+export function calcMD5(data: string) {
+  return md5(data).toString();
 }

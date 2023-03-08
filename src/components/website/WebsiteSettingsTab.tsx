@@ -13,8 +13,10 @@ import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import NginxConfigEditor from "./NginxConfigEditor";
+import { ShortcutItemIF } from "../../store/shortStore";
+import ShortcutBook from "../overview/ShortcutBook";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -79,7 +81,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}>
       {value === index && (
         <Box sx={{ p: props.padding != undefined ? props.padding : 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -191,7 +193,11 @@ function WebsiteBasicSettings(props: { id: string }) {
   const navigate = useNavigate();
   const [domain, setDomain] = React.useState<string>("");
 
+  const location = useLocation();
+  const [shortcutData, setShortcutData] = React.useState<ShortcutItemIF>();
+
   const [extraDomain, setExtraDomain] = React.useState<string>("");
+
   const { data, mutate, error } = useSWR<WebsiteObject>(
     `/api/Website/${props.id}/`,
     async (url) => {
@@ -201,6 +207,13 @@ function WebsiteBasicSettings(props: { id: string }) {
       let resJson = await res.json();
       setDomain(resJson.domain);
       setExtraDomain(resJson.extra_domain);
+      setShortcutData({
+        name: resJson.name,
+        unique: `website-${resJson.id}`,
+        cate: "website",
+        router: location,
+      });
+
       return resJson;
     }
   );
@@ -228,10 +241,10 @@ function WebsiteBasicSettings(props: { id: string }) {
       setGlobalLoadingAtom(false);
     });
   };
-  return (
-    <>
-      {data && (
-        <div className=" grid gap-4 ">
+  if (data) {
+    return (
+      <div className=" grid gap-4 ">
+        <div className="flex gap-2">
           <TextField
             value={data.name}
             fullWidth
@@ -240,80 +253,83 @@ function WebsiteBasicSettings(props: { id: string }) {
               readOnly: true,
             }}
             label="name"></TextField>
+          {shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>}
+        </div>
+        <TextField
+          value={data.web_server_type_text}
+          fullWidth
+          InputProps={{
+            readOnly: true,
+          }}
+          size="small"
+          label="web server"></TextField>
+        <div className="text-right">
+          <Divider className="pb-2"> domain settings </Divider>
+
+          <div className="grid gap-4">
+            <TextField
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              fullWidth
+              size="small"
+              label="domain"></TextField>
+
+            <TextField
+              multiline
+              helperText="separate by line"
+              value={extraDomain ? extraDomain : ""}
+              onChange={(e) => setExtraDomain(e.target.value)}
+              fullWidth
+              size="small"
+              label="extra domain"></TextField>
+          </div>
+
+          <IconButton color="secondary" onClick={updateDomain}>
+            <SaveIcon></SaveIcon>
+          </IconButton>
+        </div>
+
+        <div>
+          <Divider className="pb-2"> index root </Divider>
+
           <TextField
-            value={data.web_server_type_text}
+            value={data.index_root}
             fullWidth
             InputProps={{
               readOnly: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    color="secondary"
+                    onClick={() => {
+                      navigate(`/dash/explorer/?directory=${data.index_root}`);
+                    }}>
+                    <OpenInNewIcon></OpenInNewIcon>
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
             size="small"
-            label="web server"></TextField>
-          <div className="text-right">
-            <Divider className="pb-2"> domain settings </Divider>
-
-            <div className="grid gap-4">
-              <TextField
-                value={domain}
-                onChange={(e) => setDomain(e.target.value)}
-                fullWidth
-                size="small"
-                label="domain"></TextField>
-
-              <TextField
-                multiline
-                helperText="separate by line"
-                value={extraDomain}
-                onChange={(e) => setExtraDomain(e.target.value)}
-                fullWidth
-                size="small"
-                label="extra domain"></TextField>
-            </div>
-            <IconButton color="secondary" onClick={updateDomain}>
-              <SaveIcon></SaveIcon>
-            </IconButton>
-          </div>
-
-          <div>
-            <Divider className="pb-2"> index root </Divider>
-
-            <TextField
-              value={data.index_root}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      color="secondary"
-                      onClick={() => {
-                        navigate(
-                          `/dash/explorer/?directory=${data.index_root}`
-                        );
-                      }}>
-                      <OpenInNewIcon></OpenInNewIcon>
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              size="small"
-              label="path"></TextField>
-          </div>
+            label="path"></TextField>
         </div>
-      )}
-    </>
-  );
+      </div>
+    );
+  } else {
+    return <div></div>;
+  }
 }
 
 export default function BasicTabs(props: { id: string }) {
   const [value, setValue] = React.useState(0);
+  const location = useLocation();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+    <Box sx={{ width: "100%" }} component="div">
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }} component="div">
         <Tabs
           value={value}
           onChange={handleChange}

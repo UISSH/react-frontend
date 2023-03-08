@@ -138,7 +138,13 @@ export const navigateByLocation = (
   navigate: NavigateFunction,
   location: Location
 ) => {
-  navigate(location.pathname, {
+  let path = location.pathname;
+
+  if (location.search) {
+    path += location.search;
+  }
+
+  navigate(path, {
     state: location.state,
   });
 };

@@ -19,6 +19,7 @@
     "@mui/material": "^5.11.7",
     "ace-builds": "^1.13.2",
     "axios": "^1.2.0",
+    "crypto-js": "^4.1.1",
     "i18next": "^22.4.9",
     "i18next-browser-languagedetector": "^7.0.0",
     "i18next-http-backend": "^2.1.1",
@@ -45,6 +46,7 @@
     "xterm-addon-webgl": "0.14.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "@types/js-cookie": "^3.0.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",

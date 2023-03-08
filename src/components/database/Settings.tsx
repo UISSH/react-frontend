@@ -1,10 +1,8 @@
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import { LoadingButton } from "@mui/lab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { IconButton, TextField, Tooltip } from "@mui/material";
+import { TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import { useSnackbar } from "notistack";
@@ -18,10 +16,10 @@ import { GlobalLoadingAtom } from "../../store/recoilStore";
 import {
   addShortcut,
   removeShortcut,
-  shortcutExist,
   ShortcutItemIF,
   syncShortcut,
 } from "../../store/shortStore";
+import ShortcutBook from "../overview/ShortcutBook";
 import BackupTable from "./BackupTable";
 export interface SettingsProps {
   id: string;
@@ -71,18 +69,6 @@ export default function Settings(props: SettingsProps) {
       });
     });
   });
-
-  const handleAddShortcut = () => {
-    if (shortcutData && addShortcut(shortcutData)) {
-      mutate();
-    }
-  };
-
-  const handleRemoveShortcut = () => {
-    if (shortcutData && removeShortcut(shortcutData.unique)) {
-      mutate();
-    }
-  };
 
   const handleSave = () => {
     setSaveLoading(true);
@@ -156,18 +142,8 @@ export default function Settings(props: SettingsProps) {
                 value={dbData.password}></TextField>
 
               <div className="flex justify-end gap-x-2">
-                {shortcutData && shortcutExist(shortcutData) ? (
-                  <Tooltip title={t("common.remove-from-shortcut")}>
-                    <IconButton color="primary" onClick={handleRemoveShortcut}>
-                      <BookmarkOutlinedIcon></BookmarkOutlinedIcon>
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title={t("common.add-to-shortcut")}>
-                    <IconButton color="inherit" onClick={handleAddShortcut}>
-                      <BookmarkBorderOutlinedIcon></BookmarkBorderOutlinedIcon>
-                    </IconButton>
-                  </Tooltip>
+                {shortcutData && (
+                  <ShortcutBook {...shortcutData}></ShortcutBook>
                 )}
 
                 <LoadingButton

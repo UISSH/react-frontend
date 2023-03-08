@@ -46,7 +46,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}>
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -84,6 +84,7 @@ export function ShortcutItem(props: { value: ShortcutItemIF[] }): ReactElement {
       {props.value.map((item) => {
         return (
           <Button
+            key={item.unique}
             variant="contained"
             startIcon={getIcon(item)}
             onClick={() => {
@@ -118,10 +119,11 @@ export function CateShortcutTabPanel(props: { value?: ShortcutIF }) {
   }
   return (
     <>
-      <div>
+      <div className="flex gap-2">
         {cuteNameList.map((cuteName) => {
           return (
             <ShortcutItem
+              key={cuteName}
               value={props.value ? props.value[cuteName] : []}></ShortcutItem>
           );
         })}
@@ -167,44 +169,43 @@ export default function Shortcut(props: ShortcutProps) {
     return (
       <>
         <Card className=" mb-1 shadow-sm">
-          <CardContent>
-            <Box sx={{ width: "100%" }}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  variant="scrollable"
-                  scrollButtons
-                  allowScrollButtonsMobile
-                  value={value}
-                  onChange={handleChange}
-                  aria-label="shortcut tabs">
-                  <Tab label={t("common.all")} {...a11yProps(0)} />
-                  <Tab label={t("common.database")} {...a11yProps(1)} />
-                  <Tab label={t("common.terminal")} {...a11yProps(2)} />
-                  <Tab label={t("common.website")} {...a11yProps(3)} />
-                  <Tab label={t("common.folder")} {...a11yProps(4)} />
-                  <Tab label={t("common.text")} {...a11yProps(5)} />
-                </Tabs>
-              </Box>
-              <TabPanel value={value} index={0}>
-                <CateShortcutTabPanel value={data} />
-              </TabPanel>
-              <TabPanel value={value} index={1}>
-                <CateShortcutTabPanel value={getCateItems("database")} />
-              </TabPanel>
-              <TabPanel value={value} index={2}>
-                <CateShortcutTabPanel value={getCateItems("terminal")} />
-              </TabPanel>
-              <TabPanel value={value} index={3}>
-                <CateShortcutTabPanel value={getCateItems("website")} />
-              </TabPanel>
-              <TabPanel value={value} index={4}>
-                <CateShortcutTabPanel value={getCateItems("folder")} />
-              </TabPanel>
-              <TabPanel value={value} index={5}>
-                <CateShortcutTabPanel value={getCateItems("text")} />
-              </TabPanel>
+          <Box sx={{ width: "100%" }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs
+                variant="scrollable"
+                scrollButtons
+                allowScrollButtonsMobile
+                value={value}
+                onChange={handleChange}
+                aria-label="shortcut tabs">
+                <Tab label={t("common.all")} {...a11yProps(0)} />
+                <Tab label={t("common.database")} {...a11yProps(1)} />
+                <Tab label={t("common.terminal")} {...a11yProps(2)} />
+                <Tab label={t("common.website")} {...a11yProps(3)} />
+                <Tab label={t("common.folder")} {...a11yProps(4)} />
+                <Tab label={t("common.text")} {...a11yProps(5)} />
+              </Tabs>
             </Box>
-          </CardContent>
+            <TabPanel value={value} index={0}>
+              <CateShortcutTabPanel value={data} />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <CateShortcutTabPanel value={getCateItems("database")} />
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              <CateShortcutTabPanel value={getCateItems("terminal")} />
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+              <CateShortcutTabPanel value={getCateItems("website")} />
+            </TabPanel>
+            <TabPanel value={value} index={4}>
+              <CateShortcutTabPanel value={getCateItems("folder")} />
+            </TabPanel>
+            <TabPanel value={value} index={5}>
+              <CateShortcutTabPanel value={getCateItems("text")} />
+            </TabPanel>
+          </Box>
+
           {/* 生成一个 tabs 组件 */}
           {/* <Tabs
             value={value}
