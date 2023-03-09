@@ -1,6 +1,8 @@
+import { ClassNames } from "@emotion/react";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import { IconButton, Tooltip } from "@mui/material";
+import { DefaultTFuncReturn } from "i18next";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
@@ -15,7 +17,12 @@ import {
   syncShortcut,
 } from "../../store/shortStore";
 
-export default function ShortcutBook(props: ShortcutItemIF) {
+export default function ShortcutBook(
+  props: ShortcutItemIF & {
+    label?: string | DefaultTFuncReturn;
+    className?: string;
+  }
+) {
   const [t] = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [globalLoadingAtom, setGlobalLoadingAtom] =
@@ -63,17 +70,35 @@ export default function ShortcutBook(props: ShortcutItemIF) {
   return (
     <>
       {shortcutState.existed ? (
-        <Tooltip title={t("common.remove-from-shortcut")}>
-          <IconButton color="primary" onClick={handleRemoveShortcut}>
-            <BookmarkOutlinedIcon></BookmarkOutlinedIcon>
-          </IconButton>
-        </Tooltip>
+        <div
+          className={
+            props.className
+              ? props.className
+              : "flex justify-between items-center"
+          }
+          onClick={handleRemoveShortcut}>
+          <Tooltip title={t("common.remove-from-shortcut")}>
+            <IconButton size="small" color="primary">
+              <BookmarkOutlinedIcon></BookmarkOutlinedIcon>
+            </IconButton>
+          </Tooltip>
+          <div>{props.label}</div>
+        </div>
       ) : (
-        <Tooltip title={t("common.add-to-shortcut")}>
-          <IconButton color="inherit" onClick={handleAddShortcut}>
-            <BookmarkBorderOutlinedIcon></BookmarkBorderOutlinedIcon>
-          </IconButton>
-        </Tooltip>
+        <div
+          className={
+            props.className
+              ? props.className
+              : "flex justify-between items-center"
+          }
+          onClick={handleAddShortcut}>
+          <Tooltip title={t("common.add-to-shortcut")}>
+            <IconButton size="small" color="inherit">
+              <BookmarkBorderOutlinedIcon></BookmarkBorderOutlinedIcon>
+            </IconButton>
+          </Tooltip>
+          <div>{props.label}</div>
+        </div>
       )}
     </>
   );

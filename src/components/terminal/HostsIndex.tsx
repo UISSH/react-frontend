@@ -25,6 +25,9 @@ import { HostAuth } from "./TerminalSession";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Snippets from "./Snippets";
 import { useLocation } from "react-router-dom";
+import { ShortcutItemIF } from "../../store/shortStore";
+import ShortcutBook from "../overview/ShortcutBook";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export interface LocationState {
   name: string;
@@ -138,6 +141,7 @@ export default function HostsIndex(props: HostsIndexProps) {
     sshClientKV.current?.setItem(JSON.stringify(sshClient));
   }
   const location = useLocation();
+  const [shortcutData, setShortcutData] = useState<ShortcutItemIF>();
 
   const handleOpenSSHSession = (
     name: string,
@@ -192,14 +196,38 @@ export default function HostsIndex(props: HostsIndexProps) {
                 <div key={item}>
                   <SplitButton
                     MenuList={
-                      <MenuList id={"split-button-menu-" + item}>
+                      <MenuList
+                        id={"split-button-menu-" + item}
+                        sx={{ minWidth: "100px" }}>
                         <MenuItem
+                          dense
+                          divider
+                          className="flex justify-between pl-2"
                           onClick={() => {
                             delete sshClient[item];
                             setSshClient(JSON.parse(JSON.stringify(sshClient)));
                             saveSSHClient();
                           }}>
-                          {t("common.delete")}
+                          <DeleteIcon></DeleteIcon>
+                          <div> {t("common.delete")} </div>
+                        </MenuItem>
+                        <MenuItem
+                          dense
+                          className="flex justify-between pl-1 py-0">
+                          <ShortcutBook
+                            className="flex justify-between w-full items-center"
+                            label={t("common.add")}
+                            {...{
+                              name: item,
+                              unique: `terminal-${item}`,
+                              cate: "terminal",
+                              router: {
+                                ...location,
+                                state: {
+                                  name: item,
+                                },
+                              },
+                            }}></ShortcutBook>
                         </MenuItem>
                       </MenuList>
                     }>

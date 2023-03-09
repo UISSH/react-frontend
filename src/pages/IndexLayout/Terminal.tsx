@@ -1,6 +1,4 @@
-import HostsIndex, {
-  SSHClientInfo,
-} from "../../components/terminal/HostsIndex";
+import HostsIndex from "../../components/terminal/HostsIndex";
 
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
@@ -15,7 +13,6 @@ import FooterBar, {
 import TerminalSession, {
   HostAuth,
 } from "../../components/terminal/TerminalSession";
-import { KVStorage } from "../../requests/utils";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
