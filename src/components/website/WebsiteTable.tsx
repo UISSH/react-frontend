@@ -70,7 +70,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }}>
         {numSelected > 0 ? (
           <Typography
-            sx={{ flex: "1 1 100%" }}
+            sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
             component="div">
@@ -79,16 +79,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         ) : (
           <Typography
             className="capitalize"
-            sx={{ flex: "1 1 100%" }}
+            sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
             component="div">
             {t("layout.website")}
           </Typography>
         )}
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group">
+
+        <ButtonGroup variant="contained">
           <Button
             startIcon={<AddIcon />}
             onClick={() => {

@@ -9,6 +9,7 @@ import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import {
   Box,
+  Button,
   Card,
   CardContent,
   FormControlLabel,
@@ -24,6 +25,10 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { requestData } from "../../requests/http";
 import { AppBarOpenAtom } from "../../store/recoilStore";
+import { ShortcutItemIF } from "../../store/shortStore";
+import ShortcutBook from "../overview/ShortcutBook";
+import { MD5 } from "crypto-js";
+import { calcMD5 } from "../../utils";
 
 // import * as monaco from "monaco-editor";
 // import { loader } from "@monaco-editor/react";
@@ -48,6 +53,7 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
   const [appBarOpenAtom, setAppBarOpenAtom] = useRecoilState(AppBarOpenAtom);
 
   const location = useLocation();
+  const [shortcutData, setShortcutData] = useState<ShortcutItemIF>();
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor>();
 
@@ -83,7 +89,6 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
   }
 
   useEffect(() => {
-    console.log(location);
     if (location.state.type == "vim" && location.state.path) {
       requestData({
         url: "/api/FileBrowser/file_text_operating/",
@@ -101,6 +106,13 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
         }
       });
     }
+
+    setShortcutData({
+      name: (location.state.path.split("/").pop() as string) || "",
+      unique: "vim-" + calcMD5(location.state.path),
+      cate: "text",
+      router: location,
+    });
   }, [location.state]);
 
   return (
@@ -149,6 +161,9 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                     label="Dark"
                   />
                 </FormGroup>
+                {shortcutData && (
+                  <ShortcutBook {...shortcutData}></ShortcutBook>
+                )}
                 <IconButton size="small" color="inherit" onClick={onSave}>
                   <SaveIcon />
                 </IconButton>

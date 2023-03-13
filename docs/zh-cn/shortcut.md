@@ -21,7 +21,7 @@
 - className
   - 快捷方式的样式，可选
 
-```typescript
+```javascript
 import ShortcutBook from "../overview/ShortcutBook";
 import { ShortcutItemIF } from "../../store/shortStore";
 
@@ -42,7 +42,7 @@ const [shortcutData, setShortcutData] = useState<ShortcutItemIF>();
 */
 
 {
-  shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>;
+  shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>
 }
 ```
 
@@ -50,7 +50,7 @@ const [shortcutData, setShortcutData] = useState<ShortcutItemIF>();
 
 在当前页面添加其他页面的快捷方式的场景时，可以自定义 location 参数
 
-```typescript
+```javascript
 const customLocation = {
   pathname: "/terminal?id=1",
   // search: "?id=1", 无效
@@ -86,7 +86,7 @@ const customLocation = {
 
 ### ShortcutItemIF
 
-```typescript
+```javascript
 {
   name: string;
   unique: string; // 保证该值唯一

@@ -1,6 +1,6 @@
 import TerminalIcon from "@mui/icons-material/Terminal";
 import WebIcon from "@mui/icons-material/Web";
-import { Button, Card, CardContent } from "@mui/material";
+import { Button, Card } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -21,7 +21,7 @@ import StorageIcon from "@mui/icons-material/Storage";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import Typography from "@mui/material/Typography";
+
 import { ReactElement, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 export interface ShortcutProps {
@@ -119,7 +119,7 @@ export function CateShortcutTabPanel(props: { value?: ShortcutIF }) {
   }
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {cuteNameList.map((cuteName) => {
           return (
             <ShortcutItem

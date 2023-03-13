@@ -351,7 +351,7 @@ export default function Index({ className }: { className?: string }) {
               setPathInputShow(true);
             }}
             aria-label="breadcrumb"
-            className="p-2 cursor-pointer ">
+            className="p-2 cursor-pointer pr-20 ">
             <Link
               underline="hover"
               color="inherit"

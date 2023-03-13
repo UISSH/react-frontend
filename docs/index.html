@@ -1,21 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title>Docs</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link href="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-y/docsify/4.12.2/themes/vue.min.css" type="text/css" rel="stylesheet" /><body>
-  <div id="app"></div>
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+  <link href="//fastly.jsdelivr.net/npm/docsify@4/themes/vue.css" type="text/css" rel="stylesheet" />
   <script>
-    window.$docsify = {
-      name: 'UISSH docs',
-      repo: 'https://github.com/UISSH/react-frontend',
-      loadNavbar: true
+    const chinaCDN = 'https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-y/docsify/4.12.2';
+    const globalCDN = '//fastly.jsdelivr.net/npm/docsify@4';
+    var script = document.createElement('script');
+    var browserLang = navigator.language || navigator.userLanguage;
+    if (browserLang !== 'zh-CN') {
+      document.getElementById('docsifyTheme').href = `${chinaCDN}/themes/vue.min.css`;
+      script.src = `${chinaCDN}/docsify.min.js`;
+    } else {
+      script.src = globalCDN
+    }
+    script.type = 'application/javascript';
+
+    if (document.body) {
+      document.body.appendChild(script);
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.body.appendChild(script);
+      });
     }
   </script>
-  <!-- Docsify v4 -->
-  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/docsify/4.12.2/docsify.min.js" type="application/javascript"></script>
+
+<body>
+  <div id="app"></div>
+  <script src="//fastly.jsdelivr.net/npm/docsify-edit-on-github"></script>
+  <script>
+    window.$docsify = {
+      search: 'auto',
+      name: 'UISSH docs',
+      repo: 'https://github.com/UISSH/react-frontend',
+      loadNavbar: true,
+
+      plugins: [
+        EditOnGithubPlugin.create("https://github.com/UISSH/react-frontend/tree/main/docs/", null, "edit")
+      ],
+
+    }
+  </script>
+  <script src="//fastly.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
 </body>
+
 </html>

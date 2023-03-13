@@ -108,7 +108,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             onClick={() => {
               setOpenDialog(true);
             }}>
-            {t("add")}
+            {t("exploprer.add")}
           </Button>
           {shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>}
 

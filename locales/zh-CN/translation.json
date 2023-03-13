@@ -16,7 +16,17 @@
     "remove-from-shortcut": "从快捷方式删除"
   },
   "exploprer": {
-    "edit": "编辑"
+    "action": "操作",
+    "delete": "删除",
+    "download": "下载",
+    "edit": "编辑",
+    "filename": "文件名",
+    "group": "组",
+    "mode": "权限",
+    "owner": "用户",
+    "rename": "重命名",
+    "size": "大小",
+    "add": "新建"
   },
   "filesystem": {
     "ftp-alert": "强烈建议使用支持 FTPS 协议的客户端，使用 Window 文件资源管理器是不安全的。 "
@@ -29,7 +39,8 @@
     "overview": "概述",
     "selected": "被选中",
     "terminal": "终端",
-    "website": "站点"
+    "website": "站点",
+    "explorer": "文件管理"
   },
   "left-top-tips": "友好且简单，注重隐私。",
   "login": {
@@ -57,6 +68,7 @@
     "snippetNameRequired": "片段名称不能为空"
   },
   "website": {
+    "add": "添加",
     "please-input-domain": "请填入域名"
   }
 }

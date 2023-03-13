@@ -92,7 +92,7 @@ export default function ShortcutBook(
           }
           onClick={handleAddShortcut}>
           <Tooltip title={t("common.add-to-shortcut")}>
-            <IconButton size="small" color="inherit">
+            <IconButton size="small" color="primary">
               <BookmarkBorderOutlinedIcon></BookmarkBorderOutlinedIcon>
             </IconButton>
           </Tooltip>
