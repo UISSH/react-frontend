@@ -14,24 +14,20 @@ import {
   Link,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { useSnackbar } from "notistack";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";
 import useSWR from "swr";
 import { fetchData, fetchDataProps, requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
-import { ShortcutItemIF } from "../../store/shortStore";
-import { calcMD5, formatBytes } from "../../utils";
+import { formatBytes } from "../../utils";
 import { TableDjango } from "../DjangoTable";
 import DropFileUpload from "../DropFileUpload";
-import ShortcutBook from "../overview/ShortcutBook";
+import { ReloadTableDataContext } from "./ExplorerContext";
 import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
-
-//import CreateDatabaseDialog from "./CreateDatabaseDialog";
-
-// const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
 
 const MAIN = "fileBrowser";
 
@@ -101,38 +97,54 @@ export default function Index({ className }: { className?: string }) {
   const [updateState, setUpdateState] = useRecoilState(
     UpdateExplorerTableUISignal
   );
-  const [rowsState, setRowsState] = useState<any>([]);
+  const [rowsState, setRowsState] =
+    useState<(IFItem & { id: number; name: string })[]>();
   const [pathInputShow, setPathInputShow] = useState<boolean>(false);
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
     title: string | React.ReactNode;
     content: string | React.ReactNode;
+    records: string[];
   }>({
     open: false,
     title: "",
     content: "",
+    records: [],
   });
   const history = useRef<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPath, setCurrentPath] = useState<string | null>(
     searchParams.get("directory")
   );
-  const location = useLocation();
   const [fetchDataProps, setFetchDataProps] = useState<fetchDataProps>();
   const uidArray = useRef<{ [x: string]: string }>();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleClose = () => {
     setAlertDialog({ ...alertDialog, open: false });
   };
 
-  const requestDelete = async () => {
-    for (let i = 0; i < selected.length; i++) {
-      console.log(selected[i]);
-    }
-    setUpdateState(updateState + 1);
-    setAlertDialog({ ...alertDialog, open: false });
+  const requestDelete = async (fileName: string[]) => {
+    let cmd = "rm -rf " + fileName.join(" ");
+
+    requestData({
+      url: "/api/FileBrowser/cmd/",
+      method: "POST",
+      data: {
+        operation_command: cmd,
+        current_directory: getCurrentDirectory(),
+      },
+    }).then((res) => {
+      if (res.ok) {
+        setUpdateState(updateState + 1);
+        setAlertDialog({ ...alertDialog, open: false });
+        enqueueSnackbar(t("success"), { variant: "success" });
+      } else {
+        enqueueSnackbar(t("failed"), { variant: "error" });
+      }
+    });
   };
 
   const handleAction = (action: string) => {
@@ -142,20 +154,26 @@ export default function Index({ className }: { className?: string }) {
         title: `Delete`,
         content: (
           <div className="pt-2">
-            <div>{t("database.are-you-sure-to-delete-the-databse")}</div>
+            <div>
+              {t("exploprer.Are-you-sure-to-delete-the-following-files")}
+            </div>
             <ul>
-              {rowsState
-                // @ts-ignore
-                .filter((row) => {
-                  return selected.includes(row.id.toString());
-                })
-                // @ts-ignore
-                .map((row) => (
-                  <li key={row.id}>{row.name}</li>
-                ))}
+              {rowsState &&
+                rowsState
+                  .filter((row) => {
+                    return selected.includes(row.id.toString());
+                  })
+                  .map((row) => <li key={row.id}>{row.name}</li>)}
             </ul>
           </div>
         ),
+        records: rowsState
+          ? rowsState
+              .filter((row) => {
+                return selected.includes(row.id.toString());
+              })
+              .map((row) => row.filename)
+          : [],
       });
     } else if (action == "reload") {
       setUpdateState(updateState + 1);
@@ -167,7 +185,6 @@ export default function Index({ className }: { className?: string }) {
   const getCurrentDirectory = () => {
     let directory = searchParams.get("directory") + "/" || "/";
     directory = directory.replace(/\/\//g, "/");
-
     return directory;
   };
 
@@ -289,131 +306,140 @@ export default function Index({ className }: { className?: string }) {
   }, [updateState]);
 
   return (
-    <DropFileUpload
-      requestDataProps={{
-        url: "/api/FileBrowser/upload_file/",
-        method: "POST",
-        params: {
-          directory: getCurrentDirectory(),
-        },
+    <ReloadTableDataContext.Provider
+      value={() => {
+        setUpdateState(updateState + 1);
       }}>
-      {pathInputShow ? (
-        <div className="p-2">
-          <TextField
-            size="small"
-            value={currentPath ? currentPath : "/"}
-            autoFocus
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={(
-                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                    ) => {
-                      console.log(currentPath);
-
-                      setPathInputShow(false);
-                      setSearchParams({
-                        directory: currentPath as string,
-                      });
-                    }}>
-                    <DoneIcon></DoneIcon>
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            onBlur={(
-              e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>
-            ) => {
-              setTimeout(() => {
-                setPathInputShow(false);
-              }, 100);
-            }}
-            onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-              if (e.key == "Enter") {
-                setPathInputShow(false);
-                setSearchParams({
-                  directory: currentPath as string,
-                });
-              }
-            }}
-            onChange={(
-              e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-            ) => {
-              setCurrentPath(e.target.value);
-            }}></TextField>
-        </div>
-      ) : (
-        <div className="flex justify-between">
-          <Breadcrumbs
-            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-              setPathInputShow(true);
-            }}
-            aria-label="breadcrumb"
-            className="p-2 cursor-pointer pr-20 ">
-            <Link
-              underline="hover"
-              color="inherit"
-              className="cursor-pointer "
-              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setSearchParams({
-                  directory: "/",
-                });
-                history.current = [];
-              }}>
-              <HomeIcon />
-            </Link>
-            {history.current.map((h, i) => (
+      <DropFileUpload
+        requestDataProps={{
+          url: "/api/FileBrowser/upload_file/",
+          method: "POST",
+          params: {
+            directory: getCurrentDirectory(),
+          },
+        }}>
+        {pathInputShow ? (
+          <div className="p-2">
+            <TextField
+              size="small"
+              value={currentPath ? currentPath : "/"}
+              autoFocus
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={(
+                        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                      ) => {
+                        setPathInputShow(false);
+                        setSearchParams({
+                          directory: currentPath as string,
+                        });
+                      }}>
+                      <DoneIcon></DoneIcon>
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              onBlur={(
+                e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>
+              ) => {
+                setTimeout(() => {
+                  setPathInputShow(false);
+                }, 100);
+              }}
+              onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (e.key == "Enter") {
+                  setPathInputShow(false);
+                  setSearchParams({
+                    directory: currentPath as string,
+                  });
+                }
+              }}
+              onChange={(
+                e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+              ) => {
+                setCurrentPath(e.target.value);
+              }}></TextField>
+          </div>
+        ) : (
+          <div className="flex justify-between">
+            <Breadcrumbs
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                setPathInputShow(true);
+              }}
+              aria-label="breadcrumb"
+              className="p-2 cursor-pointer pr-20 ">
               <Link
-                key={i}
                 underline="hover"
                 color="inherit"
                 className="cursor-pointer "
                 onClick={(
                   e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
                 ) => {
+                  e.preventDefault();
                   e.stopPropagation();
-                  handleBreadcrumbClick(i);
+                  setSearchParams({
+                    directory: "/",
+                  });
+                  history.current = [];
                 }}>
-                {h}
+                <HomeIcon />
               </Link>
-            ))}
-          </Breadcrumbs>
-        </div>
-      )}
-      <Dialog open={alertDialog.open} onClose={handleClose}>
-        <DialogTitle
-          bgcolor={(theme: any) => theme.palette.primary.main}
-          color={(theme: any) => theme.palette.text.disabled}>
-          {alertDialog.title}
-        </DialogTitle>
-        <DialogContent>{alertDialog.content}</DialogContent>
-        <DialogActions>
-          <Button variant="contained" color="info" onClick={handleClose}>
-            {t("no")}
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={requestDelete}
-            autoFocus>
-            {t("yes")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <TableDjango
-        dense
-        onAction={handleAction}
-        enhancedTableToolbar={EnhancedTableToolbar}
-        selectedState={[selected, setSelected]}
-        rows={rowsState}
-        headCells={headCells}
-        title={LABEL}
-        maxHeight={"calc(100vh - 160px)"}
-      />
-    </DropFileUpload>
+              {history.current.map((h, i) => (
+                <Link
+                  key={i}
+                  underline="hover"
+                  color="inherit"
+                  className="cursor-pointer "
+                  onClick={(
+                    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+                  ) => {
+                    e.stopPropagation();
+                    handleBreadcrumbClick(i);
+                  }}>
+                  {h}
+                </Link>
+              ))}
+            </Breadcrumbs>
+          </div>
+        )}
+        <Dialog open={alertDialog.open} onClose={handleClose}>
+          <DialogTitle
+            bgcolor={(theme: any) => theme.palette.primary.main}
+            color={(theme: any) => theme.palette.text.disabled}>
+            {alertDialog.title}
+          </DialogTitle>
+          <DialogContent>{alertDialog.content}</DialogContent>
+          <DialogActions>
+            <Button variant="contained" color="info" onClick={handleClose}>
+              {t("no")}
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={(e) => {
+                requestDelete(alertDialog.records);
+              }}
+              autoFocus>
+              {t("yes")}
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {rowsState && (
+          <TableDjango
+            dense
+            onAction={handleAction}
+            enhancedTableToolbar={EnhancedTableToolbar}
+            selectedState={[selected, setSelected]}
+            rows={rowsState}
+            headCells={headCells}
+            title={LABEL}
+            maxHeight={"calc(100vh - 160px)"}
+          />
+        )}
+      </DropFileUpload>
+    </ReloadTableDataContext.Provider>
   );
 }

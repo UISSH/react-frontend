@@ -21,13 +21,6 @@ import { GlobalProgressAtom } from "../../store/recoilStore";
 import { useRecoilState } from "recoil";
 import SystemInfo from "./SystemInfo";
 
-export async function loader(props: { params: object }) {
-  let data = useLoaderData();
-}
-
-export async function action(props: { params: any; request: any }) {
-  let formData = await props.request.formData();
-}
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({

@@ -3,44 +3,49 @@
   "Oops": "哎呀",
   "back-home": "返回主页",
   "common": {
-    "all": "全部",
     "add": "添加",
-    "save": "保存",
-    "database": "数据库",
-    "terminal": "终端",
-    "website": "站点",
-    "folder": "文件夹",
-    "text": "文本",
-    "delete": "删除",
     "add-to-shortcut": "添加到快捷方式",
-    "remove-from-shortcut": "从快捷方式删除"
+    "all": "全部",
+    "database": "数据库",
+    "delete": "删除",
+    "file": "文件",
+    "folder": "文件夹",
+    "name": "名称",
+    "remove-from-shortcut": "从快捷方式删除",
+    "save": "保存",
+    "terminal": "终端",
+    "text": "文本",
+    "website": "站点"
   },
   "exploprer": {
+    "Are-you-sure-to-delete-the-following-files": "确定要删除以下文件吗？",
     "action": "操作",
+    "add": "新建",
     "delete": "删除",
     "download": "下载",
     "edit": "编辑",
     "filename": "文件名",
     "group": "组",
     "mode": "权限",
+    "new": "新建",
     "owner": "用户",
     "rename": "重命名",
-    "size": "大小",
-    "add": "新建"
+    "size": "大小"
   },
+  "failed": "失败",
   "filesystem": {
     "ftp-alert": "强烈建议使用支持 FTPS 协议的客户端，使用 Window 文件资源管理器是不安全的。 "
   },
   "key": "hello world",
   "layout": {
     "database": "数据库",
+    "explorer": "文件管理",
     "files": "文件管理",
     "ftp": "FTP",
     "overview": "概述",
     "selected": "被选中",
     "terminal": "终端",
-    "website": "站点",
-    "explorer": "文件管理"
+    "website": "站点"
   },
   "left-top-tips": "友好且简单，注重隐私。",
   "login": {
@@ -63,6 +68,7 @@
   "permission denied": "权限拒绝",
   "rows-per-page": "每页行数",
   "sorry-an-unexpected-error-has-occurred": "抱歉，这里有一个错误发生.",
+  "success": "成功",
   "terminal": {
     "addsnippet": "新建片段",
     "snippetNameRequired": "片段名称不能为空"

@@ -18,6 +18,7 @@ import { ShortcutItemIF } from "../../store/shortStore";
 import { calcMD5 } from "../../utils";
 import { EnhancedTableToolbarProps } from "../DjangoTable";
 import ShortcutBook from "../overview/ShortcutBook";
+import NewActionMenu from "./NewActionMenu";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
@@ -34,11 +35,14 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
+
   const handleDelete = () => {
     if (props.onAction) {
       props.onAction("delete");
     }
   };
+
+  const currentPath = searchParams.get("directory");
 
   const handleReloadParent = () => {
     if (props.onAction) {
@@ -57,14 +61,6 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   }, [searchParams.get("directory"), location]);
   return (
     <>
-      <Suspense>
-        {/* <CreateDatabaseDialog
-          open={openDialog}
-          setOpen={(open) => {
-            setOpenDialog(open);
-            handleReloadParent();
-          }}></CreateDatabaseDialog> */}
-      </Suspense>
       <Toolbar
         sx={{
           pl: { sm: 2 },
@@ -103,13 +99,10 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <ButtonGroup
           variant="contained"
           aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("exploprer.add")}
-          </Button>
+          {currentPath && (
+            <NewActionMenu currentPath={currentPath}></NewActionMenu>
+          )}
+
           {shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>}
 
           {numSelected > 0 ? (
