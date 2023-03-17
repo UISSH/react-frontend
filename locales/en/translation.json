@@ -2,6 +2,7 @@
   "Not Found": "Not Found",
   "Oops": "Oops",
   "back-home": "back home",
+  "cancel": "cancel",
   "common": {
     "add": "add",
     "add-to-shortcut": "add to shortcut",
@@ -82,6 +83,7 @@
   },
   "login-server": "Login Server",
   "network-error": "Network Error",
+  "ok": "ok",
   "overview": {
     "status": {
       "cpu": "CPU",

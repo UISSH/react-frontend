@@ -18,7 +18,7 @@ import { ShortcutItemIF } from "../../store/shortStore";
 import { calcMD5 } from "../../utils";
 import { EnhancedTableToolbarProps } from "../DjangoTable";
 import ShortcutBook from "../overview/ShortcutBook";
-import NewActionMenu from "./NewActionMenu";
+import NewActionMenu from "./ActionMenu";
 //import CreateDatabaseDialog from "./CreateDatabaseDialog";
 
 // const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));

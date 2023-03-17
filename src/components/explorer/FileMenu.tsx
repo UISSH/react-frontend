@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -23,11 +22,12 @@ import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { UpdateExplorerTableUISignal } from "./ExplorerTable";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
+import RenameFSDialog from "./RenameFSDialog";
 export interface FileMenuProps {
   id: string | number;
   path: string;
   directory: string;
-  name?: string;
+  name: string;
 }
 
 function DeleteFile(
@@ -89,67 +89,67 @@ function DeleteFile(
   );
 }
 
-function RenameFile(
-  props: FileMenuProps & { open: boolean; onClose: () => void }
-) {
-  const [newName, setNewName] = React.useState(props.name);
-  const [updateState, setUpdateState] = useRecoilState(
-    UpdateExplorerTableUISignal
-  );
+// function RenameFile(
+//   props: FileMenuProps & { open: boolean; onClose: () => void }
+// ) {
+//   const [newName, setNewName] = React.useState(props.name);
+//   const [updateState, setUpdateState] = useRecoilState(
+//     UpdateExplorerTableUISignal
+//   );
 
-  const [t] = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
-  const [globalLoadingAtom, setGlobalLoadingAtom] =
-    useRecoilState(GlobalLoadingAtom);
-  const handleClose = () => {
-    props.onClose();
-  };
+//   const [t] = useTranslation();
+//   const { enqueueSnackbar } = useSnackbar();
+//   const [globalLoadingAtom, setGlobalLoadingAtom] =
+//     useRecoilState(GlobalLoadingAtom);
+//   const handleClose = () => {
+//     props.onClose();
+//   };
 
-  const handelRename = async () => {
-    setGlobalLoadingAtom(true);
-    let res = await requestData({
-      url: "FileBrowserCmd",
-      method: "POST",
-      data: {
-        current_directory: props.directory,
-        operation_command: `mv ${props.name} ${newName}`,
-      },
-    });
-    setGlobalLoadingAtom(false);
-    if (res.ok) {
-      enqueueSnackbar(t("renameSuccess"), { variant: "success" });
-    } else {
-      enqueueSnackbar(t("renameFailed"), { variant: "error" });
-    }
-    setUpdateState((s) => s + 1);
-    props.onClose();
-  };
-  return (
-    <div>
-      <Dialog open={props.open} onClose={handleClose}>
-        <DialogTitle>
-          <span>{t("exploprer.rename")}</span> {props.name}
-        </DialogTitle>
-        <DialogContent>
-          <div className="pt-2">
-            <TextField
-              id="outlined-basic"
-              label="name"
-              value={newName}
-              onChange={(e) => {
-                setNewName(e.target.value);
-              }}
-            />
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handelRename}>Rename</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
-}
+//   const handelRename = async () => {
+//     setGlobalLoadingAtom(true);
+//     let res = await requestData({
+//       url: "FileBrowserCmd",
+//       method: "POST",
+//       data: {
+//         current_directory: props.directory,
+//         operation_command: `mv ${props.name} ${newName}`,
+//       },
+//     });
+//     setGlobalLoadingAtom(false);
+//     if (res.ok) {
+//       enqueueSnackbar(t("renameSuccess"), { variant: "success" });
+//     } else {
+//       enqueueSnackbar(t("renameFailed"), { variant: "error" });
+//     }
+//     setUpdateState((s) => s + 1);
+//     props.onClose();
+//   };
+//   return (
+//     <div>
+//       <Dialog open={props.open} onClose={handleClose}>
+//         <DialogTitle>
+//           <span>{t("exploprer.rename")}</span> {props.name}
+//         </DialogTitle>
+//         <DialogContent>
+//           <div className="pt-2">
+//             <TextField
+//               id="outlined-basic"
+//               label="name"
+//               value={newName}
+//               onChange={(e) => {
+//                 setNewName(e.target.value);
+//               }}
+//             />
+//           </div>
+//         </DialogContent>
+//         <DialogActions>
+//           <Button onClick={handleClose}>Cancel</Button>
+//           <Button onClick={handelRename}>Rename</Button>
+//         </DialogActions>
+//       </Dialog>
+//     </div>
+//   );
+// }
 
 export default function Index(props: FileMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -168,9 +168,6 @@ export default function Index(props: FileMenuProps) {
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     setAnchorEl(null);
-  };
-  const handleRenameClose = () => {
-    setOpenRename(false);
   };
 
   const handleEdit = () => {
@@ -204,10 +201,13 @@ export default function Index(props: FileMenuProps) {
 
   return (
     <div>
-      <RenameFile
-        {...props}
+      <RenameFSDialog
+        currentPath={props.directory}
+        name={props.name}
         open={openRename}
-        onClose={handleRenameClose}></RenameFile>
+        onStatus={(status) => {
+          setOpenRename(false);
+        }}></RenameFSDialog>
       <DeleteFile
         {...props}
         open={openDelete}

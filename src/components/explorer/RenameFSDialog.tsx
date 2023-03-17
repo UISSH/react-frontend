@@ -18,47 +18,36 @@ import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { requestData } from "../../requests/http";
 import { ReloadTableDataContext } from "./ExplorerContext";
 
-export interface FileNameDialogProps {
-  name?: string;
+export interface RenameFSDialogProps {
+  name: string;
   open: boolean;
-  fileType: "file" | "folder";
   currentPath: string;
-  action: "create" | "rename";
   onStatus: (result: "done" | "cancel") => void;
   children?: React.ReactNode;
   className?: string;
 }
-
 interface IFormInput {
   name: string;
-  newName?: string;
 }
 
-export default function FileNameDialog(props: FileNameDialogProps) {
-  useEffect(() => {}, [open]);
+export default function RenameFSDialog(props: RenameFSDialogProps) {
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
 
+  const onReloadTableData = useContext(ReloadTableDataContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm<IFormInput>();
-  const [t] = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
-  const [globalLoadingAtom, setGlobalLoadingAtom] =
-    useRecoilState(GlobalLoadingAtom);
-  const actionText = props.action === "create" ? "new" : "rename";
-  const fileTypeText = props.fileType === "file" ? "file" : "folder";
-  const nameText = props.name ? props.name : fileTypeText;
-  const onReloadTableData = useContext(ReloadTableDataContext);
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    createNew(data.name);
-  };
 
-  const createNew = (name: string) => {
-    let cmd = props.fileType === "file" ? "touch" : "mkdir";
-    cmd += " " + name;
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setGlobalLoadingAtom(true);
+    // rename file or folder
+    let cmd = "mv " + props.name + " " + data.name;
     requestData({
       url: "/api/FileBrowser/cmd/",
       method: "POST",
@@ -78,9 +67,6 @@ export default function FileNameDialog(props: FileNameDialogProps) {
       setGlobalLoadingAtom(false);
     });
   };
-
-  const rename = () => {};
-
   return (
     <>
       <CardDialog
@@ -92,7 +78,7 @@ export default function FileNameDialog(props: FileNameDialogProps) {
           color={(theme) => theme.palette.text.disabled}>
           <div className="flex justify-between  items-center">
             <div className="capitalize">
-              {t("exploprer." + actionText) + t("common." + nameText)}
+              {t("common.rename") + " " + props.name}
             </div>
             <IconButton
               color="inherit"

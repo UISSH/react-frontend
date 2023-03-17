@@ -2,6 +2,7 @@
   "Not Found": "未找到页面",
   "Oops": "哎呀",
   "back-home": "返回主页",
+  "cancel": "取消",
   "common": {
     "add": "添加",
     "add-to-shortcut": "添加到快捷方式",
@@ -55,6 +56,7 @@
     "username": "用户名"
   },
   "network-error": "网络错误",
+  "ok": "确定",
   "overview": {
     "status": {
       "cpu": "CPU",
