@@ -1,3 +1,7 @@
+/* 
+https://linux.fasionchan.com/zh_CN/latest/maintenance/monitor/os/cpu-usage.html
+*/
+
 import {
   Box,
   Card,
@@ -5,21 +9,22 @@ import {
   CardContent,
   CircularProgress,
   CircularProgressProps,
+  IconButton,
   Typography,
 } from "@mui/material";
 import React from "react";
-
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import { styled } from "@mui/material/styles";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLoaderData } from "react-router-dom";
 import { getWSGateway } from "../../requests/utils";
 import { formatBytes } from "../../utils";
 
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { useRecoilState } from "recoil";
 import SystemInfo from "./SystemInfo";
+import SystemProccess from "./Proccess";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -124,6 +129,8 @@ export default function SystemStatus() {
     info_0: { idle: 0 } as { [key: string]: number },
     info_1: { idle: 0 } as { [key: string]: number },
   });
+  const [systemProccessOpen, setSystemProccessOpen] = useState(false);
+
   const [memoryStatus, setMemoryStatus] = useState({
     used: 0,
     info: {} as { [key: string]: number },
@@ -299,11 +306,24 @@ export default function SystemStatus() {
 
   return (
     <div className="space-y-2">
+      <SystemProccess
+        open={systemProccessOpen}
+        onClose={() => {
+          setSystemProccessOpen(false);
+        }}></SystemProccess>
       <Card className="shadow-sm rounded-2xl ">
         <CardContent>
-          <Typography className="uppercase" variant="h6" component="div">
-            {t("overview.status.status")}
-          </Typography>
+          <div className="flex justify-between items-center">
+            <Typography className="uppercase" variant="h6" component="div">
+              {t("overview.status.status")}
+            </Typography>
+            <IconButton
+              onClick={() => {
+                setSystemProccessOpen(true);
+              }}>
+              <FullscreenIcon></FullscreenIcon>
+            </IconButton>
+          </div>
           <div className="flex flex-wrap p-4 w-full gap-2 justify-between">
             <WithLabelCularProgress
               tooltip={loadAverageStatus.info.map((item) => (

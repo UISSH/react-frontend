@@ -1,10 +1,10 @@
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import SystemProccess from "../../components/overview/Proccess";
 import Shortcut from "../../components/overview/Shortcut";
 import SystemStatus from "../../components/overview/SystemStatus";
 
 export default function Index() {
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(true);
   return (
     <>
       <Shortcut></Shortcut>

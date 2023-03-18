@@ -8,8 +8,8 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="stylesheet" href="./_media/custom.css">
 
-  <link href="//fastly.jsdelivr.net/npm/docsify@4/themes/vue.css" type="text/css" rel="stylesheet" />
   <script>
     const chinaCDN = 'https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-y/docsify/4.12.2';
     const globalCDN = '//fastly.jsdelivr.net/npm/docsify@4';
@@ -34,8 +34,30 @@
 
 <body>
   <div id="app"></div>
+  <script src="//fastly.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+
+  <script src="//fastly.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+  <script src="//fastly.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+
   <script src="//fastly.jsdelivr.net/npm/docsify-edit-on-github"></script>
   <script>
+    if (typeof navigator.serviceWorker !== 'undefined') {
+      navigator.serviceWorker.register('sw.js')
+    }
+
+    const text = pangu.spacing("當你凝視著bug，bug也凝視著你");
+    // text = '當你凝視著 bug，bug 也凝視著你'
+
+    pangu.spacingElementById('main');
+    pangu.spacingElementByClassName('comment');
+    pangu.spacingElementByTagName('p');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // listen to any DOM change and automatically perform spacing via MutationObserver()
+      pangu.autoSpacingPage();
+    });
+
+
     window.$docsify = {
       search: 'auto',
       name: 'UISSH docs',
