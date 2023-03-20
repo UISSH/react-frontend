@@ -1,5 +1,10 @@
+import DeleteIcon from "@mui/icons-material/Delete";
+import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import EditIcon from "@mui/icons-material/Edit";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -7,21 +12,17 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useSnackbar } from "notistack";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { fetchData, requestData } from "../../requests/http";
+import { requestData } from "../../requests/http";
 import { getApiGateway } from "../../requests/utils";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { UpdateExplorerTableUISignal } from "./ExplorerTable";
-import EditIcon from "@mui/icons-material/Edit";
-import { useNavigate } from "react-router-dom";
 import RenameFSDialog from "./RenameFSDialog";
 export interface FileMenuProps {
   id: string | number;
@@ -77,7 +78,7 @@ function DeleteFile(
         </DialogTitle>
         <DialogContent>
           <div className="pt-2">
-            t("Are you sure you want to delete this file?")
+            {t("Are you sure you want to delete this file?")}
           </div>
         </DialogContent>
         <DialogActions>
@@ -224,7 +225,6 @@ export default function Index(props: FileMenuProps) {
       </IconButton>
 
       <Menu
-        className="p-0 m-0"
         sx={{ "& .MuiList-padding": { paddingTop: 0, paddingBottom: 0 } }}
         id={props.id + "-positioned-menu"}
         aria-labelledby={props.id + "-positioned-button"}
@@ -240,22 +240,25 @@ export default function Index(props: FileMenuProps) {
           horizontal: "left",
         }}>
         {props.name && (
-          <div
-            className="w-full h-full p-2 bg-slate-300 text-center "
-            color="primary">
+          <Box
+            className="w-full h-full p-2 pl-4 "
+            sx={{
+              minWidth: "100px",
+              color: (theme) => theme.palette.secondary.contrastText,
+              backgroundColor: (theme) => {
+                return theme.palette.secondary.main;
+              },
+            }}>
             {props.name}
-          </div>
+          </Box>
         )}
         <MenuItem className=" capitalize" onClick={handleEdit}>
-          <EditIcon className="mr-2" />
           {t("exploprer.edit")}
         </MenuItem>
         <MenuItem className=" capitalize" onClick={handleDownload}>
-          <FileDownloadIcon className="mr-2" />
           {t("exploprer.download")}
         </MenuItem>
         <MenuItem className="capitalize" onClick={handleRename}>
-          <DriveFileRenameOutlineIcon className="mr-2" />
           {t("exploprer.rename")}
         </MenuItem>
         <MenuItem
@@ -264,7 +267,6 @@ export default function Index(props: FileMenuProps) {
             setAnchorEl(null);
             setOpenDelete(true);
           }}>
-          <DeleteIcon className="mr-2" />
           {t("exploprer.delete")}
         </MenuItem>
       </Menu>

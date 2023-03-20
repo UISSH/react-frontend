@@ -77,9 +77,7 @@ export default function RenameFSDialog(props: RenameFSDialogProps) {
           bgcolor={(theme) => theme.palette.primary.main}
           color={(theme) => theme.palette.text.disabled}>
           <div className="flex justify-between  items-center">
-            <div className="capitalize">
-              {t("common.rename") + " " + props.name}
-            </div>
+            <div>{t("exploprer.rename") + " " + props.name}</div>
             <IconButton
               color="inherit"
               onClick={() => props.onStatus("cancel")}>

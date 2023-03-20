@@ -28,6 +28,7 @@ import DropFileUpload from "../DropFileUpload";
 import { ReloadTableDataContext } from "./ExplorerContext";
 import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
+import FolderMenu from "./FolderMenu";
 
 const MAIN = "fileBrowser";
 
@@ -267,8 +268,15 @@ export default function Index({ className }: { className?: string }) {
                   <div> {row.filename}</div>
                 </div>
                 <div className="invisible group-hover:visible">
-                  {row.type == "regular" && (
+                  {row.type == "regular" ? (
                     <FileMenu
+                      id={row["id"]}
+                      name={row.filename}
+                      directory={getCurrentDirectory()}
+                      path={getCurrentDirectory() + row.filename}
+                    />
+                  ) : (
+                    <FolderMenu
                       id={row["id"]}
                       name={row.filename}
                       directory={getCurrentDirectory()}
