@@ -15,7 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { atom, useRecoilState } from "recoil";

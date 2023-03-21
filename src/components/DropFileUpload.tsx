@@ -72,7 +72,6 @@ export default function DropFileUpload(props: DropFileUploadProps) {
   };
 
   useEffect(() => {
-    console.log("uploadSignal", props.uploadSignal);
     if (props.uploadSignal === true) {
       requestUpload();
     }
