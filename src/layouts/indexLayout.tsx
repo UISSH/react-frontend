@@ -1,10 +1,9 @@
 import FolderIcon from "@mui/icons-material/Folder";
 import RouteIcon from "@mui/icons-material/Route";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Box from "@mui/material/Box";
 import { styled, useTheme } from "@mui/material/styles";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -22,8 +21,6 @@ import {
   LinearProgress,
   Modal,
   Paper,
-  Tab,
-  Typography,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Divider from "@mui/material/Divider";
@@ -33,16 +30,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import { useTranslation } from "react-i18next";
-import {
-  NavLink,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import packagejs from "../../package.json";
+import LabTabs from "../components/Labtabs";
 import useLongPress from "../hooks/useLongPress";
 import { fetchData, hasAuthToken } from "../requests/http";
 import {
@@ -119,67 +110,6 @@ export async function loader() {
   }
 
   return null;
-}
-
-function LabTabs() {
-  const [value, setValue] = useState("1");
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-  };
-  let params = useParams();
-  let location = useLocation();
-  const [_searchParams] = useSearchParams();
-  const [searchParams, setSearchParams] = useState<any>({});
-
-  const [locationState, setLocationState] = useState(location.state || {});
-
-  useEffect(() => {
-    let data: any = {};
-    for (let k of _searchParams.keys()) {
-      data[k] = _searchParams.get(k);
-    }
-    setSearchParams(data);
-  }, [_searchParams]);
-
-  return (
-    <Box sx={{ width: "100%", typography: "body2", minHeight: "480px" }}>
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <TabList
-            textColor="secondary"
-            indicatorColor="secondary"
-            onChange={handleChange}
-            aria-label="params tabs">
-            <Tab sx={{ textTransform: "none" }} label="useParams" value="1" />
-            <Tab
-              sx={{ textTransform: "none" }}
-              label="searchParams"
-              value="2"
-            />
-            <Tab
-              sx={{ textTransform: "none" }}
-              label="locationState"
-              value="3"
-            />
-          </TabList>
-        </Box>
-        <TabPanel value="1">{JSON.stringify(params)}</TabPanel>
-        <TabPanel value="2">
-          <Typography variant="subtitle2" className=" text-gray-500">
-            {" "}
-            [searchParams] = useSearchParams()
-          </Typography>
-          <Typography variant="subtitle2" className=" text-gray-500">
-            searchParams.get(key)
-          </Typography>
-
-          <div className="pt-2">{JSON.stringify(searchParams, null, 2)}</div>
-        </TabPanel>
-        <TabPanel value="3">{JSON.stringify(locationState)}</TabPanel>
-      </TabContext>
-    </Box>
-  );
 }
 
 function GlobalLoading() {
@@ -299,7 +229,7 @@ export default function PersistentDrawerLeft() {
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
-        <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white  shadow-md rounded-md">
+        <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-md rounded-md">
           <LabTabs></LabTabs>
         </Box>
       </Modal>

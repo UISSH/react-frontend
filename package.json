@@ -1,7 +1,7 @@
 {
   "name": "react-mui",
   "private": true,
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -34,6 +34,7 @@
     "react-full-screen": "^1.1.1",
     "react-hook-form": "^7.43.5",
     "react-i18next": "^12.2.0",
+    "react-json-tree": "^0.18.0",
     "react-router-dom": "^6.8.0",
     "recoil": "^0.7.6",
     "sort-by": "^0.0.2",
