@@ -1,11 +1,12 @@
 {
   "name": "react-mui",
   "private": true,
-  "version": "0.0.15",
+  "version": "0.0.16",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build-django": "tsc && vite build --base=/static/common/",
     "preview": "vite preview  ",
     "pretty": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\""
   },

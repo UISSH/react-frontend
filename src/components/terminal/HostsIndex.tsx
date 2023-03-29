@@ -2,7 +2,6 @@ import AddIcon from "@mui/icons-material/AddCircle";
 import {
   ButtonGroup,
   ClickAwayListener,
-  Collapse,
   Divider,
   Grow,
   IconButton,
@@ -23,11 +22,11 @@ import PostHost from "./PostHost";
 import { HostAuth } from "./TerminalSession";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import Snippets from "./Snippets";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useLocation } from "react-router-dom";
 import { ShortcutItemIF } from "../../store/shortStore";
 import ShortcutBook from "../overview/ShortcutBook";
-import DeleteIcon from "@mui/icons-material/Delete";
+import Snippets from "./Snippets";
 
 export interface LocationState {
   name: string;

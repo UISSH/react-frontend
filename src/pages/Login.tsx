@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import packageJson from "../../package.json";
 import LoadingButton from "@mui/lab/LoadingButton";
+import backgroundJPG from "../assets/background.jpg";
 
 import {
   Alert,
@@ -137,11 +138,10 @@ function Login() {
 
   return (
     <ScopedCssBaseline enableColorScheme>
-      <div className=" p-0  m-0 w-screen  h-screen bg-cover bg-center bg-[url('/assets/background.jpg')]">
-        <div
-          className={
-            "h-full flex items-center justify-center backdrop-blur-xl "
-          }>
+      <div
+        style={{ backgroundImage: `url(${backgroundJPG})` }}
+        className="p-0  m-0 w-screen  h-screen bg-cover bg-center">
+        <div className="h-full flex items-center justify-center backdrop-blur-xl">
           <div>
             <Card className="rounded-2xl  text-center w-96  shadow-2xl">
               <CardHeader
