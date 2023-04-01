@@ -39,7 +39,7 @@
     "react-router-dom": "^6.8.0",
     "recoil": "^0.7.6",
     "sort-by": "^0.0.2",
-    "swr": "^2.0.0",
+    "swr": "^2.1.1",
     "xterm": "^5.1.0",
     "xterm-addon-attach": "^0.8.0",
     "xterm-addon-fit": "^0.7.0",
