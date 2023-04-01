@@ -36,7 +36,7 @@
     "react-hook-form": "^7.43.5",
     "react-i18next": "^12.2.0",
     "react-json-tree": "^0.18.0",
-    "react-router-dom": "^6.8.0",
+    "react-router-dom": "^6.10.0",
     "recoil": "^0.7.6",
     "sort-by": "^0.0.2",
     "swr": "^2.0.0",
