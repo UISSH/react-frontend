@@ -14,7 +14,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { fetchData } from "../../requests/http";
+import { requestData } from "../../requests/http";
 import { OperationResIF } from "../../requests/interface";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { generateRandom } from "../../utils";
@@ -55,20 +55,22 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
       }
       setGlobalLoadingAtom(true);
 
-      fetchData({
-        apiType: "verifyDomainRecords",
+      requestData({
+        url: "verifyDomainRecords",
         params: {
-          searchParam: { domain: websiteBody.domain },
+          domain: websiteBody.domain,
         },
       })
         .then(async (res) => {
           if (!res.ok) {
             enqueueSnackbar(t("network-error"), { variant: "error" });
             setSslCheck(false);
+            setWebsiteBody({ ...websiteBody, ssl_enable: false });
           }
           let op: OperationResIF = await res.json();
           if (op.result.result == 1) {
             setSslCheck(true);
+            setWebsiteBody({ ...websiteBody, ssl_enable: true });
             enqueueSnackbar("ok", { variant: "success" });
           } else if (op.result.result == 2) {
             setSslCheck(false);
@@ -76,10 +78,12 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
               op.msg !== "None"
                 ? op.msg
                 : t(
-                    "the-domain-name-has-not-yet-resolved-to-the-server-public-ip"
+                    "website.the-domain-name-has-not-yet-resolved-to-the-server-public-ip"
                   ),
               { variant: "error" }
             );
+
+            setWebsiteBody({ ...websiteBody, ssl_enable: false });
           }
         })
         .finally(() => {
@@ -100,6 +104,10 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
   };
 
   const handleNextStep = () => {
+    if (!props.requestBody.current) {
+      return;
+    }
+
     props.requestBody.current.website = {
       ...props.requestBody.current.website,
       ...websiteBody,
@@ -209,7 +217,7 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
           {databaseCheck ? (
             <>
               <div className="capitalize">
-                <Divider textAlign="center">{t("database")}</Divider>
+                <Divider textAlign="center">{t("common.database")}</Divider>
               </div>
               <TextField
                 id={"database_name"}

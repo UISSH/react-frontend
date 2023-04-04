@@ -108,7 +108,6 @@
     "snippet": "Snippet",
     "snippetNameRequired": "Snippet name is required"
   },
-  "the-domain-name-has-not-yet-resolved-to-the-server-public-ip": "The domain name has not yet resolved to the server public IP",
   "website": {
     "add": "add",
     "application": "application",
@@ -119,6 +118,7 @@
     "domain": "domain",
     "path": "path",
     "please-input-domain": "Please input domain",
-    "ssl": "SSL"
+    "ssl": "SSL",
+    "the-domain-name-has-not-yet-resolved-to-the-server-public-ip": "The domain name has not yet resolved to the server public IP"
   }
 }

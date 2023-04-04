@@ -103,10 +103,7 @@ export interface BaseSettingChangeData {
   };
 }
 export interface CreateWebsiteStepProps {
-  requestBody: MutableRefObject<{
-    website: {};
-    database: {};
-  }>;
+  requestBody: MutableRefObject<RequestBodyIF | undefined>;
   onPreviousStep?: () => void;
   onNextStep?: () => void;
 }
@@ -124,4 +121,30 @@ interface Path {
 interface Certbot {
   email: string;
   provider: string;
+}
+
+export interface RequestBodyIF {
+  website: WebsiteIF;
+  database: DatabaseIF;
+}
+
+interface DatabaseIF {
+  name?: string;
+  username?: string;
+  password?: string;
+}
+
+interface WebsiteIF {
+  application?: string;
+  name?: string;
+  domain?: string;
+  ssl_enable?: boolean;
+  index_root?: string;
+  application_config?: ApplicationconfigIF;
+}
+
+interface ApplicationconfigIF {
+  username: string;
+  password: string;
+  email: string;
 }

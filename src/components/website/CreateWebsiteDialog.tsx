@@ -6,13 +6,13 @@ import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
-import { fetchData } from "../../requests/http";
+import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import CardDialog from "../CardDialog";
 import ApplicationSettings from "./ApplicationSettings";
 import BaseSetting from "./BaseSetting";
-import { ApplicationType } from "./interface";
 import SelectApplication from "./SelectApplication";
+import { ApplicationType, RequestBodyIF } from "./interface";
 
 interface CreateWebsiteProps {
   open: boolean;
@@ -25,7 +25,7 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
   const [step, setStep] = useState(1);
   const [application, setApplication] = useState<ApplicationType>();
-  const requestBody = useRef({
+  const requestBody = useRef<RequestBodyIF>({
     website: {},
     database: {},
   });
@@ -49,19 +49,20 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
   };
 
   const handleDone = async () => {
+    if (requestBody.current == undefined) {
+      return;
+    }
+
     setGlobalLoadingAtom(true);
 
     console.log(requestBody.current);
 
-    // create website
-
-    let res = await fetchData({
-      apiType: "website",
-      init: {
-        method: "POST",
-        body: JSON.stringify(requestBody.current.website),
-      },
+    let res = await requestData({
+      url: "website",
+      method: "POST",
+      data: requestBody.current.website,
     });
+
     let resWebsiteJson = { id: -1 };
 
     if (res.ok) {
@@ -72,15 +73,12 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       return;
     }
 
-    // create database
-    res = await fetchData({
-      apiType: "database",
-      init: {
-        method: "POST",
-        body: JSON.stringify({
-          ...requestBody.current.database,
-          website: resWebsiteJson.id,
-        }),
+    res = await requestData({
+      url: "database",
+      method: "POST",
+      data: {
+        ...requestBody.current.database,
+        website: resWebsiteJson.id,
       },
     });
 
@@ -94,16 +92,9 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       return;
     }
 
-    // create database instance on server
-
-    res = await fetchData({
-      apiType: "createDatabaseInstance",
-      init: {
-        method: "POST",
-      },
-      params: {
-        pathParam: { id: String(resDatabaseJson.id) },
-      },
+    res = await requestData({
+      url: `/api/DataBase/${resDatabaseJson.id}/create_instance/`,
+      method: "POST",
     });
 
     if (!res.ok) {
@@ -115,14 +106,9 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       return;
     }
 
-    res = await fetchData({
-      apiType: "createApplication",
-      init: {
-        method: "POST",
-      },
-      params: {
-        pathParam: { id: String(resWebsiteJson.id) },
-      },
+    res = await requestData({
+      url: `/api/Application/${resWebsiteJson.id}/app_create/`,
+      method: "POST",
     });
 
     if (!res.ok) {
@@ -154,7 +140,7 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
       <DialogTitle
         bgcolor={(theme) => theme.palette.primary.main}
         color={(theme) => theme.palette.text.disabled}>
-        <div className="flex justify-between  items-center">
+        <div className="flex justify-between items-center">
           <div className="capitalize">{t("website.create-new-website")}</div>
           <IconButton color="inherit" onClick={() => onStatus("cancel")}>
             <CloseIcon />
