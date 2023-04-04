@@ -2,7 +2,7 @@ import { Box, Button, DialogActions, TextField } from "@mui/material";
 
 import DialogContent from "@mui/material/DialogContent";
 import { useSnackbar } from "notistack";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationType, CreateWebsiteStepProps } from "./interface";
 

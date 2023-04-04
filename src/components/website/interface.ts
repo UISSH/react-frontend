@@ -103,7 +103,7 @@ export interface BaseSettingChangeData {
   };
 }
 export interface CreateWebsiteStepProps {
-  requestBody: MutableRefObject<RequestBodyIF | undefined>;
+  requestBody: MutableRefObject<RequestBodyIF>;
   onPreviousStep?: () => void;
   onNextStep?: () => void;
 }
@@ -140,11 +140,5 @@ interface WebsiteIF {
   domain?: string;
   ssl_enable?: boolean;
   index_root?: string;
-  application_config?: ApplicationconfigIF;
-}
-
-interface ApplicationconfigIF {
-  username: string;
-  password: string;
-  email: string;
+  application_config?: Record<string, string>;
 }
