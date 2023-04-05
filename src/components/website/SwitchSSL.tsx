@@ -1,6 +1,6 @@
 import { Switch } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { ApiType, fetchData } from "../../requests/http";
+import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 import { useSnackbar } from "notistack";
@@ -23,16 +23,16 @@ export function SwitchSSL({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let checked = event.target.checked;
 
-    let action: ApiType = checked ? "enableWebsiteSSL" : "disableWebsiteSSL";
+    let action = checked
+      ? `/api/Website/${rowID}/enable_ssl/`
+      : `/api/Website/${rowID}/disable_ssl/`;
     setGlobalLoadingAtomState(true);
-    fetchData({
-      apiType: action,
-      init: { method: "post" },
-      params: { pathParam: { id: rowID } },
+
+    requestData({
+      url: action,
+      method: "POST",
     })
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((res) => {
         if (res.result.result === 2) {
           enqueueSnackbar(res.msg, { variant: "error" });

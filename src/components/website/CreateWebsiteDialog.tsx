@@ -55,8 +55,6 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
     setGlobalLoadingAtom(true);
 
-    console.log(requestBody.current);
-
     let res = await requestData({
       url: "website",
       method: "POST",
@@ -84,26 +82,27 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
 
     let resDatabaseJson = { id: -1 };
 
-    if (res.ok) {
-      resDatabaseJson = await res.json();
-    } else {
-      setGlobalLoadingAtom(false);
-      enqueueSnackbar(t("Create database error"), { variant: "error" });
-      return;
-    }
-
-    res = await requestData({
-      url: `/api/DataBase/${resDatabaseJson.id}/create_instance/`,
-      method: "POST",
-    });
-
-    if (!res.ok) {
-      setGlobalLoadingAtom(false);
-      enqueueSnackbar(t("Create database instance error"), {
-        variant: "error",
+    if (Object.keys(requestBody.current.database).length !== 0) {
+      if (res.ok) {
+        resDatabaseJson = await res.json();
+      } else {
+        setGlobalLoadingAtom(false);
+        enqueueSnackbar(t("Create database error"), { variant: "error" });
+        return;
+      }
+      res = await requestData({
+        url: `/api/DataBase/${resDatabaseJson.id}/create_instance/`,
+        method: "POST",
       });
 
-      return;
+      if (!res.ok) {
+        setGlobalLoadingAtom(false);
+        enqueueSnackbar(t("Create database instance error"), {
+          variant: "error",
+        });
+
+        return;
+      }
     }
 
     res = await requestData({
@@ -123,7 +122,26 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     enqueueSnackbar(t("Successfully deployed the application"), {
       variant: "success",
     });
-    onStatus("done");
+
+    if (res.ok && requestBody.current.website?.ssl_enable) {
+      setGlobalLoadingAtom(true);
+      requestData({
+        url: `/api/Website/${resWebsiteJson.id}/enable_ssl/`,
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.result.result === 2) {
+            enqueueSnackbar(res.msg, { variant: "error" });
+          } else {
+            enqueueSnackbar("ok", { variant: "success" });
+          }
+        })
+        .finally(() => {
+          setGlobalLoadingAtom(false);
+          onStatus("done");
+        });
+    }
   };
 
   useEffect(() => {
