@@ -18,6 +18,20 @@
     "text": "文本",
     "website": "站点"
   },
+  "database": {
+    "are-you-sure-to-delete-the-databse": "确定要删除数据库吗？",
+    "backup": "备份",
+    "name": "名称",
+    "password": "密码",
+    "restore-backup": "恢复备份",
+    "restore-backup-failed": "恢复备份失败",
+    "restore-backup-success": "恢复备份成功",
+    "status": "状态",
+    "type": "类型",
+    "upload-backup-file": "上传备份文件",
+    "username": "用户名"
+  },
+  "empty-data": "没有数据",
   "exploprer": {
     "Are-you-sure-to-delete-the-following-files": "确定要删除以下文件吗？",
     "action": "操作",
@@ -25,7 +39,9 @@
     "delete": "删除",
     "download": "下载",
     "edit": "编辑",
+    "file": "file",
     "filename": "文件名",
+    "folder": "folder",
     "group": "组",
     "mode": "权限",
     "new": "新建",
@@ -35,13 +51,25 @@
   },
   "failed": "失败",
   "filesystem": {
-    "ftp-alert": "强烈建议使用支持 FTPS 协议的客户端，使用 Window 文件资源管理器是不安全的。 "
+    "add-failed": "添加失败",
+    "add-success": "添加成功",
+    "file-system-settings": "文件系统设置",
+    "ftp-account": "FTP 账号",
+    "ftp-alert": "强烈建议使用支持 FTPS 协议的客户端，使用 Window 文件资源管理器是不安全的。",
+    "install": "安装",
+    "password": "密码",
+    "password-is-required": "密码不能为空",
+    "username": "用户名",
+    "username-is-required": "用户名不能为空",
+    "you-need-to-install-an-ftp-server-to-enable-this-feature": "您需要安装一个 FTP 服务器来启用此功能。"
   },
   "key": "hello world",
   "layout": {
+    "IPTables": "防火墙",
     "database": "数据库",
     "explorer": "文件管理",
     "files": "文件管理",
+    "filesystem": "文件系统",
     "ftp": "FTP",
     "overview": "概述",
     "selected": "被选中",
@@ -55,6 +83,7 @@
     "remember-me": "记住我",
     "username": "用户名"
   },
+  "login-server": "登录到服务器",
   "network-error": "网络错误",
   "ok": "确定",
   "overview": {
@@ -72,7 +101,13 @@
   "sorry-an-unexpected-error-has-occurred": "抱歉，这里有一个错误发生.",
   "success": "成功",
   "terminal": {
+    "addhost": "新建主机",
     "addsnippet": "新建片段",
+    "click-to-send-to-the-selected-terminal": "点击发送到选中的终端",
+    "host": "主机",
+    "hostname": "主机名",
+    "name": "名称",
+    "snippet": "片段",
     "snippetNameRequired": "片段名称不能为空"
   },
   "website": {

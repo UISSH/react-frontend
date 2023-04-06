@@ -102,10 +102,11 @@ export function ShortcutItem(props: { value: ShortcutItemIF[] }): ReactElement {
 }
 
 export function CateShortcutTabPanel(props: { value?: ShortcutIF }) {
+  const [t] = useTranslation();
   if (!props.value) {
     return (
       <>
-        <div>empty data</div>
+        <div>t("empty-data")</div>
       </>
     );
   }
@@ -113,7 +114,7 @@ export function CateShortcutTabPanel(props: { value?: ShortcutIF }) {
   if (cuteNameList.length <= 0) {
     return (
       <>
-        <div>empty data</div>
+        <div>{t("empty-data")}</div>
       </>
     );
   }

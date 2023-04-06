@@ -21,6 +21,7 @@ const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 
 const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
 const HappyNewYear = lazy(() => import("../pages/HappyNewYear"));
+const IPTablesIndex = lazy(() => import("../pages/IndexLayout/IPTables"));
 
 export const router = createHashRouter([
   {
@@ -126,6 +127,14 @@ export const router = createHashRouter([
         element: (
           <Suspense>
             <MonacoEditorPage></MonacoEditorPage>
+          </Suspense>
+        ),
+      },
+      {
+        path: "iptables",
+        element: (
+          <Suspense>
+            <IPTablesIndex></IPTablesIndex>
           </Suspense>
         ),
       },

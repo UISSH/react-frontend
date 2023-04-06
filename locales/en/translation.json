@@ -35,6 +35,7 @@
   "exploprer": {
     "Are-you-sure-to-delete-the-following-files": "Are you sure to delete the following files?",
     "action": "action",
+    "add": "add",
     "delete": "delete",
     "download": "download",
     "edit": "edit",
@@ -64,6 +65,7 @@
   },
   "key": "hello world",
   "layout": {
+    "IPTables": "iptables",
     "database": "database",
     "explorer": "explorer",
     "files": "files",

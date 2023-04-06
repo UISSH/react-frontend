@@ -4,7 +4,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import Box from "@mui/material/Box";
 import { styled, useTheme } from "@mui/material/styles";
 import { useState } from "react";
-
+import SecurityIcon from "@mui/icons-material/Security";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -209,6 +209,11 @@ export default function PersistentDrawerLeft() {
       name: t("layout.ftp"),
       icon: RouteIcon,
       to: "/dash/mount",
+    },
+    {
+      name: t("layout.IPTables"),
+      icon: SecurityIcon,
+      to: "/dash/iptables",
     },
   ];
   const handleDrawerOpen = () => {
