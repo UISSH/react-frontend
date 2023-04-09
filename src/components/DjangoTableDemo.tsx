@@ -94,6 +94,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </Typography>
         )}
         <ButtonGroup
+          className="flex-nowarp"
           variant="contained"
           aria-label="outlined primary button group">
           <Button
@@ -107,9 +108,10 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           {numSelected > 0 ? (
             <Button
               color="error"
+              className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
               onClick={handleDelete}>
-              {t("delete")}
+              <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
             <div></div>
@@ -181,17 +183,19 @@ export default function DemoTable(props: DemoTableProps) {
     });
   };
 
-  const { mutate } = useSWR(requestDataProps, (props) => {
+  const { mutate, data } = useSWR<any>(requestDataProps, async (props) => {
     setGlobalProgress(true);
-    requestData(props)
-      .then((res) => res.json())
-      .then((data) => {
-        setRowsState(transformRowData(data.results));
-        setPaginationState(data.pagination);
-      })
-      .finally(() => {
-        setGlobalProgress(false);
-      });
+    let data = await requestData(props);
+    if (data.ok) {
+      let res = await data.json();
+      res = res as any;
+      setRowsState(transformRowData(res.results));
+      setPaginationState(res.pagination);
+      setGlobalProgress(false);
+      return res;
+    } else {
+      setGlobalProgress(false);
+    }
   });
 
   const handleSetTargetPage = (targetPage: number) => {

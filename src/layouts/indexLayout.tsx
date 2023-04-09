@@ -211,7 +211,7 @@ export default function PersistentDrawerLeft() {
       to: "/dash/mount",
     },
     {
-      name: t("layout.IPTables"),
+      name: t("layout.iptables"),
       icon: SecurityIcon,
       to: "/dash/iptables",
     },

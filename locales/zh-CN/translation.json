@@ -65,7 +65,7 @@
   },
   "key": "hello world",
   "layout": {
-    "IPTables": "防火墙",
+    "iptables": "防火墙",
     "database": "数据库",
     "explorer": "文件管理",
     "files": "文件管理",

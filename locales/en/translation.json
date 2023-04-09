@@ -65,7 +65,7 @@
   },
   "key": "hello world",
   "layout": {
-    "IPTables": "iptables",
+    "iptables": "iptables",
     "database": "database",
     "explorer": "explorer",
     "files": "files",

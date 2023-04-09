@@ -166,7 +166,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             </Tooltip>
 
             {numSelected > 0 ? (
-              <Tooltip title={t("delete")}>
+              <Tooltip title={t("common.delete")}>
                 <IconButton color="error" onClick={handleDelete}>
                   <DeleteIcon></DeleteIcon>
                 </IconButton>

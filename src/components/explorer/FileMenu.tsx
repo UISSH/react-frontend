@@ -74,7 +74,7 @@ function DeleteFile(
     <div>
       <Dialog open={props.open} onClose={handleClose}>
         <DialogTitle>
-          <span className="capitalize"> {t("delete")}</span> {props.name}
+          <span className="capitalize"> {t("common.delete")}</span> {props.name}
         </DialogTitle>
         <DialogContent>
           <div className="pt-2">

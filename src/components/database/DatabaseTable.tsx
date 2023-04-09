@@ -116,7 +116,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               color="error"
               startIcon={<DeleteIcon />}
               onClick={handleDelete}>
-              {t("delete")}
+              <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
             <div></div>
