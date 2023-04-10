@@ -1,5 +1,4 @@
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import FormGroup from "@mui/material/FormGroup";
@@ -31,6 +30,7 @@ import {
   TableDjango,
 } from "../../components/DjangoTable";
 import { GlobalProgressAtom } from "../../store/recoilStore";
+import AddIPTablesRule from "../../components/iptables/AddIPTablesRule";
 
 export interface ResponseIF {
   pagination: PaginationIF;
@@ -72,83 +72,6 @@ interface RequestDataProps {
     ordering: string;
     page_size: string;
   };
-}
-
-function AddIPTablesRule(props: {
-  children?: React.ReactNode;
-  className?: string;
-}) {
-  const [age, setAge] = React.useState("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
-  };
-  return (
-    <>
-      <FormGroup row className=" gap-2  ">
-        <FormControl>
-          <InputLabel id="application-simple-select-label">
-            application
-          </InputLabel>
-          <Select
-            size="small"
-            labelId="application-simple-select-label"
-            id="application-select"
-            value={age}
-            sx={{
-              minWidth: 120,
-            }}
-            label="application"
-            onChange={handleChange}>
-            <MenuItem value={10}>Custom</MenuItem>
-            <MenuItem value={20}>ALL TCP</MenuItem>
-            <MenuItem value={30}>ALL UDP</MenuItem>
-            <MenuItem value={30}>ALL protocols</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="protocol-simple-select-label">Protocol</InputLabel>
-          <Select
-            size="small"
-            labelId="protocol-simple-select-label"
-            id="protocol-select"
-            value={age}
-            sx={{
-              minWidth: 120,
-            }}
-            label="protocol"
-            onChange={handleChange}>
-            <MenuItem value={10}>ALL</MenuItem>
-            <MenuItem value={20}>TCP</MenuItem>
-            <MenuItem value={30}>UDP</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <TextField
-            size="small"
-            id="port-or-range"
-            label="Port or range            "
-            variant="outlined"
-            type="number"
-          />
-        </FormControl>
-
-        <FormControlLabel
-          control={<Checkbox defaultChecked />}
-          label="Restrict to IP address"
-        />
-      </FormGroup>
-      <div className="flex gap-2 justify-end mr-2">
-        <Button size="small" variant="contained" color="primary">
-          ok
-        </Button>
-        <Button size="small" variant="contained" color="secondary">
-          cancel
-        </Button>
-      </div>
-    </>
-  );
 }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -212,16 +135,6 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             {t("add")}
           </Button>
 
-          {numSelected > 0 ? (
-            <Button
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
-              <div className="whitespace-nowrap">{t("common.delete")}</div>
-            </Button>
-          ) : (
-            <div></div>
-          )}
           <IconButton
             className={globalProgress ? "animate-spin" : ""}
             color="primary"
@@ -230,7 +143,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </IconButton>
         </ButtonGroup>
       </Toolbar>
-      <div>
+      <div className="ml-4 mt-4">
         <AddIPTablesRule></AddIPTablesRule>
       </div>
     </>
@@ -281,13 +194,9 @@ export default function IPTablesIndex(props: IPTablesIndexProps) {
   const [pageSizeState, setPageSizeState] = useState(5);
   const [selected, setSelected] = useState<readonly string[]>([]);
 
-  const handleAction = (action: string) => {
+  const handleAction = async (action: string) => {
     if (action === "reload") {
       setUpdateState(updateState + 1);
-    }
-
-    if (action === "delete") {
-      console.log(selected);
     }
   };
   const handleSetpageSize = (size: number) => {
@@ -317,9 +226,6 @@ export default function IPTablesIndex(props: IPTablesIndexProps) {
         command: "echo 'y' | ufw delete " + id,
       },
     });
-    if (data.ok) {
-      setUpdateState(updateState + 1);
-    }
   };
 
   const transformRowData = (data: RowIF[]) => {
@@ -331,9 +237,12 @@ export default function IPTablesIndex(props: IPTablesIndexProps) {
             size="small"
             className={"invisible group-hover:visible"}
             color="warning"
-            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            onClick={async (
+              e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+            ) => {
               e.stopPropagation();
-              deleteRule(row.id);
+              await deleteRule(row.id);
+              setUpdateState(updateState + 1);
             }}>
             {t("common.delete")}
           </Button>
