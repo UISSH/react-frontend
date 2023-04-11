@@ -16,7 +16,7 @@ import { useSnackbar } from "notistack";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 import { requestData } from "../../requests/http";
-import { PureFunctionContext } from "./ExplorerContext";
+import { PureFunctionContext } from "../../Context";
 
 export interface RenameFSDialogProps {
   name: string;
