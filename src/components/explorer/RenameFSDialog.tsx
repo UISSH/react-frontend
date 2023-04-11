@@ -16,7 +16,7 @@ import { useSnackbar } from "notistack";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 import { requestData } from "../../requests/http";
-import { ReloadTableDataContext } from "./ExplorerContext";
+import { PureFunctionContext } from "./ExplorerContext";
 
 export interface RenameFSDialogProps {
   name: string;
@@ -36,7 +36,7 @@ export default function RenameFSDialog(props: RenameFSDialogProps) {
   const [globalLoadingAtom, setGlobalLoadingAtom] =
     useRecoilState(GlobalLoadingAtom);
 
-  const onReloadTableData = useContext(ReloadTableDataContext);
+  const onReloadTableData = useContext(PureFunctionContext);
   const {
     register,
     handleSubmit,

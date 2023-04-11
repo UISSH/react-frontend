@@ -1,23 +1,14 @@
 import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
-import FormGroup from "@mui/material/FormGroup";
-
 import {
   alpha,
   Button,
   ButtonGroup,
-  Checkbox,
-  FormControlLabel,
   IconButton,
-  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import * as React from "react";
 import useSWR from "swr";
 import { requestData } from "../../requests/http";
@@ -29,8 +20,9 @@ import {
   EnhancedTableToolbarProps,
   TableDjango,
 } from "../../components/DjangoTable";
-import { GlobalProgressAtom } from "../../store/recoilStore";
 import AddIPTablesRule from "../../components/iptables/AddIPTablesRule";
+import { GlobalProgressAtom } from "../../store/recoilStore";
+import { PureFunctionContext } from "../../Context";
 
 export interface ResponseIF {
   pagination: PaginationIF;
@@ -127,14 +119,6 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <ButtonGroup
           variant="contained"
           aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("add")}
-          </Button>
-
           <IconButton
             className={globalProgress ? "animate-spin" : ""}
             color="primary"
@@ -282,17 +266,19 @@ export default function IPTablesIndex(props: IPTablesIndexProps) {
 
   return (
     <>
-      <TableDjango
-        dense
-        onAction={handleAction}
-        enhancedTableToolbar={EnhancedTableToolbar}
-        selectedState={[selected, setSelected]}
-        onSetPageSize={handleSetpageSize}
-        onRequestSort={handleRequestSort}
-        onSetPage={handleSetTargetPage}
-        rows={rowsState}
-        headCells={headCells}
-        title={LABEL}></TableDjango>
+      <PureFunctionContext.Provider value={mutate}>
+        <TableDjango
+          dense
+          onAction={handleAction}
+          enhancedTableToolbar={EnhancedTableToolbar}
+          selectedState={[selected, setSelected]}
+          onSetPageSize={handleSetpageSize}
+          onRequestSort={handleRequestSort}
+          onSetPage={handleSetTargetPage}
+          rows={rowsState}
+          headCells={headCells}
+          title={LABEL}></TableDjango>
+      </PureFunctionContext.Provider>
     </>
   );
 }

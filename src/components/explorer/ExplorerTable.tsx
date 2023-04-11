@@ -25,10 +25,10 @@ import { GlobalProgressAtom } from "../../store/recoilStore";
 import { formatBytes } from "../../utils";
 import { TableDjango } from "../DjangoTable";
 import DropFileUpload from "../DropFileUpload";
-import { ReloadTableDataContext } from "./ExplorerContext";
 import EnhancedTableToolbar from "./ExplorerTableToolBar";
 import FileMenu from "./FileMenu";
 import FolderMenu from "./FolderMenu";
+import { PureFunctionContext } from "../../Context";
 
 const MAIN = "fileBrowser";
 
@@ -314,7 +314,7 @@ export default function Index({ className }: { className?: string }) {
   }, [updateState]);
 
   return (
-    <ReloadTableDataContext.Provider
+    <PureFunctionContext.Provider
       value={() => {
         setUpdateState(updateState + 1);
       }}>
@@ -448,6 +448,6 @@ export default function Index({ className }: { className?: string }) {
           />
         )}
       </DropFileUpload>
-    </ReloadTableDataContext.Provider>
+    </PureFunctionContext.Provider>
   );
 }

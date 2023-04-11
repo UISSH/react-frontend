@@ -16,7 +16,7 @@ import { useSnackbar } from "notistack";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 import { requestData } from "../../requests/http";
-import { ReloadTableDataContext } from "./ExplorerContext";
+import { PureFunctionContext } from "../../Context";
 
 export interface FileNameDialogProps {
   name?: string;
@@ -50,7 +50,7 @@ export default function FileNameDialog(props: FileNameDialogProps) {
   const actionText = props.action === "create" ? "new" : "rename";
   const fileTypeText = props.fileType === "file" ? "file" : "folder";
   const nameText = props.name ? props.name : fileTypeText;
-  const onReloadTableData = useContext(ReloadTableDataContext);
+  const onReloadTableData = useContext(PureFunctionContext);
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     createNew(data.name);
   };
