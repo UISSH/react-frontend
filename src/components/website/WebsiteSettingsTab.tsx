@@ -276,7 +276,7 @@ function WebsiteBasicSettings(props: { id: string }) {
 
             <TextField
               multiline
-              helperText="separate by line"
+              helperText="separate by ','"
               value={extraDomain ? extraDomain : ""}
               onChange={(e) => setExtraDomain(e.target.value)}
               fullWidth
