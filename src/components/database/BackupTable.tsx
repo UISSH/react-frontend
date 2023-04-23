@@ -1,6 +1,8 @@
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import RestoreIcon from "@mui/icons-material/Restore";
 import {
   alpha,
   Button,
@@ -10,20 +12,18 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
+import { OperatingResIF } from "../../constant";
 import { requestData } from "../../requests/http";
+import { getApiGateway } from "../../requests/utils";
 import { GlobalLoadingAtom, GlobalProgressAtom } from "../../store/recoilStore";
 import { formatBytes } from "../../utils";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
-import { getApiGateway } from "../../requests/utils";
-import RestoreIcon from "@mui/icons-material/Restore";
-import { useSnackbar } from "notistack";
-import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 const API_URL = "/api/FileBrowser/query/";
 
 const LABEL = "database.backup";
@@ -42,7 +42,7 @@ interface RowIF {
   block_size: string;
   atime: string;
   mtime: string;
-  ctime: string;
+  ctime: number;
   btime: string;
   symlink: string;
   type: string;
@@ -170,6 +170,12 @@ export default function BackupTable(props: BackupTableProps) {
       disablePadding: false,
       label: "size",
     },
+    {
+      key: "ctime",
+      numeric: true,
+      disablePadding: false,
+      label: "time",
+    },
   ];
 
   const { enqueueSnackbar } = useSnackbar();
@@ -226,9 +232,10 @@ export default function BackupTable(props: BackupTableProps) {
       requestData({
         url: `/api/DataBase/${props.id}/export_backup/`,
         method: "POST",
-      }).then((res) => {
+      }).then(async (res) => {
         setGlobalLoadingAtom(false);
-        if (res.ok) {
+        let resJson = (await res.json()) as OperatingResIF;
+        if (res.ok && resJson.result.result_text == "SUCCESS") {
           enqueueSnackbar(t("database.backup-success"), {
             variant: "success",
           });
@@ -283,8 +290,8 @@ export default function BackupTable(props: BackupTableProps) {
                     path: row.path,
                   },
                 }).then(async (res) => {
-                  let resJson = await res.json();
-                  if (res.ok && resJson.result.result == 1) {
+                  let resJson = (await res.json()) as OperatingResIF;
+                  if (res.ok && resJson.result.result_text == "SUCCESS") {
                     enqueueSnackbar(t("database.restore-backup-success"), {
                       variant: "success",
                     });
@@ -349,6 +356,9 @@ export default function BackupTable(props: BackupTableProps) {
           </Tooltip>
         </div>
       );
+      row.ctime = new Date(
+        row.ctime * 1000
+      ).toLocaleString() as unknown as number;
       id++;
       return row;
     });

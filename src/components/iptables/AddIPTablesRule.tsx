@@ -309,7 +309,7 @@ export default function AddIPTablesRule(props: {
             variant="contained"
             color="primary"
             type="submit">
-            {t("iptables.allow")}
+            {t("iptables.execute")}
           </Button>
         </div>
       </form>

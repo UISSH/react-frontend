@@ -20,6 +20,7 @@ import { useRecoilState } from "recoil";
 import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import CardDialog from "../CardDialog";
+import S3Params from "./S3Params";
 
 export interface AddProps {
   children?: React.ReactNode;
@@ -30,16 +31,17 @@ export interface AddProps {
 interface IFormInput {
   username: string;
   password: string;
+  basePath?: string;
 }
 const defaultValues = {
   s3: {
-    endpoint: "https://s3.amazonaws.com",
-    region: "eu-west-1",
-    bucket: "my-bucket",
-    access_key_id: "AKIA....",
-    secret_access_key: "IDxd....",
-    disable_ssl: "false",
-    path_style: "false",
+    // endpoint: "https://s3.amazonaws.com",
+    // region: "eu-west-1",
+    bucket: " ",
+    access_key_id: " ",
+    secret_access_key: " ",
+    // disable_ssl: "false",
+    // path_style: "false",
   },
   os: {
     basePath: "/tmp",
@@ -53,9 +55,7 @@ export default function PostHost(props: AddProps) {
     useRecoilState(GlobalLoadingAtom);
 
   const [fileSystemType, setFileSystemType] = useState<"os" | "s3">("os");
-  const [params, setParams] = useState<string>(
-    JSON.stringify(defaultValues.os, null, 2)
-  );
+  const [params, setParams] = useState({});
 
   const {
     register,
@@ -70,12 +70,18 @@ export default function PostHost(props: AddProps) {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log({ ...data, file_system: fileSystemType, params: params });
+    let basePath = data.basePath;
+
+    delete data["basePath"];
+
+    let paramsText = JSON.stringify({ ...params, basePath: basePath });
+    let playload = { ...data, file_system: fileSystemType, params: paramsText };
+    console.log(playload);
     setGlobalLoadingAtom(true);
     requestData({
       url: "/api/FtpServer/",
       method: "POST",
-      data: { ...data, file_system: fileSystemType, params: params },
+      data: playload,
     }).then(async (res) => {
       if (res.status === 201) {
         enqueueSnackbar(t("filesystem.add-success"), {
@@ -141,7 +147,20 @@ export default function PostHost(props: AddProps) {
               <div>
                 <Divider>{t("filesystem.file-system-settings")}</Divider>
               </div>
-              <FormControl>
+              <FormControl className="gap-1">
+                <TextField
+                  {...register("basePath", {
+                    required: {
+                      value: true,
+                      message: t("filesystem.base-path-is-required"),
+                    },
+                  })}
+                  fullWidth
+                  error={!!errors.basePath}
+                  helperText={errors.basePath?.message}
+                  placeholder="/tmp"
+                  size="small"
+                  label={t("filesystem.ftp-folder")}></TextField>
                 <RadioGroup
                   row
                   aria-labelledby="file-system-row-radio-buttons-group-label"
@@ -150,7 +169,6 @@ export default function PostHost(props: AddProps) {
                   onChange={(e) => {
                     let value = e.target.value as "os" | "s3";
                     setFileSystemType(value);
-                    setParams(JSON.stringify(defaultValues[value], null, 2));
                   }}>
                   <FormControlLabel
                     value="os"
@@ -160,18 +178,12 @@ export default function PostHost(props: AddProps) {
                   <FormControlLabel value="s3" control={<Radio />} label="S3" />
                 </RadioGroup>
               </FormControl>
-              {
-                <TextField
-                  variant="standard"
-                  className="p-0"
-                  inputProps={{ style: { fontSize: "0.8rem" } }}
-                  value={params}
-                  onChange={(e) => {
-                    setParams(e.target.value);
-                  }}
-                  multiline
-                  rows={5}></TextField>
-              }
+              {fileSystemType === "s3" && (
+                <S3Params
+                  onChange={(params) => {
+                    setParams(params);
+                  }}></S3Params>
+              )}
             </div>
           </DialogContent>
           <DialogActions>

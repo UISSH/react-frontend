@@ -87,6 +87,12 @@ export default function Index({ className }: { className?: string }) {
       label: t("exploprer.mode"),
     },
     {
+      key: "ctime",
+      numeric: true,
+      disablePadding: false,
+      label: t("exploprer.ctime"),
+    },
+    {
       key: "size",
       numeric: true,
       disablePadding: false,
@@ -291,6 +297,10 @@ export default function Index({ className }: { className?: string }) {
             } else {
               row.size = "-";
             }
+
+            row.ctime = new Date(
+              row.ctime * 1000
+            ).toLocaleString() as unknown as number;
 
             row.owner = uidArray.current ? uidArray.current[row.uid] : row.uid;
             row.group = uidArray.current ? uidArray.current[row.gid] : row.gid;
