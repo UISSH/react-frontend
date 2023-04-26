@@ -17,12 +17,10 @@ import { useRecoilState } from "recoil";
 import { requestData } from "../../requests/http";
 import { OperationResIF } from "../../requests/interface";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
-import { generateRandom } from "../../utils";
 import { CreateWebsiteStepProps } from "./interface";
 
 export default function BaseSetting(props: CreateWebsiteStepProps) {
   const [sslCheck, setSslCheck] = useState(false);
-  const [databaseCheck, setDatabaseCheck] = useState(false);
 
   const [t] = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -94,15 +92,6 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
     }
   };
 
-  const handleDatabaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDatabaseBody({
-      name: "DB_" + generateRandom(6),
-      username: generateRandom(8),
-      password: generateRandom(32),
-    });
-    setDatabaseCheck(event.target.checked);
-  };
-
   const handleNextStep = () => {
     if (!props.requestBody.current) {
       return;
@@ -112,15 +101,6 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
       ...props.requestBody.current.website,
       ...websiteBody,
     };
-
-    if (!databaseCheck) {
-      props.requestBody.current.database = {};
-    } else {
-      props.requestBody.current.database = {
-        ...props.requestBody.current.database,
-        ...databaseBody,
-      };
-    }
 
     props.onNextStep ? props.onNextStep() : null;
   };
@@ -168,6 +148,7 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
             {...validate("name", websiteBody.name, /^.{2,}$/, t("length-2"))}
             id={"website_name"}
             label="name"
+            size="small"
             value={websiteBody.name}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setWebsiteBody((state) => ({
@@ -187,6 +168,7 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
             )}
             id={"website_domain"}
             label="domain"
+            size="small"
             value={websiteBody.domain}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setWebsiteBody((state) => ({
@@ -205,6 +187,7 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
             )}
             id={"website_directory"}
             label="directory"
+            size="small"
             value={websiteBody.index_root}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setWebsiteBody((state) => ({
@@ -213,62 +196,12 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
               }));
             }}
           />
-
-          {databaseCheck ? (
-            <>
-              <div className="capitalize">
-                <Divider textAlign="center">{t("common.database")}</Divider>
-              </div>
-              <TextField
-                id={"database_name"}
-                label="name"
-                value={databaseBody.name}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDatabaseBody((state) => ({
-                    ...state,
-                    name: event.target.value,
-                  }));
-                }}
-              />
-              <TextField
-                id={"database_username"}
-                label="username"
-                value={databaseBody.username}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDatabaseBody((state) => ({
-                    ...state,
-                    username: event.target.value,
-                  }));
-                }}
-              />
-              <TextField
-                id={"website_directory"}
-                label={t("password")}
-                value={databaseBody.password}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDatabaseBody((state) => ({
-                    ...state,
-                    password: event.target.value,
-                  }));
-                }}
-              />
-            </>
-          ) : (
-            <></>
-          )}
         </Box>
         <FormGroup row sx={{ justifyContent: "right" }}>
           <FormControlLabel
             className="capitalize"
             control={<Switch checked={sslCheck} onChange={handleSslChange} />}
             label={t("website.ssl")}
-          />
-          <FormControlLabel
-            className="capitalize"
-            control={
-              <Switch checked={databaseCheck} onChange={handleDatabaseChange} />
-            }
-            label={t("website.database")}
           />
         </FormGroup>
       </DialogContent>

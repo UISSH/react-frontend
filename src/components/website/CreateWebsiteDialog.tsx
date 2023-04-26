@@ -72,37 +72,16 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     }
 
     res = await requestData({
-      url: "database",
+      url: `/api/Website/${resWebsiteJson.id}/allocating_resources/`,
       method: "POST",
-      data: {
-        ...requestBody.current.database,
-        website: resWebsiteJson.id,
-      },
     });
 
-    let resDatabaseJson = { id: -1 };
-
-    if (Object.keys(requestBody.current.database).length !== 0) {
-      if (res.ok) {
-        resDatabaseJson = await res.json();
-      } else {
-        setGlobalLoadingAtom(false);
-        enqueueSnackbar(t("Create database error"), { variant: "error" });
-        return;
-      }
-      res = await requestData({
-        url: `/api/DataBase/${resDatabaseJson.id}/create_instance/`,
-        method: "POST",
+    if (!res.ok) {
+      setGlobalLoadingAtom(false);
+      enqueueSnackbar(t("Failed to allocate resources"), {
+        variant: "error",
       });
-
-      if (!res.ok) {
-        setGlobalLoadingAtom(false);
-        enqueueSnackbar(t("Create database instance error"), {
-          variant: "error",
-        });
-
-        return;
-      }
+      return;
     }
 
     res = await requestData({
