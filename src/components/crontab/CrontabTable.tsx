@@ -9,21 +9,26 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
-import { requestData } from "../requests/http";
-import { GlobalProgressAtom } from "../store/recoilStore";
-import { EnhancedTableToolbarProps, TableDjango } from "./DjangoTable";
-const API_URL = "database";
+import { requestData } from "../../requests/http";
+import { GlobalProgressAtom } from "../../store/recoilStore";
+import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import { format } from "crypto-js";
 
-const LABEL = "layout.database";
+const API_URL = "/api/Crontab/";
+
+const LABEL = "layout.crontab";
 
 interface RowIF {
   id: number;
+  shecdule: string;
+  command: string;
+  update_at: string | JSX.Element;
 }
-export interface DemoTableProps {}
+export interface CrontabTableProps {}
 
 interface RequestDataProps {
   url: string;
@@ -127,7 +132,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </>
   );
 }
-export default function DemoTable(props: DemoTableProps) {
+export default function CrontabTable(props: CrontabTableProps) {
   const [t] = useTranslation();
   const headCells = [
     {
@@ -135,6 +140,24 @@ export default function DemoTable(props: DemoTableProps) {
       numeric: false,
       disablePadding: true,
       label: "ID",
+    },
+    {
+      key: "schedule",
+      numeric: true,
+      disablePadding: false,
+      label: "schedule",
+    },
+    {
+      key: "command",
+      numeric: true,
+      disablePadding: false,
+      label: "command",
+    },
+    {
+      key: "update_at",
+      numeric: true,
+      disablePadding: false,
+      label: "update_at",
     },
   ];
   const [globalProgress, setGlobalProgress] =
@@ -147,9 +170,22 @@ export default function DemoTable(props: DemoTableProps) {
   const [pageSizeState, setPageSizeState] = useState(5);
   const [selected, setSelected] = useState<readonly string[]>([]);
 
-  const handleAction = (action: string) => {
+  const handleAction = async (action: string) => {
     if (action === "reload") {
       setUpdateState(updateState + 1);
+    }
+    if (action === "delete") {
+      if (selected.length > 0) {
+        setGlobalProgress(true);
+        for (let i = 0; i < selected.length; i++) {
+          await requestData({
+            url: API_URL + selected[i] + "/",
+            method: "DELETE",
+          });
+        }
+        setGlobalProgress(false);
+        setUpdateState(updateState + 1);
+      }
     }
   };
   const handleSetpageSize = (size: number) => {
@@ -164,13 +200,7 @@ export default function DemoTable(props: DemoTableProps) {
 
   const transformRowData = (data: RowIF[]) => {
     return data.map((row) => {
-      /* custom row field */
-      /* row.password = (
-              <PasswordField
-                password={row.password}
-                readOnly={true}></PasswordField>
-            ); */
-      /* custom row field */
+      row.update_at = new Date(row.update_at as string).toLocaleString();
       return row;
     });
   };

@@ -24,7 +24,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { fetchData } from "../../requests/http";
+import { fetchData, requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import CreateWebsiteDialog from "./CreateWebsiteDialog";
@@ -197,14 +197,9 @@ export default function WebsiteTable() {
 
   const requestDeleteWebsite = async () => {
     for (let i = 0; i < selected.length; i++) {
-      await fetchData({
-        apiType: "websiteItem",
-        init: {
-          method: "DELETE",
-        },
-        params: {
-          pathParam: { id: selected[i] },
-        },
+      await requestData({
+        url: `/api/Website/${selected[i]}`,
+        method: "DELETE",
       });
     }
     setUpdateState(updateState + 1);

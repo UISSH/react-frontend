@@ -94,7 +94,8 @@
     "overview": "概述",
     "selected": "被选中",
     "terminal": "终端",
-    "website": "站点"
+    "website": "站点",
+    "crontab": "定时任务"
   },
   "left-top-tips": "友好且简单，注重隐私。",
   "login": {
@@ -105,6 +106,7 @@
   },
   "login-server": "登录到服务器",
   "network-error": "网络错误",
+  "server-502-bad-gateway": "服务器 502 错误",
   "ok": "确定",
   "overview": {
     "status": {

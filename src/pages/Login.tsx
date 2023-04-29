@@ -29,7 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { SetterOrUpdater } from "recoil";
 import { ACCESS_TOKEN, USER_INFO } from "../constant";
 
-import { fetchData } from "../requests/http";
+import { fetchData, requestData } from "../requests/http";
 import { getApiGateway, setApiGateway } from "../requests/utils";
 import { getUserInfo } from "../store";
 import { LocalStorageJson } from "../utils";
@@ -89,34 +89,30 @@ function Login() {
     setApiGateway(val.target.value);
   };
 
-  const onLogin = () => {
+  const onLogin = async () => {
     setLoading(true);
 
-    fetchData({
-      apiType: "auth",
-      init: { method: "POST", body: JSON.stringify(userInfo) },
-    })
-      .then(async (data) => {
-        let res = await data.json();
-        if (data.ok) {
-          LocalStorageJson.setItem(USER_INFO, userInfo);
-          Cookies.set(ACCESS_TOKEN, res.token);
-          window.sessionStorage.setItem(
-            USER_INFO,
-            JSON.stringify(res, null, 2)
-          );
-          setNetError({ item: {}, msg: "" });
-          navigate("/dash");
-        } else {
-          setNetError({ item: res, msg: "" });
-        }
-      })
-      .catch((err) => {
-        setNetError({ item: {}, msg: t("network-error") });
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      let res = await requestData({
+        url: "auth",
+        method: "POST",
+        data: userInfo,
       });
+      let data = await res.json();
+      if (res.ok) {
+        LocalStorageJson.setItem(USER_INFO, userInfo);
+        Cookies.set(ACCESS_TOKEN, data.token);
+        window.sessionStorage.setItem(USER_INFO, JSON.stringify(data, null, 2));
+        setNetError({ item: {}, msg: "" });
+        navigate("/dash");
+      } else {
+        setNetError({ item: data, msg: "" });
+      }
+    } catch (err) {
+      setNetError({ item: {}, msg: t("server-502-bad-gateway") });
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     const keyDownHandler = (event: {

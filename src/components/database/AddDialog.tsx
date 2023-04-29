@@ -8,7 +8,7 @@ import {
 import { useSnackbar } from "notistack";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { fetchData, fetchDataProps } from "../../requests/http";
+import { fetchData, fetchDataProps, requestData } from "../../requests/http";
 import { generateRandom } from "../../utils";
 import CardDialog from "../CardDialog";
 interface IFormInput {
@@ -31,14 +31,9 @@ export default function Index(props: {
   } = useForm<IFormInput>();
 
   const requestCreateDatabseInstance = async (id: string) => {
-    let createDatabaseRes = await fetchData({
-      apiType: "createDatabaseInstance",
-      init: {
-        method: "POST",
-      },
-      params: {
-        pathParam: { id: id },
-      },
+    /*  */ let createDatabaseRes = await requestData({
+      url: `"/api/DataBase/${id}/create_instance/"`,
+      method: "POST",
     });
 
     if (createDatabaseRes.ok) {

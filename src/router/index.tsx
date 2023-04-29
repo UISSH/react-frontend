@@ -22,6 +22,7 @@ const DevelopDemo = lazy(() => import("../pages/DevelopDemo"));
 const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
 const HappyNewYear = lazy(() => import("../pages/HappyNewYear"));
 const IPTablesIndex = lazy(() => import("../pages/IndexLayout/IPTables"));
+const CrontabIndex = lazy(() => import("../pages/IndexLayout/Crontab"));
 
 export const router = createHashRouter([
   {
@@ -135,6 +136,14 @@ export const router = createHashRouter([
         element: (
           <Suspense>
             <IPTablesIndex></IPTablesIndex>
+          </Suspense>
+        ),
+      },
+      {
+        path: "crontab",
+        element: (
+          <Suspense>
+            <CrontabIndex></CrontabIndex>
           </Suspense>
         ),
       },

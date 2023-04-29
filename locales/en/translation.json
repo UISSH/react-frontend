@@ -18,6 +18,7 @@
     "text": "text",
     "website": "website"
   },
+
   "database": {
     "are-you-sure-to-delete-the-databse": "Are you sure to delete the databse?",
     "backup": "Backup",
@@ -95,7 +96,8 @@
     "overview": "overview",
     "selected": "selected",
     "terminal": "terminal",
-    "website": "website"
+    "website": "website",
+    "crontab": "crontab"
   },
   "left-top-tips": "friendly, simple, and focused on privacy.",
   "login": {
@@ -106,6 +108,7 @@
   },
   "login-server": "Login Server",
   "network-error": "Network Error",
+  "server-502-bad-gateway": "Server 502 Bad Gateway",
   "ok": "ok",
   "overview": {
     "status": {

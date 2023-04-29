@@ -1,16 +1,14 @@
-import FolderIcon from "@mui/icons-material/Folder";
-import RouteIcon from "@mui/icons-material/Route";
-import TerminalIcon from "@mui/icons-material/Terminal";
-import Box from "@mui/material/Box";
-import { styled, useTheme } from "@mui/material/styles";
-import { useState } from "react";
-import SecurityIcon from "@mui/icons-material/Security";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CookieIcon from "@mui/icons-material/Cookie";
+import FolderIcon from "@mui/icons-material/Folder";
 import MenuIcon from "@mui/icons-material/Menu";
+import RouteIcon from "@mui/icons-material/Route";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import SecurityIcon from "@mui/icons-material/Security";
 import StorageIcon from "@mui/icons-material/Storage";
+import TerminalIcon from "@mui/icons-material/Terminal";
 import WebIcon from "@mui/icons-material/Web";
 import {
   CircularProgress,
@@ -23,25 +21,27 @@ import {
   Paper,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
+import { styled, useTheme } from "@mui/material/styles";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import packagejs from "../../package.json";
 import LabTabs from "../components/Labtabs";
 import useLongPress from "../hooks/useLongPress";
-import { fetchData, hasAuthToken } from "../requests/http";
+import { hasAuthToken, requestData } from "../requests/http";
 import {
   AppBarOpenAtom,
   GlobalLoadingAtom,
   GlobalProgressAtom,
 } from "../store/recoilStore";
-
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -102,13 +102,14 @@ export async function loader() {
 
   let version = sessionStorage.getItem("version");
   if (!version) {
-    let data = await fetchData({ apiType: "version" });
+    let data = await requestData({
+      url: "version",
+    });
     if (data.status == 403) {
       throw new Response("permission denied", { status: 404 });
     }
     sessionStorage.setItem("version", "ok");
   }
-
   return null;
 }
 
@@ -214,6 +215,11 @@ export default function PersistentDrawerLeft() {
       name: t("layout.iptables"),
       icon: SecurityIcon,
       to: "/dash/iptables",
+    },
+    {
+      name: t("layout.crontab"),
+      icon: ScheduleIcon,
+      to: "/dash/crontab",
     },
   ];
   const handleDrawerOpen = () => {
