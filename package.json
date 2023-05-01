@@ -52,7 +52,7 @@
     "@types/js-cookie": "^3.0.3",
     "@types/react": "^18.0.34",
     "@types/react-dom": "^18.0.11",
-    "@vitejs/plugin-react": "^3.1.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.14",
     "envify": "^4.1.0",
     "openapi-typescript": "^6.2.1",
