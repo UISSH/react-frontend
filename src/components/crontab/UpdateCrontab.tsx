@@ -6,8 +6,12 @@ import { isValidCron } from "cron-validator";
 
 import BashEditor from "./BashEditor";
 import { requestData } from "../../requests/http";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { t } from "i18next";
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 interface UpdateCrontabProps {
   children?: React.ReactNode;
   className?: string;
@@ -25,6 +29,10 @@ interface IFormInput {
 }
 
 export default function UpdateCrontab(props: UpdateCrontabProps) {
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
   const {
     register,
     reset,
@@ -33,6 +41,7 @@ export default function UpdateCrontab(props: UpdateCrontabProps) {
     formState: { errors },
   } = useForm<IFormInput>();
   let location = useLocation();
+  const navigate = useNavigate();
 
   const [switchCustomShellScript, setSwitchCustomShellScript] = useState(false);
   const [shellscript, setShellscript] = useState(props.shellscript);
@@ -49,6 +58,7 @@ export default function UpdateCrontab(props: UpdateCrontabProps) {
   }, [location.state]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    setGlobalLoadingAtom(true);
     let playload;
     if (switchCustomShellScript) {
       playload = {
@@ -62,20 +72,30 @@ export default function UpdateCrontab(props: UpdateCrontabProps) {
         command: data.command,
       };
     }
-
+    let res;
     if (location.state?.id) {
-      let res = await requestData({
+      res = await requestData({
         url: `/api/Crontab/${location.state.id}/`,
         method: "PATCH",
         data: playload,
       });
     } else {
-      let res = await requestData({
+      res = await requestData({
         url: "/api/Crontab/",
         method: "POST",
         data: playload,
       });
     }
+
+    if (res.ok) {
+      navigate(-1);
+    } else {
+      let msg = "error, Please view console log.";
+      enqueueSnackbar(msg, { variant: "error" });
+      console.log(await res.text());
+    }
+
+    setGlobalLoadingAtom(false);
   };
 
   return (
