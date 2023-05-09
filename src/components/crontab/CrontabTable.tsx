@@ -9,14 +9,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { Suspense, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
 import { requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
-import { format } from "crypto-js";
+import { PureFunctionContext } from "../../Context";
+import { useSearchParams } from "react-router-dom";
 
 const API_URL = "/api/Crontab/";
 
@@ -41,8 +42,10 @@ interface RequestDataProps {
 }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+  const onReloadTableData = useContext(PureFunctionContext);
   const { numSelected } = props;
   const [t] = useTranslation();
+
   const [openDialog, setOpenDialog] = useState(false);
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
@@ -53,9 +56,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   };
 
   const handleReloadParent = () => {
-    if (props.onAction) {
-      props.onAction("reload");
-    }
+    onReloadTableData && onReloadTableData();
   };
 
   return (
@@ -82,7 +83,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }}>
         {numSelected > 0 ? (
           <Typography
-            sx={{ flex: "1 1 100%" }}
+            sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
             component="div">
@@ -91,23 +92,20 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         ) : (
           <Typography
             className="capitalize"
-            sx={{ flex: "1 1 100%" }}
+            sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
             component="div">
             {t(LABEL)}
           </Typography>
         )}
-        <ButtonGroup
-          className="flex-nowarp"
-          variant="contained"
-          aria-label="outlined primary button group">
+        <ButtonGroup variant="contained">
           <Button
             startIcon={<AddIcon />}
             onClick={() => {
-              setOpenDialog(true);
+              // set search params to empty
             }}>
-            {t("add")}
+            {t("common.add")}
           </Button>
 
           {numSelected > 0 ? (
@@ -242,17 +240,19 @@ export default function CrontabTable(props: CrontabTableProps) {
 
   return (
     <>
-      <TableDjango
-        onAction={handleAction}
-        enhancedTableToolbar={EnhancedTableToolbar}
-        selectedState={[selected, setSelected]}
-        onSetPageSize={handleSetpageSize}
-        onRequestSort={handleRequestSort}
-        onSetPage={handleSetTargetPage}
-        rows={rowsState}
-        headCells={headCells}
-        title={LABEL}
-        pagination={paginationState}></TableDjango>
+      <PureFunctionContext.Provider value={mutate}>
+        <TableDjango
+          onAction={handleAction}
+          enhancedTableToolbar={EnhancedTableToolbar}
+          selectedState={[selected, setSelected]}
+          onSetPageSize={handleSetpageSize}
+          onRequestSort={handleRequestSort}
+          onSetPage={handleSetTargetPage}
+          rows={rowsState}
+          headCells={headCells}
+          title={LABEL}
+          pagination={paginationState}></TableDjango>
+      </PureFunctionContext.Provider>
     </>
   );
 }

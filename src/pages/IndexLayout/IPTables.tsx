@@ -67,21 +67,16 @@ interface RequestDataProps {
 }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+  const onReloadTableData = React.useContext(PureFunctionContext);
   const { numSelected } = props;
   const [t] = useTranslation();
   const [openDialog, setOpenDialog] = useState(false);
+
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
-  const handleDelete = () => {
-    if (props.onAction) {
-      props.onAction("delete");
-    }
-  };
 
   const handleReloadParent = () => {
-    if (props.onAction) {
-      props.onAction("reload");
-    }
+    onReloadTableData && onReloadTableData();
   };
 
   return (

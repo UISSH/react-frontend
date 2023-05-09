@@ -9,10 +9,11 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Suspense, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
+import { PureFunctionContext } from "../Context";
 import { requestData } from "../requests/http";
 import { GlobalProgressAtom } from "../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "./DjangoTable";
@@ -25,17 +26,9 @@ interface RowIF {
 }
 export interface DemoTableProps {}
 
-interface RequestDataProps {
-  url: string;
-
-  params: {
-    page: string;
-    ordering: string;
-    page_size: string;
-  };
-}
-
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+  const onReloadTableData = useContext(PureFunctionContext);
+
   const { numSelected } = props;
   const [t] = useTranslation();
   const [openDialog, setOpenDialog] = useState(false);
@@ -48,21 +41,11 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   };
 
   const handleReloadParent = () => {
-    if (props.onAction) {
-      props.onAction("reload");
-    }
+    onReloadTableData && onReloadTableData();
   };
 
   return (
     <>
-      <Suspense>
-        {/* <CreateDatabaseDialog
-            open={openDialog}
-            setOpen={(open) => {
-              setOpenDialog(open);
-              handleReloadParent();
-            }}></CreateDatabaseDialog> */}
-      </Suspense>
       <Toolbar
         sx={{
           pl: { sm: 2 },
@@ -77,7 +60,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }}>
         {numSelected > 0 ? (
           <Typography
-            sx={{ flex: "1 1 100%" }}
+            sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
             component="div">
@@ -86,7 +69,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         ) : (
           <Typography
             className="capitalize"
-            sx={{ flex: "1 1 100%" }}
+            sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
             component="div">
@@ -102,7 +85,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             onClick={() => {
               setOpenDialog(true);
             }}>
-            {t("add")}
+            {t("common.add")}
           </Button>
 
           {numSelected > 0 ? (
@@ -212,17 +195,19 @@ export default function DemoTable(props: DemoTableProps) {
 
   return (
     <>
-      <TableDjango
-        onAction={handleAction}
-        enhancedTableToolbar={EnhancedTableToolbar}
-        selectedState={[selected, setSelected]}
-        onSetPageSize={handleSetpageSize}
-        onRequestSort={handleRequestSort}
-        onSetPage={handleSetTargetPage}
-        rows={rowsState}
-        headCells={headCells}
-        title={LABEL}
-        pagination={paginationState}></TableDjango>
+      <PureFunctionContext.Provider value={mutate}>
+        <TableDjango
+          onAction={handleAction}
+          enhancedTableToolbar={EnhancedTableToolbar}
+          selectedState={[selected, setSelected]}
+          onSetPageSize={handleSetpageSize}
+          onRequestSort={handleRequestSort}
+          onSetPage={handleSetTargetPage}
+          rows={rowsState}
+          headCells={headCells}
+          title={LABEL}
+          pagination={paginationState}></TableDjango>
+      </PureFunctionContext.Provider>
     </>
   );
 }
