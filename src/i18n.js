@@ -2,9 +2,6 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import Resources from "../locales/index";
 
-// don't want to use this?
-// have a look at the Quick start guide
-// for passing in lng and translations on init
 import LanguageDetector from "i18next-browser-languagedetector";
 
 i18n

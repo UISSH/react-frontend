@@ -1,14 +1,14 @@
 import { useSearchParams } from "react-router-dom";
 import CrontabTable from "../../components/crontab/CrontabTable";
-import AddScheduleJob from "../../components/crontab/AddScheduleJob";
+import UpdateCrontab from "../../components/crontab/UpdateCrontab";
 
 export default function Index() {
   const [searchParams] = useSearchParams();
 
   const action = searchParams.get("action") || "";
 
-  if (action === "add") {
-    return <AddScheduleJob></AddScheduleJob>;
+  if (action === "update") {
+    return <UpdateCrontab></UpdateCrontab>;
   }
 
   return (

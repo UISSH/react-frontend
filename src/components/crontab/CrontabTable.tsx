@@ -11,13 +11,13 @@ import {
 } from "@mui/material";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
+import { PureFunctionContext } from "../../Context";
 import { requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
-import { PureFunctionContext } from "../../Context";
-import { useSearchParams } from "react-router-dom";
 
 const API_URL = "/api/Crontab/";
 
@@ -25,7 +25,9 @@ const LABEL = "layout.crontab";
 
 interface RowIF {
   id: number;
-  shecdule: string;
+  schedule: string;
+  action: JSX.Element;
+  shellscript: string;
   command: string;
   update_at: string | JSX.Element;
 }
@@ -45,8 +47,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
   const { numSelected } = props;
   const [t] = useTranslation();
+  const navigate = useNavigate();
 
-  const [openDialog, setOpenDialog] = useState(false);
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
   const handleDelete = () => {
@@ -103,7 +105,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           <Button
             startIcon={<AddIcon />}
             onClick={() => {
-              // set search params to empty
+              navigate(`?action=update`);
             }}>
             {t("common.add")}
           </Button>
@@ -131,18 +133,13 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 export default function CrontabTable(props: CrontabTableProps) {
+  const navigate = useNavigate();
   const [t] = useTranslation();
   const headCells = [
     {
-      key: "id",
+      key: "schedule",
       numeric: false,
       disablePadding: true,
-      label: "ID",
-    },
-    {
-      key: "schedule",
-      numeric: true,
-      disablePadding: false,
       label: "schedule",
     },
     {
@@ -156,6 +153,12 @@ export default function CrontabTable(props: CrontabTableProps) {
       numeric: true,
       disablePadding: false,
       label: "update_at",
+    },
+    {
+      key: "action",
+      numeric: true,
+      disablePadding: false,
+      label: "action",
     },
   ];
   const [globalProgress, setGlobalProgress] =
@@ -198,6 +201,26 @@ export default function CrontabTable(props: CrontabTableProps) {
 
   const transformRowData = (data: RowIF[]) => {
     return data.map((row) => {
+      row.action = (
+        <Button
+          variant="contained"
+          size="small"
+          className="lowercase"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            navigate(`?action=update`, {
+              state: {
+                id: row.id,
+                schedule: row.schedule,
+                command: row.command,
+                shellscript: row.shellscript,
+              },
+            });
+          }}>
+          editor
+        </Button>
+      );
       row.update_at = new Date(row.update_at as string).toLocaleString();
       return row;
     });
