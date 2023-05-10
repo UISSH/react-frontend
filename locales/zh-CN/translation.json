@@ -18,6 +18,11 @@
     "text": "文本",
     "website": "站点"
   },
+  "crontab": {
+    "sync_crontab_failed": "同步定时任务失败",
+    "sync_crontab_success": "同步定时任务成功",
+    "sync_btn_tlp": "从服务器同步定时任务"
+  },
   "database": {
     "are-you-sure-to-delete-the-databse": "确定要删除数据库吗？",
     "backup": "备份",
@@ -85,6 +90,7 @@
   },
   "key": "hello world",
   "layout": {
+    "crontab": "定时任务",
     "database": "数据库",
     "explorer": "文件管理",
     "files": "文件管理",
@@ -94,8 +100,7 @@
     "overview": "概述",
     "selected": "被选中",
     "terminal": "终端",
-    "website": "站点",
-    "crontab": "定时任务"
+    "website": "站点"
   },
   "left-top-tips": "友好且简单，注重隐私。",
   "login": {
@@ -106,7 +111,6 @@
   },
   "login-server": "登录到服务器",
   "network-error": "网络错误",
-  "server-502-bad-gateway": "服务器 502 错误",
   "ok": "确定",
   "overview": {
     "status": {
@@ -120,6 +124,7 @@
   },
   "permission denied": "权限拒绝",
   "rows-per-page": "每页行数",
+  "server-502-bad-gateway": "服务器 502 错误",
   "sorry-an-unexpected-error-has-occurred": "抱歉，这里有一个错误发生.",
   "success": "成功",
   "terminal": {

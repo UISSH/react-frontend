@@ -18,7 +18,11 @@
     "text": "text",
     "website": "website"
   },
-
+  "crontab": {
+    "sync_crontab_failed": "Sync crontab failed",
+    "sync_crontab_success": "Sync crontab success",
+    "sync_btn_tlp": "Sync crontab from server"
+  },
   "database": {
     "are-you-sure-to-delete-the-databse": "Are you sure to delete the databse?",
     "backup": "Backup",
@@ -87,6 +91,7 @@
   },
   "key": "hello world",
   "layout": {
+    "crontab": "crontab",
     "database": "database",
     "explorer": "explorer",
     "files": "files",
@@ -96,8 +101,7 @@
     "overview": "overview",
     "selected": "selected",
     "terminal": "terminal",
-    "website": "website",
-    "crontab": "crontab"
+    "website": "website"
   },
   "left-top-tips": "friendly, simple, and focused on privacy.",
   "login": {
@@ -108,7 +112,6 @@
   },
   "login-server": "Login Server",
   "network-error": "Network Error",
-  "server-502-bad-gateway": "Server 502 Bad Gateway",
   "ok": "ok",
   "overview": {
     "status": {
@@ -122,6 +125,7 @@
   },
   "permission denied": "Permission denied",
   "rows-per-page": "Rows per page",
+  "server-502-bad-gateway": "Server 502 Bad Gateway",
   "sorry-an-unexpected-error-has-occurred": "Sorry, an unexpected error has occurred.",
   "success": "success",
   "terminal": {

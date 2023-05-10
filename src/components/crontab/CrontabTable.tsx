@@ -18,6 +18,7 @@ import { PureFunctionContext } from "../../Context";
 import { requestData } from "../../requests/http";
 import { GlobalProgressAtom } from "../../store/recoilStore";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import SyncCrontabButton from "./SyncCrontabButton";
 
 const API_URL = "/api/Crontab/";
 
@@ -109,7 +110,6 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             }}>
             {t("common.add")}
           </Button>
-
           {numSelected > 0 ? (
             <Button
               color="error"
@@ -121,12 +121,15 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           ) : (
             <div></div>
           )}
-          <IconButton
-            className={globalProgress ? "animate-spin" : ""}
-            color="primary"
-            onClick={handleReloadParent}>
-            <RefreshIcon />
-          </IconButton>
+          <div className="px-2 gap-1 flex">
+            <SyncCrontabButton></SyncCrontabButton>
+            <IconButton
+              className={globalProgress ? "animate-spin" : ""}
+              color="primary"
+              onClick={handleReloadParent}>
+              <RefreshIcon />
+            </IconButton>
+          </div>
         </ButtonGroup>
       </Toolbar>
     </>

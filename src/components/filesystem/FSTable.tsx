@@ -174,30 +174,32 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             ) : (
               <div></div>
             )}
-            <Tooltip title="sync">
-              <IconButton onClick={handleSyncAccount}>
-                <SyncIcon color="primary"></SyncIcon>
-              </IconButton>
-            </Tooltip>
-            <Tooltip
-              title={FTPServerStatusData.run_status ? "turn off" : "turn on"}>
-              <IconButton onClick={handleControlFTPServer}>
-                {FTPServerStatusData.run_status && (
-                  <StopCircleIcon color="primary"></StopCircleIcon>
-                )}
+            <div className="px-2 gap-1 flex">
+              <Tooltip title="sync">
+                <IconButton onClick={handleSyncAccount}>
+                  <SyncIcon color="primary"></SyncIcon>
+                </IconButton>
+              </Tooltip>
+              <Tooltip
+                title={FTPServerStatusData.run_status ? "turn off" : "turn on"}>
+                <IconButton onClick={handleControlFTPServer}>
+                  {FTPServerStatusData.run_status && (
+                    <StopCircleIcon color="primary"></StopCircleIcon>
+                  )}
 
-                {!FTPServerStatusData.run_status && (
-                  <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
-                )}
-              </IconButton>
-            </Tooltip>
+                  {!FTPServerStatusData.run_status && (
+                    <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
+                  )}
+                </IconButton>
+              </Tooltip>
 
-            <IconButton
-              className={globalProgress ? "animate-spin" : ""}
-              color="primary"
-              onClick={handleReloadParent}>
-              <RefreshIcon />
-            </IconButton>
+              <IconButton
+                className={globalProgress ? "animate-spin" : ""}
+                color="primary"
+                onClick={handleReloadParent}>
+                <RefreshIcon />
+              </IconButton>
+            </div>
           </ButtonGroup>
         </div>
       </Toolbar>

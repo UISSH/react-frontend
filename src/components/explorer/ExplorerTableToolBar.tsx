@@ -115,12 +115,14 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           ) : (
             <div></div>
           )}
-          <IconButton
-            className={globalProgress ? "animate-spin" : ""}
-            color="primary"
-            onClick={handleReloadParent}>
-            <RefreshIcon />
-          </IconButton>
+          <div className="px-2 gap-1 flex">
+            <IconButton
+              className={globalProgress ? "animate-spin" : ""}
+              color="primary"
+              onClick={handleReloadParent}>
+              <RefreshIcon />
+            </IconButton>
+          </div>
         </ButtonGroup>
       </Toolbar>
     </>
