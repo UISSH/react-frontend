@@ -35,9 +35,17 @@ export function hasAuthToken() {
 
 function addHeader(ApiType: ApiType | string, init?: RequestInit) {
   let token = Cookies.get(ACCESS_TOKEN);
+
   let authorization = { Authorization: "token " + token };
+  let csrftoken = getCsrfToken();
+
+  let csrf = {};
+  if (csrftoken) {
+    csrf = { "X-CSRFToken": csrftoken };
+  }
 
   if (init?.body instanceof FormData) {
+    // pass
   } else {
     if (init?.headers && !init.headers.hasOwnProperty("Content-Type")) {
       init.headers = { "Content-Type": "application/json" };
@@ -47,7 +55,9 @@ function addHeader(ApiType: ApiType | string, init?: RequestInit) {
   }
 
   if (ApiType !== "auth") {
-    init.headers = { ...init.headers, ...authorization };
+    init.headers = { ...init.headers, ...authorization, ...csrf };
+  } else {
+    init.headers = { ...init.headers, ...csrf };
   }
   return init;
 }
@@ -76,6 +86,11 @@ export interface RequestDataProps {
     id?: string;
     action?: string;
   };
+}
+
+function getCsrfToken() {
+  let token = Cookies.get("csrftoken");
+  return token;
 }
 
 export function requestData(props: RequestDataProps): Promise<Response> {
