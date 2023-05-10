@@ -332,7 +332,7 @@ export function EnhancedTable(props: TableDjangoProps) {
               {props.rows.length == 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * 10,
+                    height: (dense ? 33 : 53) * 4,
                   }}>
                   <TableCell
                     align="center"
