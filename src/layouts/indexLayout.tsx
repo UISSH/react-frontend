@@ -10,7 +10,11 @@ import SecurityIcon from "@mui/icons-material/Security";
 import StorageIcon from "@mui/icons-material/Storage";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import WebIcon from "@mui/icons-material/Web";
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
+import BrowserUpdatedOutlinedIcon from "@mui/icons-material/BrowserUpdatedOutlined";
 import {
+  Badge,
+  Button,
   CircularProgress,
   CssBaseline,
   Dialog,
@@ -19,6 +23,7 @@ import {
   LinearProgress,
   Modal,
   Paper,
+  Tooltip,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -99,17 +104,14 @@ export async function loader() {
   if (!hasAuthToken()) {
     throw new Response("permission denied", { status: 404 });
   }
-
-  let version = sessionStorage.getItem("version");
-  if (!version) {
-    let data = await requestData({
-      url: "version",
-    });
-    if (data.status == 403) {
-      throw new Response("permission denied", { status: 404 });
-    }
-    sessionStorage.setItem("version", "ok");
+  let data = await requestData({
+    url: "version",
+  });
+  if (data.status == 403) {
+    throw new Response("permission denied", { status: 404 });
   }
+  sessionStorage.setItem("version", await data.text());
+
   return null;
 }
 
@@ -170,6 +172,9 @@ export default function PersistentDrawerLeft() {
     useRecoilState(GlobalProgressAtom);
   const navigate = useNavigate();
 
+  const verisonInfo = JSON.parse(
+    sessionStorage.getItem("version") || '{"can_updated":false}'
+  );
   const onLongPress = () => {
     setOpenDebugSwitch(!openDebugSwitch);
   };
@@ -267,9 +272,19 @@ export default function PersistentDrawerLeft() {
           </div>
 
           <div className="w-full flex justify-end">
-            <div className="cursor-pointer" {...longPressEvent}>
-              {packagejs.version}
-            </div>
+            {verisonInfo && verisonInfo.can_updated ? (
+              <Tooltip title="Update available">
+                <Badge color="info" variant="dot">
+                  <IconButton color="inherit" size="small">
+                    <BrowserUpdatedOutlinedIcon></BrowserUpdatedOutlinedIcon>
+                  </IconButton>
+                </Badge>
+              </Tooltip>
+            ) : (
+              <div className="cursor-pointer" {...longPressEvent}>
+                {packagejs.version}
+              </div>
+            )}
           </div>
         </Toolbar>
         {globalProgress && <LinearProgress />}

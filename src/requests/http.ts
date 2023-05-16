@@ -28,16 +28,14 @@ export let api = {
 export type ApiType = keyof typeof api;
 
 export function hasAuthToken() {
-  let token = Cookies.get(ACCESS_TOKEN);
-
+  let token = window.sessionStorage.getItem(ACCESS_TOKEN);
   return Boolean(token);
 }
 
 function addHeader(ApiType: ApiType | string, init?: RequestInit) {
-  let token = Cookies.get(ACCESS_TOKEN);
-
+  let token = window.sessionStorage.getItem(ACCESS_TOKEN);
   let authorization = { Authorization: "token " + token };
-  let csrftoken = getCsrfToken();
+  let csrftoken = Cookies.get("csrftoken");
 
   let csrf = {};
   if (csrftoken) {
@@ -86,11 +84,6 @@ export interface RequestDataProps {
     id?: string;
     action?: string;
   };
-}
-
-function getCsrfToken() {
-  let token = Cookies.get("csrftoken");
-  return token;
 }
 
 export function requestData(props: RequestDataProps): Promise<Response> {

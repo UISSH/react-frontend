@@ -1,6 +1,6 @@
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
 import packageJson from "../../package.json";
-import LoadingButton from "@mui/lab/LoadingButton";
 import backgroundJPG from "../assets/background.jpg";
 
 import {
@@ -23,16 +23,13 @@ import {
   SupervisorAccountOutlined,
 } from "@mui/icons-material";
 
-import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { SetterOrUpdater } from "recoil";
-import { ACCESS_TOKEN, USER_INFO } from "../constant";
+import { ACCESS_TOKEN, LOGIN_INFO, USER_INFO } from "../constant";
 
-import { fetchData, requestData } from "../requests/http";
+import { requestData } from "../requests/http";
 import { getApiGateway, setApiGateway } from "../requests/utils";
-import { getUserInfo } from "../store";
-import { LocalStorageJson } from "../utils";
 
 interface FormTextProps {
   label: string;
@@ -61,6 +58,25 @@ export interface NetErrorValue {
   item: { [name: string]: string[] | string };
   msg: string;
 }
+
+function getLoginInfo() {
+  let loginInfo = window.localStorage.getItem(LOGIN_INFO);
+  if (loginInfo) {
+    return JSON.parse(loginInfo);
+  }
+
+  loginInfo = window.sessionStorage.getItem(LOGIN_INFO);
+  if (loginInfo) {
+    return JSON.parse(loginInfo);
+  }
+
+  return {
+    username: "",
+    password: "",
+    remember_me: false,
+  };
+}
+
 function Login() {
   const [t] = useTranslation();
 
@@ -70,38 +86,53 @@ function Login() {
     msg: "",
   });
   const [url, setUrl] = useState(() => getApiGateway());
-  const [userInfo, setUserInfo] = useState(() => getUserInfo());
+
+  const [username, setUsername] = useState(() => getLoginInfo().username);
+  const [password, setPassword] = useState(() => getLoginInfo().password);
+  const [rememberMe, setRememberMe] = useState(
+    () => getLoginInfo().remember_me
+  );
 
   const navigate = useNavigate();
-  const setUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInfo((state) => ({ ...state, username: event.target.value }));
+  const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
   };
 
-  const setPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInfo((state) => ({ ...state, password: event.target.value }));
+  const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
   };
 
-  const setRememberMe = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInfo((state) => ({ ...state, remember_me: event.target.checked }));
+  const handleRememberMe = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRememberMe(event.target.checked);
   };
+
   const updateUrl = (val: any) => {
     setUrl(val.target.value);
     setApiGateway(val.target.value);
   };
 
-  const onLogin = async () => {
+  async function onLogin() {
     setLoading(true);
+    let loginInfo = {
+      username: username,
+      password: password,
+      remember_me: rememberMe,
+    };
 
     try {
       let res = await requestData({
         url: "auth",
         method: "POST",
-        data: userInfo,
+        data: loginInfo,
       });
       let data = await res.json();
       if (res.ok) {
-        LocalStorageJson.setItem(USER_INFO, userInfo);
-        Cookies.set(ACCESS_TOKEN, data.token);
+        if (rememberMe) {
+          window.localStorage.setItem(LOGIN_INFO, JSON.stringify(loginInfo));
+        } else {
+          window.sessionStorage.setItem(LOGIN_INFO, JSON.stringify(loginInfo));
+        }
+        window.sessionStorage.setItem(ACCESS_TOKEN, data.token);
         window.sessionStorage.setItem(USER_INFO, JSON.stringify(data, null, 2));
         setNetError({ item: {}, msg: "" });
         navigate("/dash");
@@ -113,7 +144,8 @@ function Login() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
   useEffect(() => {
     const keyDownHandler = (event: {
       key: string;
@@ -130,7 +162,7 @@ function Login() {
     return () => {
       document.removeEventListener("keydown", keyDownHandler);
     };
-  }, []);
+  }, [username, password, rememberMe]);
 
   return (
     <ScopedCssBaseline enableColorScheme>
@@ -172,10 +204,10 @@ function Login() {
 
                   <FormTextField
                     label={t("login.username")}
-                    value={userInfo.username}
+                    value={username}
                     type={"text"}
                     netError={netError.item?.username}
-                    setStatus={setUsername}
+                    setStatus={handleUsername}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -186,10 +218,10 @@ function Login() {
 
                   <FormTextField
                     label={t("login.password")}
-                    value={userInfo.password}
+                    value={password}
                     type={"password"}
                     netError={netError.item?.password}
-                    setStatus={setPassword}
+                    setStatus={handlePassword}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -204,8 +236,8 @@ function Login() {
                   label={t("login.remember-me")}
                   control={
                     <Checkbox
-                      checked={userInfo.remember_me}
-                      onChange={setRememberMe}
+                      checked={rememberMe}
+                      onChange={handleRememberMe}
                       inputProps={{ "aria-label": "controlled" }}
                     />
                   }

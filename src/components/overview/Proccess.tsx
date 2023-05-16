@@ -84,6 +84,11 @@ export default function SystemProccess(props: SystemProccessProps) {
       ws.current?.close();
     };
   }, [ws]);
+
+  if (data == undefined || data.length === 0) {
+    return <></>;
+  }
+
   return (
     <>
       <CardDialog open={props.open} onClose={props.onClose}>

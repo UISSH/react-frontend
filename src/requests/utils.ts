@@ -21,7 +21,8 @@ export function getApiGateway() {
 }
 
 export function getWSGateway(path: string) {
-  let token = Cookies.get(ACCESS_TOKEN);
+  //let token = Cookies.get(ACCESS_TOKEN);
+  let token = window.sessionStorage.getItem(ACCESS_TOKEN);
   let url = `${getApiGateway().replace(
     "http",
     "ws"
