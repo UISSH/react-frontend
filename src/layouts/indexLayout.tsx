@@ -1,4 +1,5 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
+import BrowserUpdatedOutlinedIcon from "@mui/icons-material/BrowserUpdatedOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CookieIcon from "@mui/icons-material/Cookie";
@@ -10,11 +11,8 @@ import SecurityIcon from "@mui/icons-material/Security";
 import StorageIcon from "@mui/icons-material/Storage";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import WebIcon from "@mui/icons-material/Web";
-import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
-import BrowserUpdatedOutlinedIcon from "@mui/icons-material/BrowserUpdatedOutlined";
 import {
   Badge,
-  Button,
   CircularProgress,
   CssBaseline,
   Dialog,
@@ -47,6 +45,7 @@ import {
   GlobalLoadingAtom,
   GlobalProgressAtom,
 } from "../store/recoilStore";
+import Version from "../components/Vesrion";
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -272,19 +271,11 @@ export default function PersistentDrawerLeft() {
           </div>
 
           <div className="w-full flex justify-end">
-            {verisonInfo && verisonInfo.can_updated ? (
-              <Tooltip title="Update available">
-                <Badge color="info" variant="dot">
-                  <IconButton color="inherit" size="small">
-                    <BrowserUpdatedOutlinedIcon></BrowserUpdatedOutlinedIcon>
-                  </IconButton>
-                </Badge>
-              </Tooltip>
-            ) : (
+            <Version>
               <div className="cursor-pointer" {...longPressEvent}>
                 {packagejs.version}
               </div>
-            )}
+            </Version>
           </div>
         </Toolbar>
         {globalProgress && <LinearProgress />}
