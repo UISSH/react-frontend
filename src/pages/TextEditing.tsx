@@ -5,13 +5,13 @@ import AceEditor from "react-ace";
 import { Box, Card, CardContent } from "@mui/material";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-github";
-import { useLocation, useNavigation, useSearchParams } from "react-router-dom";
-import LazyMode, { ModeAceType } from "../components/acemode/LazyAceEditor";
-import ModeAce from "../components/acemode/ModeAce";
-import { fetchData, requestData } from "../requests/http";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import LazyMode, { ModeAceType } from "../components/acemode/LazyAceEditor";
+import ModeAce from "../components/acemode/ModeAce";
+import { requestData } from "../requests/http";
 import { GlobalLoadingAtom } from "../store/recoilStore";
 
 export interface TextEditingProps {
