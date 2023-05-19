@@ -31,8 +31,8 @@ export default function Index(props: {
   } = useForm<IFormInput>();
 
   const requestCreateDatabseInstance = async (id: string) => {
-    /*  */ let createDatabaseRes = await requestData({
-      url: `"/api/DataBase/${id}/create_instance/"`,
+    let createDatabaseRes = await requestData({
+      url: `/api/DataBase/${id}/create_instance/`,
       method: "POST",
     });
 
@@ -46,15 +46,12 @@ export default function Index(props: {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    let fecthProps: fetchDataProps = {
-      apiType: "database",
-      init: {
-        method: "POST",
-        body: JSON.stringify(data),
-      },
-    };
-
-    let res = await fetchData(fecthProps);
+    //let res = await fetchData(fecthProps);
+    let res = await requestData({
+      url: "database",
+      method: "POST",
+      data: data,
+    });
 
     if (res.status === 201) {
       let resJson = await res.json();
