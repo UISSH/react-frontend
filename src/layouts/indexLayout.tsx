@@ -103,6 +103,10 @@ export async function loader() {
   if (!hasAuthToken()) {
     throw new Response("permission denied", { status: 404 });
   }
+
+  if (sessionStorage.getItem("version")) {
+    return null;
+  }
   let data = await requestData({
     url: "version",
   });
@@ -171,9 +175,6 @@ export default function PersistentDrawerLeft() {
     useRecoilState(GlobalProgressAtom);
   const navigate = useNavigate();
 
-  const verisonInfo = JSON.parse(
-    sessionStorage.getItem("version") || '{"can_updated":false}'
-  );
   const onLongPress = () => {
     setOpenDebugSwitch(!openDebugSwitch);
   };

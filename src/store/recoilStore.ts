@@ -1,5 +1,10 @@
 import { atom, selector } from "recoil";
-import { fetchData, requestData } from "../requests/http";
+import { requestData } from "../requests/http";
+
+export const UpdateExplorerTableUISignalAtom = atom({
+  key: "updateExplorerTableUISignal",
+  default: 1,
+});
 
 export const GlobalProgressAtom = atom({
   key: "globalProgress",

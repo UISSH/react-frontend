@@ -9,19 +9,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { GlobalProgressAtom } from "../../store/recoilStore";
+
 import { ShortcutItemIF } from "../../store/shortStore";
 import { calcMD5 } from "../../utils";
 import { EnhancedTableToolbarProps } from "../DjangoTable";
 import ShortcutBook from "../overview/ShortcutBook";
 import NewActionMenu from "./ActionMenu";
-//import CreateDatabaseDialog from "./CreateDatabaseDialog";
-
-// const CreateDatabaseDialog = React.lazy(() => import("./CreateDatabaseDialog"));
 
 const LABEL = "layout.explorer";
 
@@ -32,9 +28,6 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const location = useLocation();
 
   const [t] = useTranslation();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [globalProgress, setGlobalProgress] =
-    useRecoilState(GlobalProgressAtom);
 
   const handleDelete = () => {
     if (props.onAction) {
@@ -55,10 +48,15 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       name: searchParams.get("directory")?.split("/").pop() || "/",
       unique: "folder-" + calcMD5(searchParams.get("directory") || "/"),
       cate: "folder",
-      router: location,
+      router: {
+        ...location,
+        search: `?directory=${searchParams.get("directory") || "/"}`,
+      },
     } as ShortcutItemIF;
     setShortcutData(data);
-  }, [searchParams.get("directory"), location]);
+    console.log(data);
+  }, [searchParams, location]);
+
   return (
     <>
       <Toolbar
@@ -116,10 +114,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <div></div>
           )}
           <div className="px-2 gap-1 flex">
-            <IconButton
-              className={globalProgress ? "animate-spin" : ""}
-              color="primary"
-              onClick={handleReloadParent}>
+            <IconButton color="primary" onClick={handleReloadParent}>
               <RefreshIcon />
             </IconButton>
           </div>

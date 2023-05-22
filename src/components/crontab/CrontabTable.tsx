@@ -166,7 +166,6 @@ export default function CrontabTable(props: CrontabTableProps) {
   ];
   const [globalProgress, setGlobalProgress] =
     useRecoilState(GlobalProgressAtom);
-  const [updateState, setUpdateState] = useState(1);
   const [rowsState, setRowsState] = useState<RowIF[]>([]);
   const [paginationState, setPaginationState] = useState();
   const [pageState, setPageState] = useState(1);
@@ -176,7 +175,7 @@ export default function CrontabTable(props: CrontabTableProps) {
 
   const handleAction = async (action: string) => {
     if (action === "reload") {
-      setUpdateState(updateState + 1);
+      mutate();
     }
     if (action === "delete") {
       if (selected.length > 0) {
@@ -188,18 +187,18 @@ export default function CrontabTable(props: CrontabTableProps) {
           });
         }
         setGlobalProgress(false);
-        setUpdateState(updateState + 1);
+        mutate();
       }
     }
   };
   const handleSetpageSize = (size: number) => {
     setPageSizeState(size);
-    setUpdateState(updateState + 1);
+    mutate();
   };
 
   const handleRequestSort = (order: string, property: any) => {
     setOrederState(order + property);
-    setUpdateState(updateState + 1);
+    mutate();
   };
 
   const transformRowData = (data: RowIF[]) => {
@@ -239,6 +238,7 @@ export default function CrontabTable(props: CrontabTableProps) {
       },
     },
     async (props) => {
+      setSelected([]);
       setGlobalProgress(true);
       let data = await requestData(props);
       if (data.ok) {
@@ -256,13 +256,8 @@ export default function CrontabTable(props: CrontabTableProps) {
 
   const handleSetTargetPage = (targetPage: number) => {
     setPageState(targetPage);
-    setUpdateState(updateState + 1);
-  };
-
-  useEffect(() => {
-    setSelected([]);
     mutate();
-  }, [updateState]);
+  };
 
   return (
     <>

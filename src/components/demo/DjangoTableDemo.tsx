@@ -9,14 +9,16 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 import useSWR from "swr";
-import { PureFunctionContext } from "../Context";
-import { requestData } from "../requests/http";
-import { GlobalProgressAtom } from "../store/recoilStore";
-import { EnhancedTableToolbarProps, TableDjango } from "./DjangoTable";
+
+import { useSnackbar } from "notistack";
+import { PureFunctionContext } from "../../Context";
+import { requestData } from "../../requests/http";
+import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
+import LinearBuffer from "../LinearBuffer";
 const API_URL = "database";
 
 const LABEL = "layout.database";
@@ -32,8 +34,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
   const [t] = useTranslation();
   const [openDialog, setOpenDialog] = useState(false);
-  const [globalProgress, setGlobalProgress] =
-    useRecoilState(GlobalProgressAtom);
+
   const handleDelete = () => {
     if (props.onAction) {
       props.onAction("delete");
@@ -100,10 +101,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <div></div>
           )}
           <div className="px-2 gap-1 flex">
-            <IconButton
-              className={globalProgress ? "animate-spin" : ""}
-              color="primary"
-              onClick={handleReloadParent}>
+            <IconButton color="primary" onClick={handleReloadParent}>
               <RefreshIcon />
             </IconButton>
           </div>
@@ -122,10 +120,9 @@ export default function DemoTable(props: DemoTableProps) {
       label: "ID",
     },
   ];
-  const [globalProgress, setGlobalProgress] =
-    useRecoilState(GlobalProgressAtom);
-  const [updateState, setUpdateState] = useState(1);
-  const [rowsState, setRowsState] = useState<RowIF[]>([]);
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const [paginationState, setPaginationState] = useState();
   const [pageState, setPageState] = useState(1);
   const [orederState, setOrederState] = useState("-id");
@@ -134,17 +131,17 @@ export default function DemoTable(props: DemoTableProps) {
 
   const handleAction = (action: string) => {
     if (action === "reload") {
-      setUpdateState(updateState + 1);
+      mutate();
     }
   };
   const handleSetpageSize = (size: number) => {
     setPageSizeState(size);
-    setUpdateState(updateState + 1);
+    mutate();
   };
 
   const handleRequestSort = (order: string, property: any) => {
     setOrederState(order + property);
-    setUpdateState(updateState + 1);
+    mutate();
   };
 
   const transformRowData = (data: RowIF[]) => {
@@ -160,7 +157,7 @@ export default function DemoTable(props: DemoTableProps) {
     });
   };
 
-  const { mutate, data } = useSWR<any>(
+  const { mutate, data, isLoading } = useSWR<any>(
     {
       url: API_URL,
       params: {
@@ -170,31 +167,30 @@ export default function DemoTable(props: DemoTableProps) {
       },
     },
     async (props) => {
-      setGlobalProgress(true);
+      setSelected([]);
       let data = await requestData(props);
       if (data.ok) {
         let res = await data.json();
         res = res as any;
-        setRowsState(transformRowData(res.results));
         setPaginationState(res.pagination);
-        setGlobalProgress(false);
-        return res;
+        return transformRowData(res.results);
       } else {
-        setGlobalProgress(false);
+        enqueueSnackbar(t("common.error"), {
+          variant: "error",
+        });
+        return [];
       }
     }
   );
 
   const handleSetTargetPage = (targetPage: number) => {
     setPageState(targetPage);
-    setUpdateState(updateState + 1);
+    mutate();
   };
 
-  useEffect(() => {
-    setSelected([]);
-    mutate();
-  }, [updateState]);
-
+  if (isLoading || !data) {
+    return <LinearBuffer></LinearBuffer>;
+  }
   return (
     <>
       <PureFunctionContext.Provider value={mutate}>
@@ -205,7 +201,7 @@ export default function DemoTable(props: DemoTableProps) {
           onSetPageSize={handleSetpageSize}
           onRequestSort={handleRequestSort}
           onSetPage={handleSetTargetPage}
-          rows={rowsState}
+          rows={data}
           headCells={headCells}
           title={LABEL}
           pagination={paginationState}></TableDjango>

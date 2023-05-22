@@ -1,7 +1,3 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import EditIcon from "@mui/icons-material/Edit";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {
   Box,
@@ -21,11 +17,12 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { requestData } from "../../requests/http";
 import { getApiGateway } from "../../requests/utils";
-import { GlobalLoadingAtom } from "../../store/recoilStore";
-import { UpdateExplorerTableUISignal } from "./ExplorerTable";
+import {
+  GlobalLoadingAtom,
+  UpdateExplorerTableUISignalAtom,
+} from "../../store/recoilStore";
 import RenameFSDialog from "./RenameFSDialog";
 export interface FileMenuProps {
-  id: string | number;
   path: string;
   directory: string;
   name: string;
@@ -35,7 +32,7 @@ function DeleteFile(
   props: FileMenuProps & { open: boolean; onClose: () => void }
 ) {
   const [updateState, setUpdateState] = useRecoilState(
-    UpdateExplorerTableUISignal
+    UpdateExplorerTableUISignalAtom
   );
 
   const [t] = useTranslation();
@@ -90,68 +87,6 @@ function DeleteFile(
   );
 }
 
-// function RenameFile(
-//   props: FileMenuProps & { open: boolean; onClose: () => void }
-// ) {
-//   const [newName, setNewName] = React.useState(props.name);
-//   const [updateState, setUpdateState] = useRecoilState(
-//     UpdateExplorerTableUISignal
-//   );
-
-//   const [t] = useTranslation();
-//   const { enqueueSnackbar } = useSnackbar();
-//   const [globalLoadingAtom, setGlobalLoadingAtom] =
-//     useRecoilState(GlobalLoadingAtom);
-//   const handleClose = () => {
-//     props.onClose();
-//   };
-
-//   const handelRename = async () => {
-//     setGlobalLoadingAtom(true);
-//     let res = await requestData({
-//       url: "FileBrowserCmd",
-//       method: "POST",
-//       data: {
-//         current_directory: props.directory,
-//         operation_command: `mv ${props.name} ${newName}`,
-//       },
-//     });
-//     setGlobalLoadingAtom(false);
-//     if (res.ok) {
-//       enqueueSnackbar(t("renameSuccess"), { variant: "success" });
-//     } else {
-//       enqueueSnackbar(t("renameFailed"), { variant: "error" });
-//     }
-//     setUpdateState((s) => s + 1);
-//     props.onClose();
-//   };
-//   return (
-//     <div>
-//       <Dialog open={props.open} onClose={handleClose}>
-//         <DialogTitle>
-//           <span>{t("exploprer.rename")}</span> {props.name}
-//         </DialogTitle>
-//         <DialogContent>
-//           <div className="pt-2">
-//             <TextField
-//               id="outlined-basic"
-//               label="name"
-//               value={newName}
-//               onChange={(e) => {
-//                 setNewName(e.target.value);
-//               }}
-//             />
-//           </div>
-//         </DialogContent>
-//         <DialogActions>
-//           <Button onClick={handleClose}>Cancel</Button>
-//           <Button onClick={handelRename}>Rename</Button>
-//         </DialogActions>
-//       </Dialog>
-//     </div>
-//   );
-// }
-
 export default function Index(props: FileMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -200,8 +135,8 @@ export default function Index(props: FileMenuProps) {
     setOpenRename(true);
   };
 
-  return (
-    <div>
+  const RenameFSDialogCache = React.useMemo(
+    () => (
       <RenameFSDialog
         currentPath={props.directory}
         name={props.name}
@@ -209,6 +144,13 @@ export default function Index(props: FileMenuProps) {
         onStatus={(status) => {
           setOpenRename(false);
         }}></RenameFSDialog>
+    ),
+    [openRename, props.directory, props.name]
+  );
+
+  return (
+    <div>
+      {RenameFSDialogCache}
       <DeleteFile
         {...props}
         open={openDelete}
@@ -216,8 +158,8 @@ export default function Index(props: FileMenuProps) {
           setOpenDelete(false);
         }}></DeleteFile>
       <IconButton
-        id={props.id + "-positioned-button"}
-        aria-controls={open ? props.id + "-positioned-menu" : undefined}
+        id={props.path + "-positioned-button"}
+        aria-controls={open ? props.path + "-positioned-menu" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
         aria-expanded={open ? "true" : undefined}>
@@ -226,8 +168,8 @@ export default function Index(props: FileMenuProps) {
 
       <Menu
         sx={{ "& .MuiList-padding": { paddingTop: 0, paddingBottom: 0 } }}
-        id={props.id + "-positioned-menu"}
-        aria-labelledby={props.id + "-positioned-button"}
+        id={props.path + "-positioned-menu"}
+        aria-labelledby={props.path + "-positioned-button"}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}

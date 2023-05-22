@@ -10,7 +10,6 @@ import { GlobalLoadingAtom } from "../../store/recoilStore";
 import RenameFSDialog from "./RenameFSDialog";
 
 export interface FolderMenuProps {
-  id: string | number;
   path: string;
   directory: string;
   name: string;
@@ -50,8 +49,8 @@ export default function FolderMenu(props: FolderMenuProps) {
           setOpenRename(false);
         }}></RenameFSDialog>
       <IconButton
-        id={props.id + "-positioned-button"}
-        aria-controls={open ? props.id + "-positioned-menu" : undefined}
+        id={props.path + "-positioned-button"}
+        aria-controls={open ? props.path + "-positioned-menu" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
         aria-expanded={open ? "true" : undefined}>
