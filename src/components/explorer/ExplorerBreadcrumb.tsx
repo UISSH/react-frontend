@@ -17,14 +17,7 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPath, setCurrentPath] = React.useState<string | null>();
 
-  useEffect(() => {
-    if (searchParams.has("directory")) {
-      console.log(searchParams.get("directory"));
-      setCurrentPath(searchParams.get("directory"));
-    }
-  }, [searchParams]);
-
-  const handleBreadcrumbClick = (i: number) => {};
+  useEffect(() => {}, [searchParams]);
 
   const LinkMemo = useMemo(() => {
     const directory = searchParams.get("directory");
@@ -37,6 +30,8 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
 
     let data = directory.split("/");
     data = data.filter((d) => d !== "");
+
+    setCurrentPath(directory);
 
     return data?.map((h, i) => {
       return (
@@ -56,18 +51,6 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
         </Link>
       );
     });
-
-    // <Link
-    //   key={i}
-    //   underline="hover"
-    //   color="inherit"
-    //   className="cursor-pointer "
-    //   onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    //     e.stopPropagation();
-    //     handleBreadcrumbClick(i);
-    //   }}>
-    //   {h}
-    // </Link>;
   }, [searchParams]);
 
   return (

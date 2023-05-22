@@ -52,7 +52,12 @@ export default function UpdateCrontab(props: UpdateCrontabProps) {
         schedule: location.state?.schedule,
         command: location.state?.command,
       });
-      setSwitchCustomShellScript(true);
+      if (location.state?.shellscript) {
+        setSwitchCustomShellScript(true);
+      } else {
+        setSwitchCustomShellScript(false);
+      }
+
       console.log(location.state);
     }
   }, [location.state]);
