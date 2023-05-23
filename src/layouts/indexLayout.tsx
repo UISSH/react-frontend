@@ -1,18 +1,9 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import BrowserUpdatedOutlinedIcon from "@mui/icons-material/BrowserUpdatedOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import CookieIcon from "@mui/icons-material/Cookie";
-import FolderIcon from "@mui/icons-material/Folder";
 import MenuIcon from "@mui/icons-material/Menu";
-import RouteIcon from "@mui/icons-material/Route";
-import ScheduleIcon from "@mui/icons-material/Schedule";
-import SecurityIcon from "@mui/icons-material/Security";
-import StorageIcon from "@mui/icons-material/Storage";
-import TerminalIcon from "@mui/icons-material/Terminal";
-import WebIcon from "@mui/icons-material/Web";
+
 import {
-  Badge,
   CircularProgress,
   CssBaseline,
   Dialog,
@@ -21,7 +12,7 @@ import {
   LinearProgress,
   Modal,
   Paper,
-  Tooltip,
+  createSvgIcon,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -38,6 +29,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import packagejs from "../../package.json";
 import LabTabs from "../components/Labtabs";
+import Version from "../components/Vesrion";
 import useLongPress from "../hooks/useLongPress";
 import { hasAuthToken, requestData } from "../requests/http";
 import {
@@ -45,7 +37,8 @@ import {
   GlobalLoadingAtom,
   GlobalProgressAtom,
 } from "../store/recoilStore";
-import Version from "../components/Vesrion";
+import MenuData from "./ListMeunData";
+
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -104,17 +97,13 @@ export async function loader() {
     throw new Response("permission denied", { status: 404 });
   }
 
-  if (sessionStorage.getItem("version")) {
-    return null;
-  }
   let data = await requestData({
     url: "version",
   });
+
   if (data.status == 403) {
     throw new Response("permission denied", { status: 404 });
   }
-  sessionStorage.setItem("version", await data.text());
-
   return null;
 }
 
@@ -153,7 +142,7 @@ function CustomNavLink(props: {
       <NavLink to={props.item.to} className="text-inherit no-underline">
         <ListItemButton>
           <ListItemIcon className="text-inherit">
-            <props.item.icon fontSize="large" />
+            <props.item.icon />
           </ListItemIcon>
           <ListItemText
             className="capitalize text-inherit"
@@ -185,48 +174,7 @@ export default function PersistentDrawerLeft() {
     delay: 500,
   });
 
-  const listMeunData = [
-    {
-      name: t("layout.overview"),
-      icon: CookieIcon,
-      to: "/dash/index",
-    },
-    {
-      name: t("layout.website"),
-      icon: WebIcon,
-      to: "/dash/website",
-    },
-    {
-      name: t("layout.database"),
-      icon: StorageIcon,
-      to: "/dash/database",
-    },
-    {
-      name: t("layout.files"),
-      icon: FolderIcon,
-      to: "/dash/explorer",
-    },
-    {
-      name: t("layout.terminal"),
-      icon: TerminalIcon,
-      to: "/dash/terminal",
-    },
-    {
-      name: t("layout.ftp"),
-      icon: RouteIcon,
-      to: "/dash/mount",
-    },
-    {
-      name: t("layout.iptables"),
-      icon: SecurityIcon,
-      to: "/dash/iptables",
-    },
-    {
-      name: t("layout.crontab"),
-      icon: ScheduleIcon,
-      to: "/dash/crontab",
-    },
-  ];
+  const listMeunData = MenuData(t);
   const handleDrawerOpen = () => {
     setOpen(true);
   };

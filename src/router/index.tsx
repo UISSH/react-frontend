@@ -1,9 +1,5 @@
 import { lazy, Suspense } from "react";
-import {
-  createBrowserRouter,
-  redirect,
-  createHashRouter,
-} from "react-router-dom";
+import { createHashRouter, redirect } from "react-router-dom";
 
 import { loader as indexLayoutLoader } from "../layouts/indexLayout";
 //import DevelopDemo from "../pages/DevelopDemo";
@@ -23,6 +19,7 @@ const MonacoEditorPage = lazy(() => import("../pages/MonacoEditor"));
 const HappyNewYear = lazy(() => import("../pages/HappyNewYear"));
 const IPTablesIndex = lazy(() => import("../pages/IndexLayout/IPTables"));
 const CrontabIndex = lazy(() => import("../pages/IndexLayout/Crontab"));
+const DockerIndex = lazy(() => import("../pages/IndexLayout/Docker"));
 
 export const router = createHashRouter([
   {
@@ -144,6 +141,14 @@ export const router = createHashRouter([
         element: (
           <Suspense>
             <CrontabIndex></CrontabIndex>
+          </Suspense>
+        ),
+      },
+      {
+        path: "docker",
+        element: (
+          <Suspense>
+            <DockerIndex></DockerIndex>
           </Suspense>
         ),
       },

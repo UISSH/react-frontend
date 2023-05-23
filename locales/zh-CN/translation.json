@@ -19,9 +19,9 @@
     "website": "站点"
   },
   "crontab": {
+    "sync_btn_tlp": "从服务器同步定时任务",
     "sync_crontab_failed": "同步定时任务失败",
-    "sync_crontab_success": "同步定时任务成功",
-    "sync_btn_tlp": "从服务器同步定时任务"
+    "sync_crontab_success": "同步定时任务成功"
   },
   "database": {
     "are-you-sure-to-delete-the-databse": "确定要删除数据库吗？",
@@ -92,6 +92,7 @@
   "layout": {
     "crontab": "定时任务",
     "database": "数据库",
+    "docker": "Docker",
     "explorer": "文件管理",
     "files": "文件管理",
     "filesystem": "文件系统",

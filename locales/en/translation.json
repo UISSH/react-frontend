@@ -19,9 +19,9 @@
     "website": "website"
   },
   "crontab": {
+    "sync_btn_tlp": "Sync crontab from server",
     "sync_crontab_failed": "Sync crontab failed",
-    "sync_crontab_success": "Sync crontab success",
-    "sync_btn_tlp": "Sync crontab from server"
+    "sync_crontab_success": "Sync crontab success"
   },
   "database": {
     "are-you-sure-to-delete-the-databse": "Are you sure to delete the databse?",
@@ -93,6 +93,7 @@
   "layout": {
     "crontab": "crontab",
     "database": "database",
+    "docker": "Docker",
     "explorer": "explorer",
     "files": "files",
     "filesystem": "File System",

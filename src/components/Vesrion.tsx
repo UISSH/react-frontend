@@ -81,10 +81,12 @@ export function DialogUpdate(props: DialogUpdateProps) {
           id="alert-dialog-description"
           className="mt-2 text-right">
           visit the{" "}
-          <a
-            href={`https://github.com/UISSH/backend/releases/tag/{$props.version}`}>
+          <Button
+            type="a"
+            target="_blank"
+            href={`https://github.com/UISSH/backend/releases/tag/${props.version}`}>
             Changelog
-          </a>
+          </Button>
         </DialogContentText>
       </DialogContent>
       <DialogActions>

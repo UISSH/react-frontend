@@ -369,7 +369,7 @@ export function EnhancedTable(props: TableDjangoProps) {
 }
 
 interface TableDjangoRow {
-  id: number;
+  id: number | string;
   [x: string]: any;
 }
 
