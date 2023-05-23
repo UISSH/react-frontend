@@ -10,33 +10,15 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <link rel="stylesheet" href="./_media/custom.css">
 
-  <script>
-    const chinaCDN = 'https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-y/docsify/4.12.2';
-    const globalCDN = '//fastly.jsdelivr.net/npm/docsify@4';
-    var script = document.createElement('script');
-    var browserLang = navigator.language || navigator.userLanguage;
-    if (browserLang !== 'zh-CN') {
-      document.getElementById('docsifyTheme').href = `${chinaCDN}/themes/vue.min.css`;
-      script.src = `${chinaCDN}/docsify.min.js`;
-    } else {
-      script.src = globalCDN
-    }
-    script.type = 'application/javascript';
-
-    if (document.body) {
-      document.body.appendChild(script);
-    } else {
-      document.addEventListener('DOMContentLoaded', function () {
-        document.body.appendChild(script);
-      });
-    }
-  </script>
 
 <body>
   <div id="app"></div>
   <script src="//fastly.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
 
-  <script src="//fastly.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+  <script src="
+https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js
+"></script>
+  <script src="//fastly.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
   <script src="//fastly.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
 
   <script src="//fastly.jsdelivr.net/npm/docsify-edit-on-github"></script>
@@ -70,6 +52,8 @@
 
     }
   </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+
   <script src="//fastly.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
 </body>
 
