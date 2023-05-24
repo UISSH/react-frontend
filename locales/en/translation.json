@@ -90,6 +90,26 @@
     "ufw_command_helper_text": "You can also modify this command before executing it or fully customize it."
   },
   "key": "hello world",
+  "docker": {
+    "image": "image",
+    "container": "container",
+    "network": "network",
+    "volume": "volume",
+    "exec": "exec",
+    "create": "create",
+    "start": "start",
+    "stop": "stop",
+    "restart": "restart",
+    "pause": "pause",
+    "unpause": "unpause",
+    "remove": "remove",
+    "inspect": "inspect",
+    "logs": "logs",
+    "stats": "stats",
+    "no-data": "no data",
+    "no-network": "no network",
+    "no-volume": "no volume"
+  },
   "layout": {
     "crontab": "crontab",
     "database": "database",

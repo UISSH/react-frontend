@@ -89,6 +89,26 @@
     "ufw_command_helper_text": "您也可以在执行前修改此命令或完全自定义它。"
   },
   "key": "hello world",
+  "docker": {
+    "image": "镜像",
+    "container": "容器",
+    "network": "网络",
+    "volume": "卷",
+    "exec": "执行",
+    "create": "创建",
+    "start": "启动",
+    "stop": "停止",
+    "restart": "重启",
+    "pause": "暂停",
+    "unpause": "恢复",
+    "remove": "删除",
+    "inspect": "查看",
+    "logs": "日志",
+    "stats": "状态",
+    "no-data": "没有数据",
+    "no-network": "没有网络",
+    "no-volume": "没有卷"
+  },
   "layout": {
     "crontab": "定时任务",
     "database": "数据库",

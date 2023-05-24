@@ -27,6 +27,18 @@ export let api = {
 
 export type ApiType = keyof typeof api;
 
+interface DjangoTableResponse {
+  pagination: Pagination;
+  results: any[];
+}
+
+interface Pagination {
+  total_pages: number;
+  current_page: number;
+  total_record: number;
+  next?: any;
+  previous?: any;
+}
 export function hasAuthToken() {
   let token = window.sessionStorage.getItem(ACCESS_TOKEN);
   return Boolean(token);
@@ -84,6 +96,48 @@ export interface RequestDataProps {
     id?: string;
     action?: string;
   };
+}
+/**
+ * execute osquery sql,
+ *
+ * shecma: https://www.osquery.io/schema/5.8.2/
+ *
+ * docs: https://osquery.readthedocs.io/en/stable/introduction/using-osqueryi/
+ *
+ * @param {string} sql e.g: select * from processes;
+ * @returns
+ */
+export async function requestOsqueryData(sql: string) {
+  // 兼容 Django 返回的数据格式
+  let data = {
+    url: "/api/Operating/excute_command_sync/",
+    method: "POST" as const,
+    data: {
+      command: `osqueryi "${sql}" --json`,
+      cwd: "/tmp/",
+    },
+  };
+
+  let resPonse = new Promise<any>(async (resolve) => {
+    let res = await requestData(data);
+    resolve({
+      ok: res.ok,
+      json: async () => {
+        let json = await res.json();
+        let data = JSON.parse(json.msg);
+        return {
+          pagination: {
+            total_pages: 1,
+            current_page: 1,
+            total_record: json.length,
+          },
+          results: data,
+        };
+      },
+    });
+  });
+
+  return resPonse;
 }
 
 export function requestData(props: RequestDataProps): Promise<Response> {

@@ -7,6 +7,7 @@ import {
   ButtonGroup,
   IconButton,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
@@ -15,39 +16,19 @@ import useSWR from "swr";
 
 import { useSnackbar } from "notistack";
 import { PureFunctionContext } from "../../Context";
-import { requestData } from "../../requests/http";
+import { requestOsqueryData } from "../../requests/http";
+import { formatBytes } from "../../utils";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
+import { VolumeRowIF } from "./schema";
 
-const LABEL = "layout.docker";
-
-interface RowIF {
-  cgroup_namespace: string;
-  command: string;
-  config_entrypoint: string;
-  created: string;
-  env_variables: string;
-  finished_at: string;
-  id: string;
-  image: string;
-  image_id: string;
-  ipc_namespace: string;
-  mnt_namespace: string;
-  name: string;
-  net_namespace: string;
-  path: string;
-  pid: string;
-  pid_namespace: string;
-  privileged: string;
-  readonly_rootfs: string;
-  security_options: string;
-  started_at: string;
-  state: string;
-  status: string;
-  user_namespace: string;
-  uts_namespace: string;
+interface RowIF extends VolumeRowIF {
+  id: number;
 }
-export interface DemoTableProps {}
+
+const LABEL = "docker.volume";
+
+export interface VolumeTableProps {}
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
@@ -131,7 +112,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </>
   );
 }
-export default function DemoTable(props: DemoTableProps) {
+export default function ContainerTable(props: VolumeTableProps) {
   const [t] = useTranslation();
   const headCells = [
     {
@@ -140,35 +121,18 @@ export default function DemoTable(props: DemoTableProps) {
       disablePadding: true,
       label: "ID",
     },
+
     {
-      key: "name",
+      key: "tags",
       numeric: true,
       disablePadding: false,
-      label: "name",
+      label: "tags",
     },
     {
-      key: "command",
+      key: "size_bytes",
       numeric: true,
       disablePadding: false,
-      label: "command",
-    },
-    {
-      key: "image",
-      numeric: true,
-      disablePadding: false,
-      label: "image",
-    },
-    {
-      key: "state",
-      numeric: true,
-      disablePadding: false,
-      label: "state",
-    },
-    {
-      key: "status",
-      numeric: true,
-      disablePadding: false,
-      label: "status",
+      label: "size",
     },
     {
       key: "created",
@@ -189,30 +153,23 @@ export default function DemoTable(props: DemoTableProps) {
   };
 
   const transformRowData = (data: RowIF[]) => {
+    let c = 0;
     return data.map((row) => {
-      row.id = row.id.slice(0, 12);
+      row.id = ++c;
+      row.nameJSX = <Button>{row.name}</Button>;
+
       return row;
     });
   };
 
-  const { mutate, data, isLoading } = useSWR<RowIF[]>(
-    {
-      url: "/api/Operating/excute_command_sync/",
-      method: "POST",
-      data: {
-        command: 'osqueryi "select * from docker_containers;" --json',
-        cwd: "/tmp/",
-      },
-    },
-    async (props) => {
+  const { mutate, data, isLoading, error } = useSWR<RowIF[]>(
+    "select * from docker_volumes;",
+    async (sql) => {
       setSelected([]);
-      let data = await requestData(props);
+      let data = await requestOsqueryData(sql);
       if (data.ok) {
         let res = await data.json();
-
-        res = JSON.parse(res.msg);
-
-        return transformRowData(res);
+        return transformRowData(res.results);
       } else {
         enqueueSnackbar(t("common.error"), {
           variant: "error",
@@ -221,6 +178,15 @@ export default function DemoTable(props: DemoTableProps) {
       }
     }
   );
+
+  if (error) {
+    console.log(error);
+    let msg =
+      "oops, something went wrong! please open the console to see the error message";
+    enqueueSnackbar(msg, {
+      variant: "error",
+    });
+  }
 
   const handleSetTargetPage = (targetPage: number) => {
     mutate();

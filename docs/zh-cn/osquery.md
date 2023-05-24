@@ -6,7 +6,7 @@ osquery将操作系统呈现为高性能的关系型数据库。这意味着您�
 
 继续往下阅读时，您需要掌握osquery的基本概念。如果您还不熟悉osquery，请参阅[osquery官方文档](https://osquery.readthedocs.io/en/stable/)。
 
-## 查询数据
+## 轮询查询
 
 要查询系统状态，需要创建 websocket 实例。
 
@@ -68,6 +68,24 @@ interface Message {
 interface Out {
   [key: string]: string;
 }
+```
+
+
+## 实时查询
+
+
+
+```ts
+// import { requestOsqueryData } from "./src/requests/http.ts";
+
+let sql = "select * from processes";
+
+let data = await requestOsqueryData(sql);
+
+if (data.ok) {
+    let res = await data.json();
+    console.log(res.results); 
+} 
 ```
 
 ## 本地运行
