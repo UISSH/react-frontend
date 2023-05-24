@@ -11,15 +11,15 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
-
-import { useSnackbar } from "notistack";
 import { PureFunctionContext } from "../../Context";
 import { requestOsqueryData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
+import ContainerPort from "./ContainerPort";
 import { ContainerRowIF as RowIF } from "./schema";
 const LABEL = "docker.container";
 
@@ -122,12 +122,7 @@ export default function ContainerTable(props: ContainerProps) {
       disablePadding: false,
       label: "name",
     },
-    {
-      key: "command",
-      numeric: true,
-      disablePadding: false,
-      label: "command",
-    },
+
     {
       key: "image",
       numeric: true,
@@ -139,6 +134,12 @@ export default function ContainerTable(props: ContainerProps) {
       numeric: true,
       disablePadding: false,
       label: "state",
+    },
+    {
+      key: "port",
+      numeric: true,
+      disablePadding: false,
+      label: "port",
     },
     {
       key: "status",
@@ -171,6 +172,7 @@ export default function ContainerTable(props: ContainerProps) {
           <Button>{row.id.slice(0, 12)}</Button>
         </Tooltip>
       );
+      row.port = <ContainerPort id={row.id}></ContainerPort>;
       row.created = new Date(parseInt(row.created) * 1000).toLocaleString();
       return row;
     });

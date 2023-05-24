@@ -7,7 +7,6 @@ import {
   ButtonGroup,
   IconButton,
   Toolbar,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
@@ -114,6 +113,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 export default function ContainerTable(props: VolumeTableProps) {
   const [t] = useTranslation();
+
   const headCells = [
     {
       key: "id",
@@ -123,22 +123,28 @@ export default function ContainerTable(props: VolumeTableProps) {
     },
 
     {
-      key: "tags",
+      key: "name",
       numeric: true,
       disablePadding: false,
-      label: "tags",
+      label: "name",
     },
     {
-      key: "size_bytes",
+      key: "driver",
       numeric: true,
       disablePadding: false,
-      label: "size",
+      label: "driver",
     },
     {
-      key: "created",
+      key: "mount_point",
       numeric: true,
       disablePadding: false,
-      label: "created",
+      label: "mount_point",
+    },
+    {
+      key: "type",
+      numeric: true,
+      disablePadding: false,
+      label: "type",
     },
   ];
 
@@ -157,7 +163,6 @@ export default function ContainerTable(props: VolumeTableProps) {
     return data.map((row) => {
       row.id = ++c;
       row.nameJSX = <Button>{row.name}</Button>;
-
       return row;
     });
   };

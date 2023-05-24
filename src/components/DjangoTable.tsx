@@ -310,7 +310,10 @@ export function EnhancedTable(props: TableDjangoProps) {
                           /* @ts-ignore */
                         }
                         return (
-                          <TableCell key={headRow.key} align="right">
+                          <TableCell
+                            className="whitespace-nowrap	"
+                            key={headRow.key}
+                            align="right">
                             {row[headRow.key]}
                           </TableCell>
                         );

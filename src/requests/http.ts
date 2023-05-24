@@ -118,7 +118,10 @@ export async function requestOsqueryData(sql: string) {
     },
   };
 
-  let resPonse = new Promise<any>(async (resolve) => {
+  let resPonse = new Promise<{
+    ok: boolean;
+    json: () => Promise<DjangoTableResponse>;
+  }>(async (resolve) => {
     let res = await requestData(data);
     resolve({
       ok: res.ok,
@@ -132,7 +135,7 @@ export async function requestOsqueryData(sql: string) {
             total_record: json.length,
           },
           results: data,
-        };
+        } as DjangoTableResponse;
       },
     });
   });

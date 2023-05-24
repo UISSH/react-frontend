@@ -15,6 +15,7 @@ export interface ImageRowIF {
 }
 export interface ContainerRowIF {
   id_name?: JSX.Element;
+  port?: JSX.Element;
   cgroup_namespace: string;
   command: string;
   config_entrypoint: string;

@@ -52,7 +52,7 @@ ws.onmessage = (e) => {
 ```
 ### 接口定义
 
-```typescript
+```javascript
 interface OsqueryResult {
   doc: string;
   action: string;
@@ -75,7 +75,7 @@ interface Out {
 
 
 
-```ts
+```javascript
 // import { requestOsqueryData } from "./src/requests/http.ts";
 
 let sql = "select * from processes";

@@ -1,15 +1,13 @@
 import { useSearchParams } from "react-router-dom";
-import DockerTable from "../../components/docker/ContainerTable";
 import ImageTable from "../../components/docker/ImageTable";
 import VolumeTable from "../../components/docker/VolumeTable";
 
-import * as React from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import ContainerTable from "../../components/docker/ContainerTable";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import * as React from "react";
 import { useTranslation } from "react-i18next";
+import ContainerTable from "../../components/docker/ContainerTable";
 
 interface TabPanelProps {
   children?: React.ReactNode;
