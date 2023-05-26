@@ -20,7 +20,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-import MoodBadIcon from "@mui/icons-material/MoodBad";
 import SuspenseLoading from "./SuspenseLoading";
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -105,6 +104,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 export interface EnhancedTableToolbarProps {
+  selected: readonly string[];
   numSelected: number;
   onAction?: (action: string) => void;
 }
@@ -246,6 +246,7 @@ export function EnhancedTable(props: TableDjangoProps) {
       <Paper sx={{ width: "100%", mb: 2, minHeight: 300, boxShadow: "none" }}>
         {
           <EnhancedTableToolbar
+            selected={selected}
             numSelected={selected.length}
             onAction={props.onAction}
             title={props.title}

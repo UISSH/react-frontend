@@ -1,6 +1,9 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import StopCircleIcon from "@mui/icons-material/StopCircle";
+import SyncIcon from "@mui/icons-material/Sync";
 import {
   alpha,
   Button,
@@ -16,19 +19,18 @@ import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import { PureFunctionContext } from "../../Context";
-import { requestOsqueryData } from "../../requests/http";
+import { requestData, requestOsqueryData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import ContainerPort from "./ContainerPort";
 import { ContainerRowIF as RowIF } from "./schema";
 const LABEL = "docker.container";
-
 export interface ContainerTableProps {}
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
 
-  const { numSelected } = props;
+  const { numSelected, selected } = props;
   const [t] = useTranslation();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -75,7 +77,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </Typography>
         )}
         <ButtonGroup
-          className="flex-nowarp"
+          className="flex-nowarp bg-white"
           variant="contained"
           aria-label="outlined primary button group">
           <Button
@@ -85,7 +87,40 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             }}>
             {t("common.add")}
           </Button>
+          {numSelected == 1 && (
+            <ButtonGroup
+              className="flex-nowarp bg-white"
+              variant="contained"
+              color="inherit">
+              <div className="px-2 gap-1 flex">
+                <Tooltip title={"turn on"}>
+                  <IconButton
+                    onClick={() => {
+                      props.onAction && props.onAction("start");
+                    }}>
+                    <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={"turn off"}>
+                  <IconButton
+                    onClick={() => {
+                      props.onAction && props.onAction("stop");
+                    }}>
+                    <StopCircleIcon color="primary"></StopCircleIcon>
+                  </IconButton>
+                </Tooltip>
 
+                <Tooltip title="restart">
+                  <IconButton
+                    onClick={() => {
+                      props.onAction && props.onAction("restart");
+                    }}>
+                    <SyncIcon color="primary"></SyncIcon>
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </ButtonGroup>
+          )}
           {numSelected > 0 ? (
             <Button
               color="error"
@@ -158,11 +193,47 @@ export default function ContainerTable(props: ContainerProps) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [selected, setSelected] = useState<readonly string[]>([]);
+  const executeCommand = async (command: string) => {
+    let data = {
+      url: "/api/Operating/excute_command_sync/",
+      method: "POST" as const,
+      data: {
+        command: command,
+        cwd: "/tmp/",
+      },
+    };
+    let res = await requestData(data);
 
-  const handleAction = (action: string) => {
+    if (!res.ok) {
+      enqueueSnackbar(res.status, { variant: "error" });
+    }
+
+    let resJson = await res.json();
+    if (resJson.result.result_text === "SUCCESS") {
+      enqueueSnackbar("success", { variant: "success" });
+    } else {
+      enqueueSnackbar(resJson.msg, { variant: "error" });
+    }
+  };
+
+  const handleAction = async (action: string) => {
     if (action === "reload") {
       mutate();
     }
+    if (action === "start") {
+      for (let i = 0; i < selected.length; i++) {
+        await executeCommand(`docker start ${selected[i]}`);
+      }
+    } else if (action === "stop") {
+      for (let i = 0; i < selected.length; i++) {
+        await executeCommand(`docker stop ${selected[i]}`);
+      }
+    } else if (action === "restart") {
+      for (let i = 0; i < selected.length; i++) {
+        await executeCommand(`docker restart ${selected[i]}`);
+      }
+    }
+    mutate();
   };
 
   const transformRowData = (data: RowIF[]) => {
