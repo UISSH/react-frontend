@@ -19,11 +19,11 @@ import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import { PureFunctionContext } from "../../Context";
-import { requestData, requestOsqueryData } from "../../requests/http";
+import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
+import { ContainerIF, ContainersIF } from "./schema";
 import ContainerPort from "./ContainerPort";
-import { ContainerRowIF as RowIF } from "./schema";
 const LABEL = "docker.container";
 export interface ContainerTableProps {}
 
@@ -232,28 +232,36 @@ export default function ContainerTable(props: ContainerProps) {
       for (let i = 0; i < selected.length; i++) {
         await executeCommand(`docker restart ${selected[i]}`);
       }
+    } else if (action === "delete") {
+      for (let i = 0; i < selected.length; i++) {
+        await executeCommand(`docker rm ${selected[i]} --force`);
+      }
     }
     mutate();
   };
 
-  const transformRowData = (data: RowIF[]) => {
+  const transformRowData = (data: ContainerIF[]) => {
     return data.map((row) => {
+      row.name = row.names.pop();
       row.id_name = (
         <Tooltip title={row.id}>
           <Button>{row.id.slice(0, 12)}</Button>
         </Tooltip>
       );
-      row.port = <ContainerPort id={row.id}></ContainerPort>;
-      row.created = new Date(parseInt(row.created) * 1000).toLocaleString();
+      row.port = <ContainerPort row={row}></ContainerPort>;
+      row.created = new Date((row.created as number) * 1000).toLocaleString();
       return row;
     });
   };
 
-  const { mutate, data, isLoading, error } = useSWR<RowIF[]>(
-    "select * from docker_containers;",
-    async (sql) => {
+  const { mutate, data, isLoading, error } = useSWR<ContainerIF[]>(
+    "/api/DockerContainer/",
+    async (url) => {
       setSelected([]);
-      let data = await requestOsqueryData(sql);
+      let data = await requestData({
+        url: url,
+        method: "GET",
+      });
       if (data.ok) {
         let res = await data.json();
         return transformRowData(res.results);

@@ -1,31 +1,19 @@
-import useSWR from "swr";
-import { requestOsqueryData } from "../../requests/http";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import { ContainerIF } from "./schema";
 
 interface ContainerProps {
-  id: string;
+  row: ContainerIF;
 }
 export default function ContainerPort(props: ContainerProps) {
-  const { data, isLoading, error, mutate } = useSWR(props.id, async () => {
-    let res = await requestOsqueryData(
-      "select * from docker_container_ports where id = '" + props.id + "';"
-    );
-    return res.json();
-  });
-  if (isLoading) return <div>loading...</div>;
-  if (error) return <div>error</div>;
-  if (!data) return <div>no data</div>;
+  const ipv4Port = props.row.ports[0];
+
+  if (ipv4Port == null) {
+    return <div></div>;
+  }
   return (
-    <div>
-      {data.results.map((row: any) => {
-        return (
-          <div className="flex  justify-end items-center">
-            {row.port} {<ArrowRightAltIcon></ArrowRightAltIcon>} [{row.host_ip}
-            ]:
-            {row.host_port}
-          </div>
-        );
-      })}
+    <div className="flex justify-end items-center">
+      {ipv4Port.privateport} {<ArrowRightAltIcon></ArrowRightAltIcon>}
+      {ipv4Port.publicport}
     </div>
   );
 }

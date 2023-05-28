@@ -41,3 +41,76 @@ export interface ContainerRowIF {
   user_namespace: string;
   uts_namespace: string;
 }
+
+export interface ContainersIF {
+  containers: ContainerIF[];
+}
+
+export interface ContainerIF {
+  port?: string | JSX.Element;
+  name?: string | JSX.Element;
+  id_name?: JSX.Element;
+  id: string;
+  names: string[];
+  image: string;
+  imageid: string;
+  command: string;
+  created: number | string;
+  ports: Port[];
+  labels: Labels;
+  state: string;
+  status: string;
+  hostconfig: Hostconfig;
+  networksettings: Networksettings;
+  mounts: Mount[];
+}
+
+interface Mount {
+  type: string;
+  name: string;
+  source: string;
+  destination: string;
+  driver: string;
+  mode: string;
+  rw: boolean;
+  propagation: string;
+}
+
+interface Networksettings {
+  networks: Networks;
+}
+
+interface Networks {
+  bridge: Bridge;
+}
+
+interface Bridge {
+  ipamconfig?: any;
+  links?: any;
+  aliases?: any;
+  networkid: string;
+  endpointid: string;
+  gateway: string;
+  ipaddress: string;
+  ipprefixlen: number;
+  ipv6gateway: string;
+  globalipv6address: string;
+  globalipv6prefixlen: number;
+  macaddress: string;
+  driveropts?: any;
+}
+
+interface Hostconfig {
+  networkmode: string;
+}
+
+interface Labels {
+  maintainer?: string;
+}
+
+interface Port {
+  ip: string;
+  privateport: number;
+  publicport: number;
+  type: string;
+}
