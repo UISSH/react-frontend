@@ -53,30 +53,19 @@ export interface ContainerIF {
   id: string;
   names: string[];
   image: string;
-  imageid: string;
+  imageID: string;
   command: string;
   created: number | string;
   ports: Port[];
   labels: Labels;
   state: string;
   status: string;
-  hostconfig: Hostconfig;
-  networksettings: Networksettings;
-  mounts: Mount[];
+  hostConfig: HostConfig;
+  networkSettings: NetworkSettings;
+  mounts: any[];
 }
 
-interface Mount {
-  type: string;
-  name: string;
-  source: string;
-  destination: string;
-  driver: string;
-  mode: string;
-  rw: boolean;
-  propagation: string;
-}
-
-interface Networksettings {
+interface NetworkSettings {
   networks: Networks;
 }
 
@@ -85,32 +74,32 @@ interface Networks {
 }
 
 interface Bridge {
-  ipamconfig?: any;
+  iPAMConfig?: any;
   links?: any;
   aliases?: any;
-  networkid: string;
-  endpointid: string;
+  networkID: string;
+  endpointID: string;
   gateway: string;
-  ipaddress: string;
-  ipprefixlen: number;
-  ipv6gateway: string;
-  globalipv6address: string;
-  globalipv6prefixlen: number;
-  macaddress: string;
-  driveropts?: any;
+  iPAddress: string;
+  iPPrefixLen: number;
+  iPv6Gateway: string;
+  globalIPv6Address: string;
+  globalIPv6PrefixLen: number;
+  macAddress: string;
+  driverOpts?: any;
 }
 
-interface Hostconfig {
-  networkmode: string;
+interface HostConfig {
+  networkMode: string;
 }
 
 interface Labels {
-  maintainer?: string;
+  maintainer: string;
 }
 
 interface Port {
-  ip: string;
-  privateport: number;
-  publicport: number;
+  iP: string;
+  privatePort: number;
+  publicPort: number;
   type: string;
 }

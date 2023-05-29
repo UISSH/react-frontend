@@ -20,6 +20,9 @@ const HappyNewYear = lazy(() => import("../pages/HappyNewYear"));
 const IPTablesIndex = lazy(() => import("../pages/IndexLayout/IPTables"));
 const CrontabIndex = lazy(() => import("../pages/IndexLayout/Crontab"));
 const DockerIndex = lazy(() => import("../pages/IndexLayout/Docker"));
+const RunNewContainer = lazy(
+  () => import("../components/docker/RunNewContainer")
+);
 
 export const router = createHashRouter([
   {
@@ -146,9 +149,18 @@ export const router = createHashRouter([
       },
       {
         path: "docker",
+
         element: (
           <Suspense>
             <DockerIndex></DockerIndex>
+          </Suspense>
+        ),
+      },
+      {
+        path: "new_container",
+        element: (
+          <Suspense>
+            <RunNewContainer></RunNewContainer>
           </Suspense>
         ),
       },
