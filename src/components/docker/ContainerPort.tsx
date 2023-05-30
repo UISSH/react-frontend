@@ -12,8 +12,8 @@ export default function ContainerPort(props: ContainerProps) {
   }
   return (
     <div className="flex justify-end items-center">
-      {ipv4Port.privateport} {<ArrowRightAltIcon></ArrowRightAltIcon>}
-      {ipv4Port.publicport}
+      {ipv4Port.privatePort} {<ArrowRightAltIcon></ArrowRightAltIcon>}
+      {ipv4Port.publicPort}
     </div>
   );
 }
