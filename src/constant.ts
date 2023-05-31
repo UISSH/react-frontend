@@ -10,6 +10,7 @@ export const SHORTCUT_UNIQUE = "SHORTCUTUNIQUE_V2";
 export interface OperatingResIF {
   event_id: string;
   result: ResultIF;
+
   name: string;
   msg: string;
   create_at: string;

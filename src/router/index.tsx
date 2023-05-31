@@ -21,7 +21,7 @@ const IPTablesIndex = lazy(() => import("../pages/IndexLayout/IPTables"));
 const CrontabIndex = lazy(() => import("../pages/IndexLayout/Crontab"));
 const DockerIndex = lazy(() => import("../pages/IndexLayout/Docker"));
 const RunNewContainer = lazy(
-  () => import("../components/docker/RunNewContainer")
+  () => import("../components/docker/CreateContainer")
 );
 
 export const router = createHashRouter([

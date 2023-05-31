@@ -3,6 +3,10 @@ import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { requestData } from "../../requests/http";
+import { OperatingResIF } from "../../constant";
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
 export interface RunNewContainerProps {}
 
 interface VolumeIF {
@@ -20,7 +24,7 @@ interface IFormInput {
   hostPort: number;
   containerPort: number;
   volumes: VolumeIF[];
-  env: ENVIF[];
+  environment: ENVIF[];
 }
 export default function RunNewContainer(props: RunNewContainerProps) {
   const {
@@ -33,28 +37,79 @@ export default function RunNewContainer(props: RunNewContainerProps) {
   const imageName = "louislam/uptime-kuma:1";
   const [volumeCount, setVolumeCount] = useState<number>(1);
   const [envCount, setENVCount] = useState<number>(1);
-
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log(data);
     let volumes = [];
+    let environment = [];
+
     for (let i = 0; i < data.volumes.length; i++) {
-      volumes.push(
-        `${data.volumes[i].hostPath}:${data.volumes[i].containerPath}`
-      );
+      if (data.volumes[i].containerPath) {
+        volumes.push(
+          `${data.volumes[i].hostPath}:${data.volumes[i].containerPath}`
+        );
+      }
     }
-    let payload = {
+
+    for (let i = 0; i < data.environment.length; i++) {
+      if (data.environment[i].value) {
+        environment.push(data.environment[i]);
+      }
+    }
+
+    let payload;
+    payload = {
       name: data.name,
       image: imageName,
-      port_bindings: {
-        [data.containerPort]: Number(data.hostPort),
-      },
       binds: volumes,
+      environment: [],
     };
+
+    if (data.hostPort != null) {
+      payload = {
+        ...payload,
+        port_bindings: { [data.containerPort]: Number(data.hostPort) },
+      };
+    }
+
     console.log(payload);
+
+    enqueueSnackbar("Creating...", { variant: "info" });
+
+    let res = await requestData({
+      url: "/api/DockerContainer/create_container/",
+      method: "POST",
+      data: payload,
+    });
+
+    let resJson = (await res.json()) as OperatingResIF;
+    if (resJson.result.result_text === "SUCCESS") {
+      enqueueSnackbar("success", { variant: "success" });
+    } else {
+      enqueueSnackbar(resJson.msg, { variant: "error" });
+      return;
+    }
+
+    enqueueSnackbar("Starting...", { variant: "info" });
+    // /api/DockerContainer/{docker_id}/start/
+    res = await requestData({
+      url: `/api/DockerContainer/${resJson.msg}/start/`,
+      method: "POST",
+    });
+
+    resJson = (await res.json()) as OperatingResIF;
+    if (resJson.result.result_text === "SUCCESS") {
+      enqueueSnackbar("success", { variant: "success" });
+    } else {
+      enqueueSnackbar(resJson.msg, { variant: "error" });
+      return;
+    }
+
+    reset();
   };
 
   const getError = (props: {
-    filedName: "volumes" | "env";
+    filedName: "volumes" | "environment";
     key: string;
     index: number;
   }) => {
@@ -178,20 +233,20 @@ export default function RunNewContainer(props: RunNewContainerProps) {
               <div className="flex gap-2 w-full justify-between">
                 <TextField
                   className="w-full"
-                  {...register(`env.${i}.key`, {
+                  {...register(`environment.${i}.key`, {
                     required: false,
                   })}
                   size="small"
                   error={
                     getError({
-                      filedName: "env",
+                      filedName: "environment",
                       key: "key",
                       index: i,
                     }).error
                   }
                   helperText={
                     getError({
-                      filedName: "env",
+                      filedName: "environment",
                       key: "key",
                       index: i,
                     }).message
@@ -202,20 +257,20 @@ export default function RunNewContainer(props: RunNewContainerProps) {
                 />
                 <TextField
                   className="w-full"
-                  {...register(`env.${i}.value`, {
+                  {...register(`environment.${i}.value`, {
                     required: false,
                   })}
                   size="small"
                   error={
                     getError({
-                      filedName: "env",
+                      filedName: "environment",
                       key: "value",
                       index: i,
                     }).error
                   }
                   helperText={
                     getError({
-                      filedName: "env",
+                      filedName: "environment",
                       key: "value",
                       index: i,
                     }).message
