@@ -61,7 +61,7 @@
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.14",
     "envify": "^4.1.0",
-    "openapi-typescript": "^6.2.4",
+    "openapi-typescript": "^6.2.6",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",
     "rollup-plugin-visualizer": "^5.9.0",
