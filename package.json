@@ -21,7 +21,7 @@
     "@material/material-color-utilities": "^0.2.6",
     "@monaco-editor/react": "^4.5.1",
     "@mui/icons-material": "^5.11.16",
-    "@mui/lab": "^5.0.0-alpha.131",
+    "@mui/lab": "^5.0.0-alpha.132",
     "@mui/material": "^5.13.2",
     "ace-builds": "^1.22.0",
     "axios": "^1.4.0",
