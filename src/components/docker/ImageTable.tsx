@@ -16,7 +16,7 @@ import useSWR from "swr";
 
 import { useSnackbar } from "notistack";
 import { PureFunctionContext } from "../../Context";
-import { requestOsqueryData } from "../../requests/http";
+import { requestData, requestOsqueryData } from "../../requests/http";
 import { formatBytes } from "../../utils";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
@@ -34,9 +34,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleDelete = () => {
-    if (props.onAction) {
-      props.onAction("delete");
-    }
+    props.onAction && props.onAction("delete");
   };
 
   const handleReloadParent = () => {
@@ -142,10 +140,16 @@ export default function ContainerTable(props: ImageTableProps) {
 
   const [selected, setSelected] = useState<readonly string[]>([]);
 
+  const deleteImage = async (id: string) => {};
+
   const handleAction = (action: string) => {
     if (action === "reload") {
       mutate();
+    } else if (action === "delete") {
+      console.log(selected);
     }
+
+    console.log(selected);
   };
 
   const transformRowData = (data: RowIF[]) => {
@@ -163,10 +167,10 @@ export default function ContainerTable(props: ImageTableProps) {
   };
 
   const { mutate, data, isLoading, error } = useSWR<RowIF[]>(
-    "select * from docker_images;",
-    async (sql) => {
+    "/api/DockerImage/",
+    async (url) => {
       setSelected([]);
-      let data = await requestOsqueryData(sql);
+      let data = await requestData(url);
       if (data.ok) {
         let res = await data.json();
         return transformRowData(res.results);

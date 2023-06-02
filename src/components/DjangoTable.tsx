@@ -21,6 +21,9 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
 import SuspenseLoading from "./SuspenseLoading";
+import { useSnackbar } from "notistack";
+import { useRecoilState } from "recoil";
+import { AppBarOpenAtom } from "../store/recoilStore";
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -402,9 +405,16 @@ interface TableDjangoProps {
 }
 
 export function TableDjango(props: TableDjangoProps) {
+  const [appBarOpenAtom] = useRecoilState(AppBarOpenAtom);
+
   return (
     <>
-      <EnhancedTable {...props}></EnhancedTable>
+      <Box
+        sx={{
+          maxWidth: appBarOpenAtom ? "calc(100vw - 240px)" : "100%",
+        }}>
+        <EnhancedTable {...props}></EnhancedTable>
+      </Box>
     </>
   );
 }
