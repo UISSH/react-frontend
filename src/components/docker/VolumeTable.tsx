@@ -15,8 +15,7 @@ import useSWR from "swr";
 
 import { useSnackbar } from "notistack";
 import { PureFunctionContext } from "../../Context";
-import { requestOsqueryData } from "../../requests/http";
-import { formatBytes } from "../../utils";
+import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import { VolumeRowIF } from "./schema";
@@ -128,23 +127,18 @@ export default function ContainerTable(props: VolumeTableProps) {
       disablePadding: false,
       label: "name",
     },
+
     {
-      key: "driver",
-      numeric: true,
-      disablePadding: false,
-      label: "driver",
-    },
-    {
-      key: "mount_point",
+      key: "mountpoint",
       numeric: true,
       disablePadding: false,
       label: "mount_point",
     },
     {
-      key: "type",
+      key: "driver",
       numeric: true,
       disablePadding: false,
-      label: "type",
+      label: "driver",
     },
   ];
 
@@ -152,8 +146,22 @@ export default function ContainerTable(props: VolumeTableProps) {
 
   const [selected, setSelected] = useState<readonly string[]>([]);
 
-  const handleAction = (action: string) => {
+  const deleteVolume = async (name: string) => {
+    await requestData({
+      url: `/api/DockerVolume/${name}/`,
+      method: "DELETE",
+    });
+  };
+
+  const handleAction = async (action: string) => {
     if (action === "reload") {
+      mutate();
+    }
+
+    if (action == "delete") {
+      for (let name of selected) {
+        await deleteVolume(name);
+      }
       mutate();
     }
   };
@@ -168,10 +176,12 @@ export default function ContainerTable(props: VolumeTableProps) {
   };
 
   const { mutate, data, isLoading, error } = useSWR<RowIF[]>(
-    "select * from docker_volumes;",
-    async (sql) => {
+    "/api/DockerVolume/",
+    async (url) => {
       setSelected([]);
-      let data = await requestOsqueryData(sql);
+      let data = await requestData({
+        url: url,
+      });
       if (data.ok) {
         let res = await data.json();
         return transformRowData(res.results);
@@ -205,6 +215,7 @@ export default function ContainerTable(props: VolumeTableProps) {
       <PureFunctionContext.Provider value={mutate}>
         <TableDjango
           onAction={handleAction}
+          selectKey="name"
           enhancedTableToolbar={EnhancedTableToolbar}
           selectedState={[selected, setSelected]}
           onSetPage={handleSetTargetPage}

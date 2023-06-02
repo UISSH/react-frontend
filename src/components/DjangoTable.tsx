@@ -181,6 +181,7 @@ export function EnhancedTable(props: TableDjangoProps) {
   const [dense, setDense] = React.useState(props.dense);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [t] = useTranslation();
+  const keyName = props.selectKey ? props.selectKey : "id";
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: any
@@ -193,7 +194,7 @@ export function EnhancedTable(props: TableDjangoProps) {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = props.rows.map((n) => String(n.id));
+      const newSelected = props.rows.map((n) => String(n[keyName]));
       setSelected(newSelected);
       return;
     }
@@ -216,7 +217,6 @@ export function EnhancedTable(props: TableDjangoProps) {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -272,13 +272,15 @@ export function EnhancedTable(props: TableDjangoProps) {
             />
             <TableBody>
               {props.rows.map((row, index) => {
-                const isItemSelected = isSelected(String(row.id));
+                const isItemSelected = isSelected(String(row[keyName]));
                 const labelId = `enhanced-table-checkbox-${index}`;
                 return (
                   <TableRow
                     className="group"
                     hover
-                    onClick={(event) => handleClick(event, String(row.id))}
+                    onClick={(event) =>
+                      handleClick(event, String(row[keyName]))
+                    }
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -383,6 +385,7 @@ interface TableDjangoRow {
 interface TableDjangoProps {
   title: string;
   headCells: HeadCell[];
+  selectKey?: string;
   rows: TableDjangoRow[];
   pagination?: {
     current_page: number;

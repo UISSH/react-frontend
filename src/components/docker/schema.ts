@@ -2,16 +2,16 @@ export interface VolumeRowIF {
   nameJSX?: JSX.Element;
   name: string;
   driver: string;
-  mount_point: string;
-  type: string;
+  mountpoint: string;
 }
 
 export interface ImageRowIF {
+  tags: JSX.Element;
+  size: string;
   id_name?: JSX.Element;
   id: string;
   created: string;
-  size_bytes: string;
-  tags: string;
+  repoTags: string[];
 }
 export interface ContainerRowIF {
   id_name?: JSX.Element;

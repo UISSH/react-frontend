@@ -5,6 +5,7 @@ import {
   alpha,
   Button,
   ButtonGroup,
+  Chip,
   IconButton,
   Toolbar,
   Tooltip,
@@ -123,7 +124,7 @@ export default function ContainerTable(props: ImageTableProps) {
       label: "tags",
     },
     {
-      key: "size_bytes",
+      key: "size",
       numeric: true,
       disablePadding: false,
       label: "size",
@@ -156,11 +157,18 @@ export default function ContainerTable(props: ImageTableProps) {
     return data.map((row) => {
       row.id_name = (
         <Tooltip title={row.id}>
-          <Button>{row.id.slice(0, 12)}</Button>
+          <Button>{row.id.replace("sha256:", "").slice(0, 12)}</Button>
         </Tooltip>
       );
-      row.size_bytes = formatBytes(Number(row.size_bytes));
+      row.size = formatBytes(Number(row.size));
       row.created = new Date(parseInt(row.created) * 1000).toLocaleString();
+      row.tags = (
+        <div>
+          {row.repoTags.map((tag) => {
+            return <Chip label={tag} />;
+          })}
+        </div>
+      );
 
       return row;
     });
@@ -170,7 +178,10 @@ export default function ContainerTable(props: ImageTableProps) {
     "/api/DockerImage/",
     async (url) => {
       setSelected([]);
-      let data = await requestData(url);
+      let data = await requestData({
+        url: url,
+        method: "GET",
+      });
       if (data.ok) {
         let res = await data.json();
         return transformRowData(res.results);
