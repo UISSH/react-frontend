@@ -1,17 +1,16 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import TextField from "@mui/material/TextField";
 import { Button, FormControlLabel, Switch } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import TextField from "@mui/material/TextField";
 import { isValidCron } from "cron-validator";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-import BashEditor from "./BashEditor";
-import { requestData } from "../../requests/http";
-import { useLocation, useNavigate } from "react-router-dom";
-import { t } from "i18next";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
+import BashEditor from "./BashEditor";
 interface UpdateCrontabProps {
   children?: React.ReactNode;
   className?: string;

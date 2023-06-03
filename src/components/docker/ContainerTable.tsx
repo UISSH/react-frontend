@@ -242,7 +242,7 @@ export default function ContainerTable(props: ContainerProps) {
 
   const transformRowData = (data: ContainerIF[]) => {
     return data.map((row) => {
-      row.name = row.names.pop();
+      row.name = row.names.pop()?.replace("/", "") || "";
       row.id_name = (
         <Tooltip title={row.id}>
           <Button>{row.id.slice(0, 12)}</Button>
@@ -275,7 +275,6 @@ export default function ContainerTable(props: ContainerProps) {
   );
 
   if (error) {
-    console.log(error);
     let msg =
       "oops, something went wrong! please open the console to see the error message";
     enqueueSnackbar(msg, {

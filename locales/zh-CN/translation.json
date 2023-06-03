@@ -16,7 +16,11 @@
     "save": "保存",
     "terminal": "终端",
     "text": "文本",
-    "website": "站点"
+    "website": "站点",
+    "cancel": "取消",
+    "confirm": "确定",
+    "success": "成功",
+    "failed": "失败"
   },
   "crontab": {
     "sync_btn_tlp": "从服务器同步定时任务",
@@ -107,7 +111,10 @@
     "stats": "状态",
     "no-data": "没有数据",
     "no-network": "没有网络",
-    "no-volume": "没有卷"
+    "no-volume": "没有卷",
+    "pull_image": "拉取镜像",
+    "tag": "标签",
+    "pull": "拉取"
   },
   "layout": {
     "crontab": "定时任务",

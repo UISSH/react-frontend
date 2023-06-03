@@ -16,7 +16,11 @@
     "save": "save",
     "terminal": "terminal",
     "text": "text",
-    "website": "website"
+    "website": "website",
+    "cancel": "cancel",
+    "confirm": "confirm",
+    "success": "success",
+    "failed": "failed"
   },
   "crontab": {
     "sync_btn_tlp": "Sync crontab from server",
@@ -108,7 +112,10 @@
     "stats": "stats",
     "no-data": "no data",
     "no-network": "no network",
-    "no-volume": "no volume"
+    "no-volume": "no volume",
+    "pull_image": "pull image",
+    "tag": "tag",
+    "pull": "pull"
   },
   "layout": {
     "crontab": "crontab",

@@ -1,8 +1,12 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useNavigate } from "react-router-dom";
+
+import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import {
   alpha,
+  Box,
   Button,
   ButtonGroup,
   Chip,
@@ -11,17 +15,17 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
-
-import { useSnackbar } from "notistack";
 import { PureFunctionContext } from "../../Context";
-import { requestData, requestOsqueryData } from "../../requests/http";
+import { requestData } from "../../requests/http";
 import { formatBytes } from "../../utils";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import { ImageRowIF as RowIF } from "./schema";
+import SearchImage from "./SearchImage";
 
 const LABEL = "docker.image";
 
@@ -29,10 +33,8 @@ export interface ImageTableProps {}
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
-
   const { numSelected } = props;
   const [t] = useTranslation();
-  const [openDialog, setOpenDialog] = useState(false);
 
   const handleDelete = () => {
     props.onAction && props.onAction("delete");
@@ -65,27 +67,21 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
-          <Typography
-            className="capitalize"
-            sx={{ flex: "1 1 50%" }}
-            variant="h6"
-            id="tableTitle"
-            component="div">
-            {t(LABEL)}
-          </Typography>
+          <Box className="flex gap-4 items-center" sx={{ flex: "1 1 50%" }}>
+            <Typography
+              className="capitalize"
+              variant="h6"
+              id="tableTitle"
+              component="div">
+              {t(LABEL)}
+            </Typography>
+            <SearchImage />
+          </Box>
         )}
         <ButtonGroup
           className="flex-nowarp"
           variant="contained"
           aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("common.add")}
-          </Button>
-
           {numSelected > 0 ? (
             <Button
               color="error"
@@ -107,8 +103,10 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </>
   );
 }
-export default function ContainerTable(props: ImageTableProps) {
+export default function ImageTable(props: ImageTableProps) {
   const [t] = useTranslation();
+  const navigate = useNavigate();
+  const [pullImageDialogOpen, setPullImageDialogOpen] = useState(false);
   const headCells = [
     {
       key: "id_name",
@@ -141,16 +139,31 @@ export default function ContainerTable(props: ImageTableProps) {
 
   const [selected, setSelected] = useState<readonly string[]>([]);
 
-  const deleteImage = async (id: string) => {};
+  const deleteImage = async (id: string) => {
+    let res = await requestData({
+      url: `/api/DockerImage/${id}`,
+      method: "DELETE",
+    });
+    if (res.ok) {
+      enqueueSnackbar(t("success"), { variant: "success" });
+    } else {
+      enqueueSnackbar(t("error"), { variant: "error" });
+    }
+  };
 
-  const handleAction = (action: string) => {
+  const handleAction = async (action: string) => {
+    console.log(action);
+
     if (action === "reload") {
       mutate();
     } else if (action === "delete") {
-      console.log(selected);
+      for (let id of selected) {
+        await deleteImage(id);
+      }
+      mutate();
+    } else if (action === "add") {
+      setPullImageDialogOpen(true);
     }
-
-    console.log(selected);
   };
 
   const transformRowData = (data: RowIF[]) => {
@@ -163,10 +176,27 @@ export default function ContainerTable(props: ImageTableProps) {
       row.size = formatBytes(Number(row.size));
       row.created = new Date(parseInt(row.created) * 1000).toLocaleString();
       row.tags = (
-        <div>
+        <div className="flex gap-1 justify-end">
           {row.repoTags.map((tag) => {
-            return <Chip label={tag} />;
+            return <Chip key={tag} label={tag} />;
           })}
+
+          <Tooltip title="Create and run a docker container from this image">
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                navigate("/dash/new_container", {
+                  state: {
+                    imageName: row.repoTags[0],
+                    imageId: row.id,
+                  },
+                });
+              }}>
+              <PlayCircleFilledWhiteIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       );
 

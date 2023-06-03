@@ -1,12 +1,21 @@
-import { Button, FormGroup, IconButton, TextField } from "@mui/material";
-import { useMemo, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { requestData } from "../../requests/http";
-import { OperatingResIF } from "../../constant";
+import {
+  Button,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Switch,
+  TextField,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useMemo, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import useSWR from "swr";
+import { OperatingResIF } from "../../constant";
+import { requestData } from "../../requests/http";
 export interface RunNewContainerProps {}
 
 interface VolumeIF {
@@ -22,23 +31,33 @@ interface ENVIF {
 interface IFormInput {
   name: string;
   hostPort: number;
-  containerPort: number;
+  containerPort: number | string;
   volumes: VolumeIF[];
   environment: ENVIF[];
 }
+
 export default function RunNewContainer(props: RunNewContainerProps) {
   const {
+    setValue,
     register,
     reset,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<IFormInput>();
-  const imageName = "louislam/uptime-kuma:1";
+
   const [volumeCount, setVolumeCount] = useState<number>(1);
   const [envCount, setENVCount] = useState<number>(1);
   const [t] = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [advanced, setAdvanced] = useState<boolean>(false);
+
+  const imageName = location.state?.imageName;
+  const imageId = location.state?.imageId;
+  const [containerPort, setContainerPort] = useState<number | string>();
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     let volumes = [];
     let environment = [];
@@ -59,7 +78,6 @@ export default function RunNewContainer(props: RunNewContainerProps) {
 
     let payload;
     payload = {
-      name: data.name,
       image: imageName,
       binds: volumes,
       environment: [],
@@ -72,7 +90,12 @@ export default function RunNewContainer(props: RunNewContainerProps) {
       };
     }
 
-    console.log(payload);
+    if (data.name != null) {
+      payload = {
+        ...payload,
+        name: data.name,
+      };
+    }
 
     enqueueSnackbar("Creating...", { variant: "info" });
 
@@ -104,8 +127,8 @@ export default function RunNewContainer(props: RunNewContainerProps) {
       enqueueSnackbar(resJson.msg, { variant: "error" });
       return;
     }
-
     reset();
+    navigate("/dash/docker");
   };
 
   const getError = (props: {
@@ -301,16 +324,55 @@ export default function RunNewContainer(props: RunNewContainerProps) {
       </>
     );
   }, [envCount, errors]);
+
+  const { error, isLoading } = useSWR(
+    `/api/DockerImage/${imageId}/inspect/`,
+    async (url) => {
+      let res = await requestData({ url });
+
+      let resJson = await res.json();
+      let config = resJson.config;
+      console.log(config);
+
+      if (config.hasOwnProperty("exposedPorts")) {
+        let ports = Object.keys(config.exposedPorts);
+        setValue("containerPort", ports[0].split("/")[0]);
+      }
+    }
+  );
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="p-2 ">
+      <div className="p-2">
         <div className="text-2xl">Run a new container </div>
-        <div className="text-sm underline decoration-sky-600">{imageName}</div>
+        <div className="flex items-center justify-between">
+          <div className=" text-sm underline decoration-sky-600">
+            {imageName}
+          </div>
+          <div className="ml-2">
+            <FormControlLabel
+              control={
+                <Switch
+                  color="info"
+                  size="small"
+                  checked={advanced}
+                  onChange={(e) => setAdvanced(e.target.checked)}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Option settings"
+            />
+          </div>
+        </div>
       </div>
+
       <FormGroup className="gap-4 p-2">
         <TextField
           {...register("name", {
-            required: true,
+            required: false,
           })}
           size="small"
           error={!!errors.name}
@@ -326,7 +388,7 @@ export default function RunNewContainer(props: RunNewContainerProps) {
         <div className="flex  gap-2">
           <TextField
             {...register("hostPort", {
-              required: true,
+              required: false,
             })}
             size="small"
             error={!!errors.hostPort}
@@ -340,7 +402,8 @@ export default function RunNewContainer(props: RunNewContainerProps) {
           />
           <TextField
             {...register("containerPort", {
-              required: true,
+              required: false,
+              value: containerPort,
             })}
             size="small"
             error={!!errors.containerPort}
@@ -355,11 +418,13 @@ export default function RunNewContainer(props: RunNewContainerProps) {
         {volumesJSX}
         <div>Environment variables</div>
         {ENVJSX}
-
-        <Button size="small" variant="contained" color="primary" type="submit">
-          ok
-        </Button>
       </FormGroup>
+
+      <div className="flex gap-2 p-2 justify-center">
+        <Button size="small" variant="contained" color="primary" type="submit">
+          created and run
+        </Button>
+      </div>
     </form>
   );
 }

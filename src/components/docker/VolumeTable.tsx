@@ -147,10 +147,21 @@ export default function ContainerTable(props: VolumeTableProps) {
   const [selected, setSelected] = useState<readonly string[]>([]);
 
   const deleteVolume = async (name: string) => {
-    await requestData({
+    let res = await requestData({
       url: `/api/DockerVolume/${name}/`,
       method: "DELETE",
     });
+
+    if (res.ok) {
+      enqueueSnackbar(t("success"), {
+        variant: "success",
+      });
+    } else {
+      let data = await res.json();
+      enqueueSnackbar(data, {
+        variant: "error",
+      });
+    }
   };
 
   const handleAction = async (action: string) => {
