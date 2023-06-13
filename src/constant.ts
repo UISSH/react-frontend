@@ -7,16 +7,31 @@ export const REMEMBER_ME = "REMEMBER_ME";
 export const TERMINAL_SNIPPET_PREFIX = "terminal_snippet_";
 export const SHORTCUT_UNIQUE = "SHORTCUTUNIQUE_V2";
 
+export interface DjangoPaginationIF<T> {
+  pagination: Pagination;
+  results: T[];
+}
+
+interface Pagination {
+  total_pages: number;
+  current_page: number;
+  total_record: number;
+  next: string;
+  previous?: any;
+}
+
+export type ResultTextIF =
+  | "PENDING"
+  | "SUCCESS"
+  | "FAILURE"
+  | "PROCESSING"
+  | "NOT_SUPPORT";
+
 export interface OperatingResIF {
   event_id: string;
-  result: ResultIF;
-
+  result: 0 | 1 | 2 | 3 | 4;
+  result_text: ResultTextIF;
   name: string;
   msg: string;
   create_at: string;
-}
-
-interface ResultIF {
-  result: 0 | 1 | 2 | 3 | 4;
-  result_text: "PENDING" | "SUCCESS" | "FAILURE" | "PROCESSING" | "NOT_SUPPORT";
 }

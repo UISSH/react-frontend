@@ -38,6 +38,7 @@ import {
   GlobalProgressAtom,
 } from "../store/recoilStore";
 import MenuData from "./ListMeunData";
+import Notify from "../components/Notify";
 
 const drawerWidth = 240;
 
@@ -219,7 +220,9 @@ export default function PersistentDrawerLeft() {
             </IconButton>
           </div>
 
-          <div className="w-full flex justify-end">
+          <div className="w-full flex gap-4 justify-end ">
+            <Notify></Notify>
+
             <Version>
               <div className="cursor-pointer" {...longPressEvent}>
                 {packagejs.version}
