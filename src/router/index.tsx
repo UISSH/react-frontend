@@ -24,6 +24,8 @@ const RunNewContainer = lazy(
   () => import("../components/docker/CreateContainer")
 );
 
+const NofifyIndex = lazy(() => import("../pages/IndexLayout/Nofify"));
+
 export const router = createHashRouter([
   {
     path: "/",
@@ -161,6 +163,14 @@ export const router = createHashRouter([
         element: (
           <Suspense>
             <RunNewContainer></RunNewContainer>
+          </Suspense>
+        ),
+      },
+      {
+        path: "notify",
+        element: (
+          <Suspense>
+            <NofifyIndex></NofifyIndex>
           </Suspense>
         ),
       },

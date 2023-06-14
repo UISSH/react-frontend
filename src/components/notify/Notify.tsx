@@ -1,6 +1,7 @@
 import { Close } from "@mui/icons-material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CircleIcon from "@mui/icons-material/Circle";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import ErrorIcon from "@mui/icons-material/Error";
 import RotateRightIcon from "@mui/icons-material/RotateRight";
@@ -10,9 +11,16 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import * as React from "react";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
 import useSWR from "swr";
-import { DjangoPaginationIF, OperatingResIF, ResultTextIF } from "../constant";
-import { requestData } from "../requests/http";
+import {
+  DjangoPaginationIF,
+  OperatingResIF,
+  ResultTextIF,
+} from "../../constant";
+import { requestData } from "../../requests/http";
+import { HasNewNotificationAtom } from "../../store/recoilStore";
+import { useNavigate } from "react-router-dom";
 function StatusIcon(props: { status: ResultTextIF }) {
   return (
     <div>
@@ -40,7 +48,7 @@ function Sidebar(props: {
   if (!props.open) {
     return <div></div>;
   }
-
+  const navigate = useNavigate();
   const { data, error, isLoading } = useSWR("/api/Operating/", async (url) => {
     let res = await requestData({
       url: url,
@@ -75,10 +83,15 @@ function Sidebar(props: {
                   <ListItem
                     key={item.event_id}
                     alignItems="flex-start"
-                    className="flex gap-2 justify-between  ">
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/dash/notify/?id=${item.event_id}`);
+                    }}
+                    className="flex gap-2 justify-between cursor-pointer">
                     <div>
                       <div className="flex justify-between">
-                        <StatusIcon status={item.result_text}></StatusIcon>
+                        <StatusIcon
+                          status={item.result.result_text}></StatusIcon>
                         <div className="text-lg">
                           {item.name ? item.name : item.msg.substring(0, 5)}
                         </div>
@@ -95,6 +108,10 @@ function Sidebar(props: {
                   </ListItem>
                 );
               })}
+
+            {data && data.results.length === 0 && (
+              <div className=" text-center">no data </div>
+            )}
           </List>
         </div>
       </Box>
@@ -103,6 +120,9 @@ function Sidebar(props: {
 }
 
 export default function Notify() {
+  const [hasNewNotification, setHasNewNotification] = useRecoilState(
+    HasNewNotificationAtom
+  );
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -115,7 +135,17 @@ export default function Notify() {
       <div>
         <Sidebar open={open} onClose={handleClose}></Sidebar>
         <div className=" cursor-pointer" onClick={handleOpen}>
-          <Badge variant="dot" color="info">
+          <Badge
+            badgeContent={
+              hasNewNotification && (
+                <CircleIcon
+                  color="info"
+                  sx={{
+                    fontSize: "0.4rem",
+                  }}
+                  className="animate-ping"></CircleIcon>
+              )
+            }>
             <CircleNotificationsIcon />
           </Badge>
         </div>

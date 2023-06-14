@@ -12,7 +12,6 @@ import {
   LinearProgress,
   Modal,
   Paper,
-  createSvgIcon,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -30,6 +29,7 @@ import { useRecoilState } from "recoil";
 import packagejs from "../../package.json";
 import LabTabs from "../components/Labtabs";
 import Version from "../components/Vesrion";
+import Notify from "../components/notify/Notify";
 import useLongPress from "../hooks/useLongPress";
 import { hasAuthToken, requestData } from "../requests/http";
 import {
@@ -38,7 +38,6 @@ import {
   GlobalProgressAtom,
 } from "../store/recoilStore";
 import MenuData from "./ListMeunData";
-import Notify from "../components/Notify";
 
 const drawerWidth = 240;
 

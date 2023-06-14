@@ -21,6 +21,11 @@ export const AppBarOpenAtom = atom({
   default: window.matchMedia("(min-width:900px)").matches,
 });
 
+export const HasNewNotificationAtom = atom({
+  key: "hasNewNotification",
+  default: false,
+});
+
 export interface TerminalGlobalCommand {
   uuid: string;
   command: string;

@@ -29,8 +29,10 @@ export type ResultTextIF =
 
 export interface OperatingResIF {
   event_id: string;
-  result: 0 | 1 | 2 | 3 | 4;
-  result_text: ResultTextIF;
+  result: {
+    result: 0 | 1 | 2 | 3 | 4;
+    result_text: ResultTextIF;
+  };
   name: string;
   msg: string;
   create_at: string;
