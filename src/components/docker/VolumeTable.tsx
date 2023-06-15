@@ -19,6 +19,7 @@ import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import { VolumeRowIF } from "./schema";
+import { useNavigate } from "react-router-dom";
 
 interface RowIF extends VolumeRowIF {
   id: number;
@@ -112,6 +113,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 export default function ContainerTable(props: VolumeTableProps) {
   const [t] = useTranslation();
+const navigate = useNavigate();
 
   const headCells = [
     {
@@ -122,7 +124,7 @@ export default function ContainerTable(props: VolumeTableProps) {
     },
 
     {
-      key: "name",
+      key: "nameJSX",
       numeric: true,
       disablePadding: false,
       label: "name",
@@ -164,6 +166,11 @@ export default function ContainerTable(props: VolumeTableProps) {
     }
   };
 
+  const handleOpenMountPoint = (path: string) => {
+    navigate(`/dash/explorer?directory=${path}`)
+
+  }
+
   const handleAction = async (action: string) => {
     if (action === "reload") {
       mutate();
@@ -181,7 +188,11 @@ export default function ContainerTable(props: VolumeTableProps) {
     let c = 0;
     return data.map((row) => {
       row.id = ++c;
-      row.nameJSX = <Button>{row.name}</Button>;
+      row.nameJSX = <Button onClick={(e)=>{
+        e.preventDefault()
+        e.stopPropagation()
+        handleOpenMountPoint(row.mountpoint)
+      }}>{row.name}</Button>;
       return row;
     });
   };

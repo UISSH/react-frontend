@@ -5,7 +5,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import ErrorIcon from "@mui/icons-material/Error";
 import RotateRightIcon from "@mui/icons-material/RotateRight";
-import { Box, IconButton } from "@mui/material";
+import { Box, Divider, IconButton } from "@mui/material";
 import Badge from "@mui/material/Badge";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -79,33 +79,38 @@ function Sidebar(props: {
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
             {data &&
               data.results.map((item) => {
-                return (
-                  <ListItem
-                    key={item.event_id}
-                    alignItems="flex-start"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/dash/notify/?id=${item.event_id}`);
-                    }}
-                    className="flex gap-2 justify-between cursor-pointer">
-                    <div>
-                      <div className="flex justify-between">
-                        <StatusIcon
-                          status={item.result.result_text}></StatusIcon>
-                        <div className="text-lg">
-                          {item.name ? item.name : item.msg.substring(0, 5)}
+                return (<div>
+                  <Divider />
+                  <div key={item.event_id}>
+                    <ListItem
+                      alignItems="flex-start"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/dash/notify/?id=${item.event_id}`);
+                      }}
+                      className="flex gap-2 justify-between cursor-pointer">
+                      <div>
+                        <div className="flex justify-between">
+                          <StatusIcon
+                            status={item.result.result_text}></StatusIcon>
+                          <div >
+                            {item.name ? item.name : item.msg.substring(0, 5)}
+                          </div>
+                        </div>
+                        <div
+                          className="text-xs whitespace-nowrap opacity-80	"
+                          style={{ minWidth: "210px" }}>
+                          {item.event_id.replace(/-/g, "")}
+                        </div>
+                        <div className="text-sm overflow-y-auto mt-4">
+                          {item.msg.substring(0, 24)} ...
                         </div>
                       </div>
-                      <div
-                        className="text-xs whitespace-nowrap opacity-80	"
-                        style={{ minWidth: "210px" }}>
-                        {item.event_id.replace(/-/g, "")}
-                      </div>
-                      <div className="text-sm overflow-y-auto mt-4">
-                        {item.msg.substring(0, 64)} ...
-                      </div>
-                    </div>
-                  </ListItem>
+
+                    </ListItem>
+                    <Divider />
+                  </div>
+                </div>
                 );
               })}
 
