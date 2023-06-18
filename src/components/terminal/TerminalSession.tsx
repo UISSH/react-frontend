@@ -20,16 +20,17 @@ import { SelectedTerminalTabUniqueAtom } from "./FooterBar";
 
 export interface HostAuth {
   hostname: string;
-  port: number;
-  username: string;
-  password: string;
-  private_key: string;
-  private_key_password: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  private_key?: string;
+  private_key_password?: string;
 }
 
 export interface TerminalSessionProps {
   unique: string;
   auth: HostAuth;
+  cmd?: string;
   children?: React.ReactNode;
 }
 
@@ -112,7 +113,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
   useEffect(() => {
     if (
       terminalGlobalCommandUUID.current !==
-        terminalGlobalCommandDispatch.uuid &&
+      terminalGlobalCommandDispatch.uuid &&
       terminalGlobalCommandDispatch.uniques.includes(props.unique) &&
       webSocketRef.current?.readyState === 1
     ) {
@@ -176,6 +177,17 @@ export default function TerminalSession(props: TerminalSessionProps) {
             message: `stty cols ${terminalSize.cols} rows ${terminalSize.rows}  \r`,
           })
         );
+
+
+
+        if (props.cmd) {
+          terminalSocket.send(
+            JSON.stringify({
+              message: `${props.cmd} \r clear \r`,
+            })
+          );
+        }
+
         term?.clear();
       } else {
       }
@@ -250,7 +262,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
             backgroundColor: theme.palette.background.default,
             color: theme.palette.text.secondary,
           }}
-          className=" flex justify-between py-1 px-2">
+          className="flex justify-between py-1 px-2">
           <div>
             {props.auth.username}@{props.auth.hostname}:{props.auth.port}
           </div>

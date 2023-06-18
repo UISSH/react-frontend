@@ -27,7 +27,7 @@ interface RowIF extends VolumeRowIF {
 
 const LABEL = "docker.volume";
 
-export interface VolumeTableProps {}
+export interface VolumeTableProps { }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
@@ -113,7 +113,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 export default function ContainerTable(props: VolumeTableProps) {
   const [t] = useTranslation();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const headCells = [
     {
@@ -188,11 +188,11 @@ const navigate = useNavigate();
     let c = 0;
     return data.map((row) => {
       row.id = ++c;
-      row.nameJSX = <Button onClick={(e)=>{
+      row.nameJSX = <Button onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
         handleOpenMountPoint(row.mountpoint)
-      }}>{row.name}</Button>;
+      }}>{row.name.substring(0, 16)}</Button>;
       return row;
     });
   };

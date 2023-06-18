@@ -262,9 +262,11 @@ export default function HostsIndex(props: HostsIndexProps) {
 
         <Divider className="py-2">{t("terminal.snippet")}</Divider>
         <Snippets></Snippets>
+
         <PostHost
           open={postHostOpen}
           onAdd={(name, hostAuth) => {
+            /* @ts-ignore */
             sshClient[name] = {
               name: name,
               ...hostAuth,

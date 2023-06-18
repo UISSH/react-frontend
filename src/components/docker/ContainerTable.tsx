@@ -4,6 +4,7 @@ import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import SyncIcon from "@mui/icons-material/Sync";
+import TerminalIcon from '@mui/icons-material/Terminal';
 import {
   alpha,
   Box,
@@ -23,6 +24,7 @@ import { PureFunctionContext } from "../../Context";
 import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
+import TerminalLocalSerssionDialog from "../terminal/TerminalLocalSerssionDialog";
 import ContainerLogs from "./ContainerLog";
 import ContainerPort from "./ContainerPort";
 import { ContainerIF } from "./schema";
@@ -200,6 +202,11 @@ export default function ContainerTable(props: ContainerProps) {
     open: false,
     containerId: "",
   })
+
+  const [terminalDialog, setTerminalDialog] = useState({
+    open: false,
+    containerId: "",
+  })
   const [selected, setSelected] = useState<readonly string[]>([]);
   const executeCommand = async (command: string) => {
     let data = {
@@ -251,6 +258,25 @@ export default function ContainerTable(props: ContainerProps) {
   const transformRowData = (data: ContainerIF[]) => {
     return data.map((row) => {
       row.name = row.names.pop()?.replace("/", "") || "";
+      row.name = (
+        <div className="flex  flex-nowrap gap-1 items-center justify-end">
+          <div>{row.name}</div>
+
+          <IconButton disabled={
+            row.state === "running" ? false : true
+          } color="primary" onClick={(e) => {
+            e.stopPropagation()
+            setTerminalDialog({
+              open: true,
+              containerId: row.id
+            })
+          }}>
+            <TerminalIcon ></TerminalIcon>
+          </IconButton>
+
+
+        </div>
+      )
       row.id_name = (
         <div className="flex  flex-nowrap gap-1">
 
@@ -322,6 +348,17 @@ export default function ContainerTable(props: ContainerProps) {
   return (
     <>
       <PureFunctionContext.Provider value={mutate}>
+
+        {terminalDialog.containerId && <TerminalLocalSerssionDialog open={terminalDialog.open} containerId={terminalDialog.containerId} onClose={
+          () => {
+            setTerminalDialog({
+              open: false,
+              containerId: ""
+            })
+          }
+        }
+          cmd={"docker exec -it " + terminalDialog.containerId + " /bin/sh"}
+        ></TerminalLocalSerssionDialog>}
         {logsDialog.containerId && <ContainerLogs open={logsDialog.open} containerId={logsDialog.containerId}
           onClose={() => {
             setLogsDialog({

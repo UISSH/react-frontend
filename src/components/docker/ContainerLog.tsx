@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import useSWR, { mutate } from "swr";
 import { requestData } from "../../requests/http";
 import { OperatingResIF } from "../../constant";
-import { Dialog, DialogContent, IconButton, TextField, Tooltip } from "@mui/material";
+import { Box, Dialog, DialogContent, IconButton, TextField, Tooltip } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect } from "react";
 import { Download } from "@mui/icons-material";
 import { getApiGateway } from "../../requests/utils";
-
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface ContainerLogsProps {
     containerId: string;
@@ -110,7 +110,12 @@ export default function ContainerLogs(props: ContainerLogsProps) {
                 </DialogContent>
                 <DialogContent className="p-0">
                     <div className="ml-2">show docker container logs in last 60 minutes.</div>
-                    {isLoading ? "loading" :
+                    {isLoading ? <div className=" p-2 flex flex-col items-center ">
+                        <RefreshIcon color="primary" fontSize="large" className=" animate-spin"></RefreshIcon>
+                        <Box sx={{
+                            color: (theme) => theme.palette.text.secondary
+                        }} className="opacity-90">loading...</Box>
+                    </div> :
                         <TextField focused fullWidth maxRows={22} multiline value={data?.msg}
                             variant="filled"
                             className="pl-1 pt-1 pr-1 pb-0"
@@ -128,7 +133,7 @@ export default function ContainerLogs(props: ContainerLogsProps) {
                                 }
                             }} ></TextField>}
                 </DialogContent>
-            </Dialog>
+            </Dialog >
         </>
     )
 }
