@@ -58,7 +58,7 @@ export interface ContainerIF {
   created: number | string;
   ports: Port[];
   labels: Labels;
-  state: string;
+  state: string | JSX.Element;
   status: string;
   hostConfig: HostConfig;
   networkSettings: NetworkSettings;

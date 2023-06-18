@@ -6,7 +6,12 @@ import SecurityIcon from "@mui/icons-material/Security";
 import StorageIcon from "@mui/icons-material/Storage";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import WebIcon from "@mui/icons-material/Web";
-import { DockerIcon } from "./FontAwesomeIcons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDocker } from "@fortawesome/free-brands-svg-icons";
+
+ function DockerIcon() {
+  return <FontAwesomeIcon icon={faDocker} />;
+}
 
 export default function MenuData(t: Function) {
   return [

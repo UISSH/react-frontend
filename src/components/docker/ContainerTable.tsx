@@ -6,6 +6,7 @@ import StopCircleIcon from "@mui/icons-material/StopCircle";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
   alpha,
+  Box,
   Button,
   ButtonGroup,
   ContainerProps,
@@ -22,10 +23,11 @@ import { PureFunctionContext } from "../../Context";
 import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
-import { ContainerIF, ContainersIF } from "./schema";
+import ContainerLogs from "./ContainerLog";
 import ContainerPort from "./ContainerPort";
+import { ContainerIF } from "./schema";
 const LABEL = "docker.container";
-export interface ContainerTableProps {}
+export interface ContainerTableProps { }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
@@ -190,8 +192,14 @@ export default function ContainerTable(props: ContainerProps) {
     },
   ];
 
+
+
   const { enqueueSnackbar } = useSnackbar();
 
+  const [logsDialog, setLogsDialog] = useState({
+    open: false,
+    containerId: "",
+  })
   const [selected, setSelected] = useState<readonly string[]>([]);
   const executeCommand = async (command: string) => {
     let data = {
@@ -244,10 +252,32 @@ export default function ContainerTable(props: ContainerProps) {
     return data.map((row) => {
       row.name = row.names.pop()?.replace("/", "") || "";
       row.id_name = (
-        <Tooltip title={row.id}>
-          <Button>{row.id.slice(0, 12)}</Button>
-        </Tooltip>
+        <div className="flex  flex-nowrap gap-1">
+
+          <Tooltip title={row.id}>
+            <Button>{row.id.slice(0, 12)}</Button>
+          </Tooltip>
+
+        </div>
       );
+      row.state = (
+        <div className="flex  flex-nowrap gap-1 items-center justify-end">
+          <div>{row.state}</div>
+          <Box
+            className="cursor-pointer p-1  rounded "
+            sx={{
+              color: (theme) => theme.palette.primary.contrastText,
+              backgroundColor: (theme) => theme.palette.primary.main
+            }} onClick={(e) => {
+              e.stopPropagation()
+              setLogsDialog({
+                open: true,
+                containerId: row.id
+              })
+            }}>Logs</Box>
+        </div>
+
+      )
       row.port = <ContainerPort row={row}></ContainerPort>;
       row.created = new Date((row.created as number) * 1000).toLocaleString();
       return row;
@@ -292,6 +322,15 @@ export default function ContainerTable(props: ContainerProps) {
   return (
     <>
       <PureFunctionContext.Provider value={mutate}>
+        {logsDialog.containerId && <ContainerLogs open={logsDialog.open} containerId={logsDialog.containerId}
+          onClose={() => {
+            setLogsDialog({
+              open: false,
+              containerId: ""
+            })
+          }}
+        ></ContainerLogs>
+        }
         <TableDjango
           onAction={handleAction}
           enhancedTableToolbar={EnhancedTableToolbar}

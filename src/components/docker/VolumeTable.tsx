@@ -14,12 +14,12 @@ import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 import { PureFunctionContext } from "../../Context";
 import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import { VolumeRowIF } from "./schema";
-import { useNavigate } from "react-router-dom";
 
 interface RowIF extends VolumeRowIF {
   id: number;
