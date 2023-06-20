@@ -28,6 +28,7 @@ import TerminalLocalSerssionDialog from "../terminal/TerminalLocalSerssionDialog
 import ContainerLogs from "./ContainerLog";
 import ContainerPort from "./ContainerPort";
 import { ContainerIF } from "./schema";
+import { ContainerInspectDialog } from "./ContainerInspectDialog";
 const LABEL = "docker.container";
 export interface ContainerTableProps { }
 
@@ -203,6 +204,11 @@ export default function ContainerTable(props: ContainerProps) {
     containerId: "",
   })
 
+  const [containerInspectDialog, setContainerInspectDialog] = useState({
+    open: false,
+    containerId: "",
+  })
+
   const [terminalDialog, setTerminalDialog] = useState({
     open: false,
     containerId: "",
@@ -279,9 +285,14 @@ export default function ContainerTable(props: ContainerProps) {
       )
       row.id_name = (
         <div className="flex  flex-nowrap gap-1">
-
           <Tooltip title={row.id}>
-            <Button>{row.id.slice(0, 12)}</Button>
+            <Button onClick={(e) => {
+              e.stopPropagation()
+              setContainerInspectDialog({
+                open: true,
+                containerId: row.id
+              })
+            }}>{row.id.slice(0, 12)}</Button>
           </Tooltip>
 
         </div>
@@ -359,6 +370,7 @@ export default function ContainerTable(props: ContainerProps) {
         }
           cmd={"docker exec -it " + terminalDialog.containerId + " /bin/sh"}
         ></TerminalLocalSerssionDialog>}
+
         {logsDialog.containerId && <ContainerLogs open={logsDialog.open} containerId={logsDialog.containerId}
           onClose={() => {
             setLogsDialog({
@@ -368,6 +380,20 @@ export default function ContainerTable(props: ContainerProps) {
           }}
         ></ContainerLogs>
         }
+
+        {containerInspectDialog.containerId && <ContainerInspectDialog open={containerInspectDialog.open} containerId={containerInspectDialog.containerId}
+
+          onClose={() => {
+            setContainerInspectDialog({
+              open: false,
+              containerId: ""
+            })
+          }}
+        ></ContainerInspectDialog>
+        }
+
+
+
         <TableDjango
           onAction={handleAction}
           enhancedTableToolbar={EnhancedTableToolbar}

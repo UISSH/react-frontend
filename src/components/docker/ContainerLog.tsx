@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import useSWR, { mutate } from "swr";
 import { requestData } from "../../requests/http";
 import { OperatingResIF } from "../../constant";
-import { Box, Dialog, DialogContent, IconButton, TextField, Tooltip } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useEffect } from "react";
 import { Download } from "@mui/icons-material";
@@ -82,11 +82,7 @@ export default function ContainerLogs(props: ContainerLogsProps) {
     return (
         <>
             <Dialog open={props.open} onClose={props.onClose} fullWidth maxWidth="xl">
-                <DialogContent className="flex justify-between items-center" sx={{
-                    backgroundColor: (theme) => theme.palette.primary.main,
-                    color: (theme) => theme.palette.primary.contrastText
-                }}>
-
+                <DialogTitle className="flex justify-between items-center" >
                     <div>Logs</div>
                     <div className="flex gap-2 items-center">
                         <Tooltip title="donwload full log">
@@ -106,8 +102,7 @@ export default function ContainerLogs(props: ContainerLogsProps) {
                             <CloseIcon></CloseIcon>
                         </IconButton>
                     </div>
-
-                </DialogContent>
+                </DialogTitle>
                 <DialogContent className="p-0">
                     <div className="ml-2">show docker container logs in last 60 minutes.</div>
                     {isLoading ? <div className=" p-2 flex flex-col items-center ">
