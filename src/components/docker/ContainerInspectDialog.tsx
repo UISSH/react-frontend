@@ -19,6 +19,10 @@ interface ContainerInspectProps {
     onClose: () => void;
 }
 export function ContainerInspectDialog(props: ContainerInspectProps) {
+    if (!props.open) {
+        return <></>
+
+    }
 
     const [t] = useTranslation();
     const location = useLocation();

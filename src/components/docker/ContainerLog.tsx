@@ -17,6 +17,11 @@ interface ContainerLogsProps {
 }
 export default function ContainerLogs(props: ContainerLogsProps) {
 
+    if (!props.open) {
+        return <></>
+
+    }
+
     const [t] = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
     const { mutate, data, error, isLoading } = useSWR<OperatingResIF>(`/api/DockerContainer/${props.containerId}/logs/`, async (url) => {
@@ -103,7 +108,7 @@ export default function ContainerLogs(props: ContainerLogsProps) {
                         </IconButton>
                     </div>
                 </DialogTitle>
-                <DialogContent className="p-0">
+                <DialogContent className="p-0 ">
                     <div className="ml-2">show docker container logs in last 60 minutes.</div>
                     {isLoading ? <div className=" p-2 flex flex-col items-center ">
                         <RefreshIcon color="primary" fontSize="large" className=" animate-spin"></RefreshIcon>
@@ -117,6 +122,7 @@ export default function ContainerLogs(props: ContainerLogsProps) {
                             InputProps={{
                                 readOnly: true,
                                 style: {
+                                    minHeight: "100px",
                                     padding: "0.2rem 0rem 0.2rem 1rem",
                                 }
                             }}

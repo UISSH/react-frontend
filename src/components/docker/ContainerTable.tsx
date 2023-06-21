@@ -7,17 +7,16 @@ import SyncIcon from "@mui/icons-material/Sync";
 import TerminalIcon from '@mui/icons-material/Terminal';
 import {
   alpha,
-  Box,
   Button,
   ButtonGroup,
   ContainerProps,
   IconButton,
   Toolbar,
   Tooltip,
-  Typography,
+  Typography
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import { PureFunctionContext } from "../../Context";
@@ -25,11 +24,29 @@ import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import TerminalLocalSerssionDialog from "../terminal/TerminalLocalSerssionDialog";
+import { ContainerInspectDialog } from "./ContainerInspectDialog";
 import ContainerLogs from "./ContainerLog";
 import ContainerPort from "./ContainerPort";
 import { ContainerIF } from "./schema";
-import { ContainerInspectDialog } from "./ContainerInspectDialog";
+
+import { faChartSimple } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ContainerStatsDialog from "./ContainerStatsDialog";
+
+function ChartSimpleIcon() {
+  return <FontAwesomeIcon icon={faChartSimple} />;
+}
+
 const LABEL = "docker.container";
+
+
+interface DialogState {
+  open: boolean;
+  containerId: string;
+}
+
+
+
 export interface ContainerTableProps { }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -199,20 +216,14 @@ export default function ContainerTable(props: ContainerProps) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [logsDialog, setLogsDialog] = useState({
-    open: false,
-    containerId: "",
-  })
+  const [logsDialog, setLogsDialog] = useState<DialogState>({ open: false, containerId: "" })
 
-  const [containerInspectDialog, setContainerInspectDialog] = useState({
-    open: false,
-    containerId: "",
-  })
+  const [containerInspectDialog, setContainerInspectDialog] = useState<DialogState>({ open: false, containerId: "" })
 
-  const [terminalDialog, setTerminalDialog] = useState({
-    open: false,
-    containerId: "",
-  })
+  const [terminalDialog, setTerminalDialog] = useState<DialogState>({ open: false, containerId: "" })
+
+  const [containerStats, setContainerStats] = useState<DialogState>({ open: false, containerId: "" })
+
   const [selected, setSelected] = useState<readonly string[]>([]);
   const executeCommand = async (command: string) => {
     let data = {
@@ -236,6 +247,10 @@ export default function ContainerTable(props: ContainerProps) {
       enqueueSnackbar(resJson.msg, { variant: "error" });
     }
   };
+
+  const handleResetDialog = (setFN: Dispatch<SetStateAction<DialogState>>) => {
+    setFN({ open: false, containerId: "" })
+  }
 
   const handleAction = async (action: string) => {
     if (action === "reload") {
@@ -300,18 +315,28 @@ export default function ContainerTable(props: ContainerProps) {
       row.state = (
         <div className="flex  flex-nowrap gap-1 items-center justify-end">
           <div>{row.state}</div>
-          <Box
-            className="cursor-pointer p-1  rounded "
-            sx={{
-              color: (theme) => theme.palette.primary.contrastText,
-              backgroundColor: (theme) => theme.palette.primary.main
-            }} onClick={(e) => {
+
+
+          <Button className="capitalize" size="small" variant="contained" onClick={(e) => {
+            e.stopPropagation()
+            setLogsDialog({
+              open: true,
+              containerId: row.id
+            })
+          }}>
+            Logs
+          </Button>
+
+          <Tooltip title="view container stats">
+            <IconButton color="primary" onClick={(e) => {
               e.stopPropagation()
-              setLogsDialog({
+              setContainerStats({
                 open: true,
                 containerId: row.id
               })
-            }}>Logs</Box>
+            }}>
+              <ChartSimpleIcon></ChartSimpleIcon>
+            </IconButton></Tooltip>
         </div>
 
       )
@@ -360,39 +385,36 @@ export default function ContainerTable(props: ContainerProps) {
     <>
       <PureFunctionContext.Provider value={mutate}>
 
-        {terminalDialog.containerId && <TerminalLocalSerssionDialog open={terminalDialog.open} containerId={terminalDialog.containerId} onClose={
-          () => {
-            setTerminalDialog({
-              open: false,
-              containerId: ""
-            })
-          }
-        }
-          cmd={"docker exec -it " + terminalDialog.containerId + " /bin/sh"}
-        ></TerminalLocalSerssionDialog>}
+        {terminalDialog.containerId &&
+          <TerminalLocalSerssionDialog
+            containerId={terminalDialog.containerId}
+            open={terminalDialog.open}
+            onClose={() => handleResetDialog(setTerminalDialog)}
+            cmd={"docker exec -it " + terminalDialog.containerId + " /bin/sh"}
+          />}
 
-        {logsDialog.containerId && <ContainerLogs open={logsDialog.open} containerId={logsDialog.containerId}
-          onClose={() => {
-            setLogsDialog({
-              open: false,
-              containerId: ""
-            })
-          }}
-        ></ContainerLogs>
+        {logsDialog.containerId &&
+          <ContainerLogs
+            containerId={logsDialog.containerId}
+            open={logsDialog.open}
+            onClose={() => handleResetDialog(setLogsDialog)}
+          />
         }
 
-        {containerInspectDialog.containerId && <ContainerInspectDialog open={containerInspectDialog.open} containerId={containerInspectDialog.containerId}
-
-          onClose={() => {
-            setContainerInspectDialog({
-              open: false,
-              containerId: ""
-            })
-          }}
-        ></ContainerInspectDialog>
+        {containerInspectDialog.containerId &&
+          <ContainerInspectDialog
+            containerId={containerInspectDialog.containerId}
+            open={containerInspectDialog.open}
+            onClose={() => handleResetDialog(setContainerInspectDialog)}
+          />
         }
 
-
+        {containerStats.containerId &&
+          <ContainerStatsDialog
+            containerId={containerStats.containerId}
+            open={containerStats.open}
+            onClose={() => handleResetDialog(setContainerStats)}
+          />}
 
         <TableDjango
           onAction={handleAction}
