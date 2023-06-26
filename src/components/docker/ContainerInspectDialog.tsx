@@ -1,16 +1,14 @@
 import { CloseOutlined } from "@mui/icons-material";
-import { Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, IconButton, Radio, RadioGroup, TextField, Typography } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, FormControlLabel, IconButton, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { requestData } from "../../requests/http";
 import { GlobalLoadingAtom } from "../../store/recoilStore";
 import { ContainerIF, ContainerInspectIF } from "./schema";
-import { useEffect, useState } from "react";
-import { set } from "react-hook-form";
-import { use } from "i18next";
 
 
 interface ContainerInspectProps {
@@ -39,28 +37,30 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
         return <div></div>
     }
 
+    // Add timestamp to avoid cache
+
     const { data, isLoading, error } = useSWR<{
         inspect: ContainerInspectIF;
         container: ContainerIF;
-    }>(
-        props.containerId,
+    }>(props.containerId,
         async (id) => {
-
             let inspectRes = await requestData({
                 url: `/api/DockerContainer/${id}/inspect/`,
                 method: "GET",
+
             });
 
             let containerRes = await requestData({
                 url: `/api/DockerContainer/${id}/`,
                 method: "GET",
+
             })
 
             let resJson = {
                 inspect: await inspectRes.json(),
                 container: await containerRes.json()
             }
-            let v = data?.inspect.hostConfig.restartPolicy.name ? data?.inspect.hostConfig.restartPolicy.name : "no"
+            let v = resJson?.inspect.hostConfig.restartPolicy.name ? resJson?.inspect.hostConfig.restartPolicy.name : "no"
             setRestartPolicy(v)
             return resJson
 
@@ -68,7 +68,9 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
     )
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return <Dialog open={props.open} onClose={props.onClose} >
+            <DialogContent>loading ...</DialogContent>
+        </Dialog>
     }
 
     const handleRestartPolicyChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,13 +84,11 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
             }
         })
         if (res.ok) {
-            setRestartPolicy(e.target.value)
+            mutate(props.containerId)
         } else {
-
             enqueueSnackbar("set restart policy failed", { variant: "error" })
         }
         setGlobalLoadingAtom(false)
-
     }
 
 
@@ -112,6 +112,7 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
 
                 <div className="flex flex-col gap-2 ">
                     <TextField label="policy" size="small"
+                        InputProps={{ readOnly: true, }}
                         helperText="https://docs.docker.com/config/containers/start-containers-automatically/#use-a-restart-policy"
                         value={restartPolicy}
                     ></TextField>
@@ -138,7 +139,13 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
                 <Typography variant="subtitle1" className="my-2">Environment</Typography>
                 <div className="flex flex-col gap-2">
                     {data?.inspect.config.env.map((item, index) => {
-                        return <TextField size="small" key={index} value={item}></TextField>
+                        return <TextField
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                            size="small"
+                            key={index}
+                            value={item}></TextField>
                     }
                     )}
                 </div>
@@ -147,8 +154,8 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
                 <div className="flex flex-col gap-2 w-ful">
                     {data?.inspect.mounts.map((item, index) => {
                         return <div key={index} className="flex gap-2">
-                            <TextField label="host" fullWidth size="small" value={item.source}></TextField>
-                            <TextField label="container" fullWidth size="small" value={item.destination}></TextField>
+                            <TextField InputProps={{ readOnly: true, }} label="host" fullWidth size="small" value={item.source}></TextField>
+                            <TextField InputProps={{ readOnly: true, }} label="container" fullWidth size="small" value={item.destination}></TextField>
                         </div>
                     }
                     )}
@@ -161,11 +168,14 @@ export function ContainerInspectDialog(props: ContainerInspectProps) {
                             {
                                 data?.inspect.networkSettings.ports[item].map((port, index) => {
                                     return <div key={`${port}${index}`} className="flex gap-2">
-                                        <TextField fullWidth label="container" size="small" value={item}   ></TextField>
+                                        <TextField fullWidth label="container" size="small" value={item}
+                                            InputProps={{ readOnly: true, }}
+                                        ></TextField>
                                         {
-                                            port.hostIp && <TextField fullWidth label="host ip" size="small" value={port.hostIp}></TextField>
+                                            port.hostIp && <TextField InputProps={{ readOnly: true, }} fullWidth label="host ip" size="small" value={port.hostIp}></TextField>
                                         }
-                                        <TextField fullWidth label="host port" size="small" value={port.hostPort}></TextField>
+                                        <TextField InputProps={{ readOnly: true, }}
+                                            fullWidth label="host port" size="small" value={port.hostPort}></TextField>
                                     </div>
                                 })
                             }

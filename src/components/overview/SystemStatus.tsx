@@ -25,6 +25,7 @@ import { GlobalProgressAtom } from "../../store/recoilStore";
 import { useRecoilState } from "recoil";
 import SystemInfo from "./SystemInfo";
 import SystemProccess from "./Proccess";
+import WithLabelCularProgress from "./WithLabelCularProgress";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -38,86 +39,7 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-function WithLabelCularProgress(
-  props: CircularProgressProps & {
-    value: number;
-    label?: string | null;
-    tooltip?: React.ReactNode;
-  }
-) {
-  const getColor = () => {
-    // "primary" | "secondary" | "error" | "info" | "success" | "warning" |
 
-    if (props.value < 30) {
-      return "primary";
-    } else if (props.value <= 60) {
-      return "secondary";
-    } else {
-      return "warning";
-    }
-  };
-  return (
-    <HtmlTooltip
-      followCursor
-      title={
-        <React.Fragment>
-          <div> {props.tooltip}</div>
-        </React.Fragment>
-      }>
-      <div>
-        <Box sx={{ position: "relative", display: "inline-flex" }}>
-          <CircularProgress
-            variant="determinate"
-            sx={{
-              color: (theme) =>
-                theme.palette.grey[theme.palette.mode === "light" ? 50 : 800],
-            }}
-            size={"6rem"}
-            thickness={4}
-            {...props}
-            value={100}
-          />
-          <Box
-            sx={{
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              position: "absolute",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-            <CircularProgress
-              color={getColor()}
-              size={"6rem"}
-              variant="determinate"
-              {...props}
-            />
-            <Box
-              sx={{
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-                position: "absolute",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Typography
-                fontSize={18}
-                variant="caption"
-                component="div"
-                color={getColor()}>{`${Math.round(props.value)}%`}</Typography>
-            </Box>
-          </Box>
-        </Box>
-        <div className="text-center mt-2 uppercase">{props.label}</div>
-      </div>
-    </HtmlTooltip>
-  );
-}
 
 export default function SystemStatus() {
   const { t } = useTranslation();
@@ -185,7 +107,7 @@ export default function SystemStatus() {
       let used = (
         (1 -
           (Number(cpu_time.idle) - Number(cpuStatus.info_0.idle)) /
-            (total_1 - total_0)) *
+          (total_1 - total_0)) *
         100
       ).toFixed(2);
       if (used === "NaN") {

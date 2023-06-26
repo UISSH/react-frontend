@@ -1,4 +1,3 @@
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +28,7 @@ import SearchImage from "./SearchImage";
 
 const LABEL = "docker.image";
 
-export interface ImageTableProps {}
+export interface ImageTableProps { }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);

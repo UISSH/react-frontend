@@ -1,4 +1,3 @@
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
@@ -82,13 +81,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           className="flex-nowarp"
           variant="contained"
           aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("common.add")}
-          </Button>
+
 
           {numSelected > 0 ? (
             <Button

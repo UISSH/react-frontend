@@ -102,13 +102,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           className="flex-nowarp bg-white"
           variant="contained"
           aria-label="outlined primary button group">
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setOpenDialog(true);
-            }}>
-            {t("common.add")}
-          </Button>
+
           {numSelected == 1 && (
             <ButtonGroup
               className="flex-nowarp bg-white"
