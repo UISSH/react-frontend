@@ -15,6 +15,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { Button, IconButton } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { requestData } from "../../requests/http";
+import { set } from "react-hook-form";
+import { OperatingResIF } from "../../constant";
 export interface SystemProccessProps {
   open: boolean;
   onClose?: () => void;
@@ -59,6 +64,9 @@ export default function SystemProccess(props: SystemProccessProps) {
     useRecoilState(GlobalLoadingAtom);
   const ws = useRef<WebSocket>();
   const [data, setData] = useState<ProccessIF[]>([]);
+
+
+
   useLayoutEffect(() => {
     ws.current = new WebSocket(getWSGateway("server_status"));
 
@@ -100,6 +108,41 @@ export default function SystemProccess(props: SystemProccessProps) {
 }
 
 function BasicTable(props: { rows: ProccessIF[] }) {
+  const [t] = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+  const handleKillProcess = async (pid: string) => {
+    console.log(pid);
+
+
+    setGlobalLoadingAtom(true);
+    let res = await requestData({
+      method: "POST",
+      url: "/api/Operating/excute_command_sync/",
+      data: {
+        "cwd": "/tmp",
+        "command": "kill -9 " + pid
+      }
+    })
+    if (!res.ok) {
+      enqueueSnackbar("request error.", { variant: "error" });
+      setGlobalLoadingAtom(false);
+      return
+    }
+    let resJson = await res.json() as OperatingResIF;
+
+    if (resJson.result.result_text == "SUCCESS") {
+      enqueueSnackbar("kill process success.", { variant: "success" });
+    } else {
+      enqueueSnackbar("kill process failed.", { variant: "error" });
+    }
+    setGlobalLoadingAtom(false);
+
+
+
+
+  }
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -137,13 +180,22 @@ function BasicTable(props: { rows: ProccessIF[] }) {
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody >
           {props.rows.map((row) => (
             <TableRow
-              key={row.name}
+              className="group"
+              key={row.pid}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-              <TableCell component="th" scope="row">
-                {row.name}
+              <TableCell component="th" scope="row" className="flex items-center gap-1" >
+                <div>
+                  {row.name}
+                </div>
+                <IconButton size="small" className="invisible group-hover:visible"
+                  onClick={() => {
+                    handleKillProcess(row.pid)
+                  }}>
+                  <Close></Close>
+                </IconButton>
               </TableCell>
               <TableCell align="right">
                 {row.username}({row.uid})
