@@ -43,7 +43,8 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}>
+      {...other}
+    >
       {value === index && (
         <Box sx={{ p: 3 }}>
           <div>{children}</div>
@@ -92,7 +93,8 @@ export function ShortcutItem(props: { value: ShortcutItemIF[] }): ReactElement {
             }}
             sx={{
               textTransform: "none",
-            }}>
+            }}
+          >
             {item.name}
           </Button>
         );
@@ -125,7 +127,8 @@ export function CateShortcutTabPanel(props: { value?: ShortcutIF }) {
           return (
             <ShortcutItem
               key={cuteName}
-              value={props.value ? props.value[cuteName] : []}></ShortcutItem>
+              value={props.value ? props.value[cuteName] : []}
+            ></ShortcutItem>
           );
         })}
       </div>
@@ -178,7 +181,8 @@ export default function Shortcut(props: ShortcutProps) {
                 allowScrollButtonsMobile
                 value={value}
                 onChange={handleChange}
-                aria-label="shortcut tabs">
+                aria-label="shortcut tabs"
+              >
                 <Tab label={t("common.all")} {...a11yProps(0)} />
                 <Tab label={t("common.database")} {...a11yProps(1)} />
                 <Tab label={t("common.terminal")} {...a11yProps(2)} />

@@ -106,7 +106,8 @@ export default function Snippets() {
                           });
                         }
                       });
-                    }}>
+                    }}
+                  >
                     <DeleteIcon />
                     <div> {t("common.delete")}</div>
                   </MenuItem>
@@ -130,10 +131,12 @@ export default function Snippets() {
                             newSnippet: false,
                           },
                         },
-                      }}></ShortcutBook>
+                      }}
+                    ></ShortcutBook>
                   </MenuItem>
                 </MenuList>
-              }>
+              }
+            >
               <Button
                 variant="contained"
                 key={item.id}
@@ -145,7 +148,8 @@ export default function Snippets() {
                       newSnippet: false,
                     },
                   });
-                }}>
+                }}
+              >
                 {getSnippetName(item.key)}
               </Button>
             </SplitButton>
@@ -163,7 +167,8 @@ export default function Snippets() {
                   newSnippet: true,
                 },
               });
-            }}>
+            }}
+          >
             <AddIcon />
           </IconButton>
         </Tooltip>

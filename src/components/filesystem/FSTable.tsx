@@ -112,7 +112,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         onClose={() => {
           setOpenDialog(false);
           handleReloadParent();
-        }}></AddDialog>
+        }}
+      ></AddDialog>
 
       <Toolbar
         sx={{
@@ -125,7 +126,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {
           <div className="flex flex-1 w-full">
             <Typography
@@ -133,18 +135,21 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               sx={{ flex: numSelected > 0 ? "1 1 100%" : "0 0 0%" }}
               color="inherit"
               variant="subtitle1"
-              component="div">
+              component="div"
+            >
               {numSelected} {t(LABEL)}
             </Typography>
 
             <Box
               className={numSelected <= 0 ? "visible" : "invisible w-0 h-0"}
-              sx={{ flex: numSelected <= 0 ? "1 1 100%" : "0 0 0%" }}>
+              sx={{ flex: numSelected <= 0 ? "1 1 100%" : "0 0 0%" }}
+            >
               <FTPServerStatus
                 renderCount={renderCount}
                 onChange={(value) => {
                   setFTPServerStatusData(value);
-                }}></FTPServerStatus>
+                }}
+              ></FTPServerStatus>
             </Box>
           </div>
         }
@@ -154,13 +159,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             variant="contained"
             color="inherit"
             size="small"
-            aria-label="outlined primary button group">
+            aria-label="outlined primary button group"
+          >
             <Tooltip title={t("add")}>
               <IconButton
                 color="primary"
                 onClick={() => {
                   setOpenDialog(true);
-                }}>
+                }}
+              >
                 <AddIcon></AddIcon>
               </IconButton>
             </Tooltip>
@@ -181,7 +188,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 </IconButton>
               </Tooltip>
               <Tooltip
-                title={FTPServerStatusData.run_status ? "turn off" : "turn on"}>
+                title={FTPServerStatusData.run_status ? "turn off" : "turn on"}
+              >
                 <IconButton onClick={handleControlFTPServer}>
                   {FTPServerStatusData.run_status && (
                     <StopCircleIcon color="primary"></StopCircleIcon>
@@ -196,7 +204,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               <IconButton
                 className={globalProgress ? "animate-spin" : ""}
                 color="primary"
-                onClick={handleReloadParent}>
+                onClick={handleReloadParent}
+              >
                 <RefreshIcon />
               </IconButton>
             </div>
@@ -324,7 +333,8 @@ export default function FSTable(props: FSTableProps) {
         rows={rowsState}
         headCells={headCells}
         title={LABEL}
-        pagination={paginationState}></TableDjango>
+        pagination={paginationState}
+      ></TableDjango>
 
       <Alert severity="info">{t("filesystem.ftp-alert")}</Alert>
     </>

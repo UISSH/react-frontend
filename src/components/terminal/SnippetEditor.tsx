@@ -139,7 +139,8 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
             e.preventDefault();
             onSave();
           }
-        }}>
+        }}
+      >
         <FullScreen handle={handle}>
           <CardContent sx={{ padding: 0 }}>
             <Box
@@ -149,7 +150,8 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                 color: (theme) =>
                   darkTheme ? "white" : theme.palette.text.primary,
               }}
-              className=" flex justify-between py-2 px-2 items-center">
+              className=" flex justify-between py-2 px-2 items-center"
+            >
               <div>
                 <span className="p-1">
                   <TextField
@@ -162,7 +164,8 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                     value={snippetName}
                     onChange={(e) => {
                       setSnippetName(e.target.value);
-                    }}></TextField>
+                    }}
+                  ></TextField>
                 </span>
               </div>
 
@@ -188,7 +191,8 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                   color="inherit"
                   onClick={() => {
                     handle.active ? handle.exit() : handle.enter();
-                  }}>
+                  }}
+                >
                   {handle.active ? (
                     <ZoomInMapIcon></ZoomInMapIcon>
                   ) : (
@@ -209,7 +213,8 @@ export default function MonacoEditorPage(props: MonacoEditorProps) {
                 height: handle.active
                   ? "calc(100vh - 60px)"
                   : "calc(100vh - 120px)",
-              }}>
+              }}
+            >
               <Editor
                 options={{
                   minimap: {

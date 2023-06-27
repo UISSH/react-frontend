@@ -1,4 +1,4 @@
-import { Container } from '@mui/material';
+import { Container } from "@mui/material";
 export interface VolumeRowIF {
   nameJSX?: JSX.Element;
   name: string;
@@ -105,9 +105,6 @@ interface Port {
   type: string;
 }
 
-
-
-
 export interface ContainerInspectIF {
   id: string;
   created: string;
@@ -134,15 +131,14 @@ export interface ContainerInspectIF {
   networkSettings: NetworkSettings;
 }
 
-
 interface NetworkSettings {
   bridge: string;
   sandboxID: string;
   hairpinMode: boolean;
   linkLocalIPv6Address: string;
   linkLocalIPv6PrefixLen: number;
-  ports: { [key: string]: {hostIp:string; hostPort:string }[] };
-  
+  ports: { [key: string]: { hostIp: string; hostPort: string }[] };
+
   sandboxKey: string;
   secondaryIPAddresses?: any;
   secondaryIPv6Addresses?: any;
@@ -199,7 +195,6 @@ interface Config2 {
   labels: {};
 }
 
-
 interface Healthcheck {
   test: string[];
   interval: number;
@@ -207,7 +202,6 @@ interface Healthcheck {
   startPeriod: number;
   retries: number;
 }
-
 
 interface Mount {
   type: string;

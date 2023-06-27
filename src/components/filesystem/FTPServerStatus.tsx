@@ -49,7 +49,8 @@ export default function FTPServerStatus(props: FTPServerStatusProps) {
           <div className="flex gap-2 items-center">
             <CircleIcon
               sx={{ fontSize: 16 }}
-              color={data.run_status ? "primary" : "error"}></CircleIcon>
+              color={data.run_status ? "primary" : "error"}
+            ></CircleIcon>
             {getApiGateway().replace("https", "ftp").replace("http", "ftp")}
           </div>
         ) : (
@@ -59,7 +60,8 @@ export default function FTPServerStatus(props: FTPServerStatusProps) {
                 setOpenDialog(true);
               }}
               severity="info"
-              className="cursor-pointer">
+              className="cursor-pointer"
+            >
               {t(
                 "filesystem.you-need-to-install-an-ftp-server-to-enable-this-feature"
               )}
@@ -76,10 +78,12 @@ export default function FTPServerStatus(props: FTPServerStatusProps) {
                     color="inherit"
                     onClick={(e) => {
                       setOpenDialog(false);
-                    }}>
+                    }}
+                  >
                     <CloseOutlined></CloseOutlined>
                   </IconButton>
-                }></CardHeader>
+                }
+              ></CardHeader>
               <CardContent>https://github.com/UISSH/ftp-server</CardContent>
               <CardActions className="flex gap-1 justify-end">
                 <LoadingButton
@@ -97,7 +101,8 @@ export default function FTPServerStatus(props: FTPServerStatusProps) {
                       }, 2000);
                     });
                   }}
-                  variant="contained">
+                  variant="contained"
+                >
                   install
                 </LoadingButton>
               </CardActions>

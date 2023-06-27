@@ -31,7 +31,8 @@ function StatusIcon(props: { status: ResultTextIF }) {
       {props.status === "PROCESSING" && (
         <RotateRightIcon
           className=" animate-spin"
-          color="info"></RotateRightIcon>
+          color="info"
+        ></RotateRightIcon>
       )}
       {props.status === "PENDING" && (
         <AccessTimeIcon color="secondary"></AccessTimeIcon>
@@ -61,14 +62,16 @@ function Sidebar(props: {
     <aside
       id="default-sidebar"
       className=" fixed  top-0  right-0 z-40 w-64 h-screen transition-transform  translate-x-0"
-      aria-label="Sidebar">
+      aria-label="Sidebar"
+    >
       <Box
         className="h-full  overflow-y-auto "
         sx={{
           color: (theme) => theme.palette.text.primary,
           boxShadow: (theme) => theme.shadows[24],
           backgroundColor: (theme) => theme.palette.background.paper,
-        }}>
+        }}
+      >
         <div className="h-full">
           <div className="flex justify-end">
             <IconButton onClick={props.onClose}>
@@ -79,38 +82,41 @@ function Sidebar(props: {
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
             {data &&
               data.results.map((item) => {
-                return (<div>
-                  <Divider />
-                  <div key={item.event_id}>
-                    <ListItem
-                      alignItems="flex-start"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/dash/notify/?id=${item.event_id}`);
-                      }}
-                      className="flex gap-2 justify-between cursor-pointer">
-                      <div>
-                        <div className="flex justify-between">
-                          <StatusIcon
-                            status={item.result.result_text}></StatusIcon>
-                          <div >
-                            {item.name ? item.name : item.msg.substring(0, 5)}
+                return (
+                  <div>
+                    <Divider />
+                    <div key={item.event_id}>
+                      <ListItem
+                        alignItems="flex-start"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/dash/notify/?id=${item.event_id}`);
+                        }}
+                        className="flex gap-2 justify-between cursor-pointer"
+                      >
+                        <div>
+                          <div className="flex justify-between">
+                            <StatusIcon
+                              status={item.result.result_text}
+                            ></StatusIcon>
+                            <div>
+                              {item.name ? item.name : item.msg.substring(0, 5)}
+                            </div>
+                          </div>
+                          <div
+                            className="text-xs whitespace-nowrap opacity-80	"
+                            style={{ minWidth: "210px" }}
+                          >
+                            {item.event_id.replace(/-/g, "")}
+                          </div>
+                          <div className="text-sm overflow-y-auto mt-4">
+                            {item.msg.substring(0, 24)} ...
                           </div>
                         </div>
-                        <div
-                          className="text-xs whitespace-nowrap opacity-80	"
-                          style={{ minWidth: "210px" }}>
-                          {item.event_id.replace(/-/g, "")}
-                        </div>
-                        <div className="text-sm overflow-y-auto mt-4">
-                          {item.msg.substring(0, 24)} ...
-                        </div>
-                      </div>
-
-                    </ListItem>
-                    <Divider />
+                      </ListItem>
+                      <Divider />
+                    </div>
                   </div>
-                </div>
                 );
               })}
 
@@ -148,9 +154,11 @@ export default function Notify() {
                   sx={{
                     fontSize: "0.4rem",
                   }}
-                  className="animate-ping"></CircleIcon>
+                  className="animate-ping"
+                ></CircleIcon>
               )
-            }>
+            }
+          >
             <CircleNotificationsIcon />
           </Badge>
         </div>

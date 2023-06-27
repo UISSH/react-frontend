@@ -113,7 +113,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
   useEffect(() => {
     if (
       terminalGlobalCommandUUID.current !==
-      terminalGlobalCommandDispatch.uuid &&
+        terminalGlobalCommandDispatch.uuid &&
       terminalGlobalCommandDispatch.uniques.includes(props.unique) &&
       webSocketRef.current?.readyState === 1
     ) {
@@ -177,8 +177,6 @@ export default function TerminalSession(props: TerminalSessionProps) {
             message: `stty cols ${terminalSize.cols} rows ${terminalSize.rows}  \r`,
           })
         );
-
-
 
         if (props.cmd) {
           terminalSocket.send(
@@ -256,13 +254,15 @@ export default function TerminalSession(props: TerminalSessionProps) {
         requestDataProps={{
           url: "/api/Terminal/upload_file/",
           method: "POST",
-        }}>
+        }}
+      >
         <Box
           sx={{
             backgroundColor: theme.palette.background.default,
             color: theme.palette.text.secondary,
           }}
-          className="flex justify-between py-1 px-2">
+          className="flex justify-between py-1 px-2"
+        >
           <div>
             {props.auth.username}@{props.auth.hostname}:{props.auth.port}
           </div>
@@ -271,7 +271,8 @@ export default function TerminalSession(props: TerminalSessionProps) {
             {connectStatus ? (
               <OnlinePredictionIcon
                 color="success"
-                className="animate-pulse"></OnlinePredictionIcon>
+                className="animate-pulse"
+              ></OnlinePredictionIcon>
             ) : (
               <OnlinePredictionIcon color="error"></OnlinePredictionIcon>
             )}
@@ -283,7 +284,8 @@ export default function TerminalSession(props: TerminalSessionProps) {
           sx={{
             height: "calc(100vh - 195px)",
             backgroundColor: theme.palette.background.default,
-          }}>
+          }}
+        >
           <div className="w-full h-full" id={props.unique}></div>
         </Box>
       </DropFileUpload>

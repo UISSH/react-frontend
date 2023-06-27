@@ -223,14 +223,16 @@ export default function RunNewContainer(props: RunNewContainerProps) {
                   <IconButton
                     onClick={() => {
                       setVolumeCount(volumeCount + 1);
-                    }}>
+                    }}
+                  >
                     <AddIcon></AddIcon>
                   </IconButton>
                 ) : (
                   <IconButton
                     onClick={() => {
                       setVolumeCount(volumeCount - 1);
-                    }}>
+                    }}
+                  >
                     <RemoveIcon></RemoveIcon>
                   </IconButton>
                 )}
@@ -306,14 +308,16 @@ export default function RunNewContainer(props: RunNewContainerProps) {
                   <IconButton
                     onClick={() => {
                       setENVCount(envCount + 1);
-                    }}>
+                    }}
+                  >
                     <AddIcon></AddIcon>
                   </IconButton>
                 ) : (
                   <IconButton
                     onClick={() => {
                       setENVCount(envCount - 1);
-                    }}>
+                    }}
+                  >
                     <RemoveIcon></RemoveIcon>
                   </IconButton>
                 )}

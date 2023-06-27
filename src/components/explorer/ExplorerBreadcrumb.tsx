@@ -46,7 +46,8 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
             setSearchParams({
               directory: "/" + data.slice(0, i + 1).join("/"),
             });
-          }}>
+          }}
+        >
           {h}
         </Link>
       );
@@ -73,7 +74,8 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
                       setSearchParams({
                         directory: currentPath as string,
                       });
-                    }}>
+                    }}
+                  >
                     <DoneIcon></DoneIcon>
                   </IconButton>
                 </InputAdornment>
@@ -98,20 +100,23 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
               e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
             ) => {
               setCurrentPath(e.target.value);
-            }}></TextField>
+            }}
+          ></TextField>
         </div>
       ) : (
         <div
           className="flex items-center p-2 "
           style={{
             height: "56px",
-          }}>
+          }}
+        >
           <Breadcrumbs
             onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
               setPathInputShow(true);
             }}
             aria-label="breadcrumb"
-            className="cursor-pointer pr-20 ">
+            className="cursor-pointer pr-20 "
+          >
             <Link
               underline="hover"
               color="inherit"
@@ -122,7 +127,8 @@ export default function ExplorerBreadcrumb(props: ExplorerBreadcrumbProps) {
                 setSearchParams({
                   directory: "/",
                 });
-              }}>
+              }}
+            >
               <HomeIcon />
             </Link>
             {LinkMemo}

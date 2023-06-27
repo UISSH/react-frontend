@@ -93,7 +93,8 @@ export default function Index(props: {
               required
               error={errors.name ? true : false}
               helperText={errors.name?.message}
-              label={t("database.name")}></TextField>
+              label={t("database.name")}
+            ></TextField>
 
             <TextField
               {...register("username", {
@@ -109,7 +110,8 @@ export default function Index(props: {
               error={errors.username ? true : false}
               helperText={errors.username?.message}
               autoComplete="username"
-              label={t("database.username")}></TextField>
+              label={t("database.username")}
+            ></TextField>
 
             <TextField
               {...register("password", {
@@ -121,7 +123,8 @@ export default function Index(props: {
               error={errors.password ? true : false}
               helperText={errors.password?.message}
               label={t("database.password")}
-              autoComplete="new-password"></TextField>
+              autoComplete="new-password"
+            ></TextField>
 
             {/* <Controller
               name="name"
@@ -189,7 +192,8 @@ export default function Index(props: {
             <Button
               color="inherit"
               variant="contained"
-              onClick={() => props.setOpen(false)}>
+              onClick={() => props.setOpen(false)}
+            >
               {t("cancel")}
             </Button>
             <Button variant="contained" type="submit">

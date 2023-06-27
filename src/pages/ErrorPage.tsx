@@ -31,7 +31,8 @@ function Context() {
       <div
         className={
           "md:grid md:h-screen md:place-items-center grid place-items-center md:pt-0  pt-8  px-2"
-        }>
+        }
+      >
         <div className="w-11/12 md:max-w-xl  pb-8 rounded-2xl shadow-2xl bg-white">
           <Alert severity="error">
             <AlertTitle className=" text-2xl"> {t("Oops")} !</AlertTitle>

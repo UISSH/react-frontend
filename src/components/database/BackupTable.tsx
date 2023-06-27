@@ -99,13 +99,15 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 100%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -114,18 +116,21 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 100%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
           variant="contained"
-          aria-label="outlined primary button group">
+          aria-label="outlined primary button group"
+        >
           <Button
             startIcon={<AddIcon />}
             onClick={() => {
               props.onAction && props.onAction("newBackup");
-            }}>
+            }}
+          >
             {t("add")}
           </Button>
           <Tooltip title={t("database.upload-backup-file")}>
@@ -133,7 +138,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               color="primary"
               onClick={() => {
                 props.onAction && props.onAction("uploadBackup");
-              }}>
+              }}
+            >
               <CloudUploadOutlinedIcon></CloudUploadOutlinedIcon>
             </IconButton>
           </Tooltip>
@@ -141,7 +147,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <IconButton
               className={globalProgress ? "animate-spin" : ""}
               color="primary"
-              onClick={handleReloadParent}>
+              onClick={handleReloadParent}
+            >
               <RefreshIcon />
             </IconButton>
           </div>
@@ -305,7 +312,8 @@ export default function BackupTable(props: BackupTableProps) {
                     setGlobalLoadingAtom(false);
                   }, 500);
                 });
-              }}>
+              }}
+            >
               <RestoreIcon></RestoreIcon>
             </IconButton>
           </Tooltip>
@@ -323,7 +331,8 @@ export default function BackupTable(props: BackupTableProps) {
               folderArray.pop();
               let folder = folderArray.join("/");
               navigate(`/dash/explorer/?directory=${folder}`);
-            }}>
+            }}
+          >
             <FolderOpenIcon></FolderOpenIcon>
           </IconButton>
           <Tooltip title={t("download")}>
@@ -351,7 +360,8 @@ export default function BackupTable(props: BackupTableProps) {
                   }
                 });
               }}
-              className="cursor-pointer hover:opacity-95">
+              className="cursor-pointer hover:opacity-95"
+            >
               {row.path}
             </div>
           </Tooltip>
@@ -409,7 +419,8 @@ export default function BackupTable(props: BackupTableProps) {
         rows={rowsState}
         headCells={headCells}
         title={LABEL}
-        pagination={paginationState}></TableDjango>
+        pagination={paginationState}
+      ></TableDjango>
     </>
   );
 }

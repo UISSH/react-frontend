@@ -47,13 +47,15 @@ export default function FolderMenu(props: FolderMenuProps) {
         open={openRename}
         onStatus={(status) => {
           setOpenRename(false);
-        }}></RenameFSDialog>
+        }}
+      ></RenameFSDialog>
       <IconButton
         id={props.path + "-positioned-button"}
         aria-controls={open ? props.path + "-positioned-menu" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
-        aria-expanded={open ? "true" : undefined}>
+        aria-expanded={open ? "true" : undefined}
+      >
         <MoreHorizIcon />
       </IconButton>
       <Menu
@@ -64,7 +66,8 @@ export default function FolderMenu(props: FolderMenuProps) {
         onClose={handleClose}
         MenuListProps={{
           "aria-labelledby": "folder-button",
-        }}>
+        }}
+      >
         {props.name && (
           <Box
             className="w-full h-full p-2 pl-4 "
@@ -74,7 +77,8 @@ export default function FolderMenu(props: FolderMenuProps) {
               backgroundColor: (theme) => {
                 return theme.palette.secondary.main;
               },
-            }}>
+            }}
+          >
             {props.name}
           </Box>
         )}

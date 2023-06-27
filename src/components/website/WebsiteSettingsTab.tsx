@@ -78,7 +78,8 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}>
+      {...other}
+    >
       {value === index && (
         <Box sx={{ p: props.padding != undefined ? props.padding : 3 }}>
           <div>{children}</div>
@@ -125,26 +126,30 @@ function WebsiteSSLSettings(props: { id: string }) {
             value={data.issued_common_name}
             fullWidth
             size="small"
-            label="issued_common_name"></TextField>
+            label="issued_common_name"
+          ></TextField>
           <div className="flex gap-2">
             <TextField
               inputProps={{ readOnly: true }}
               value={data.issuer_common_name}
               fullWidth
               size="small"
-              label="issuer_common_name"></TextField>
+              label="issuer_common_name"
+            ></TextField>
             <TextField
               inputProps={{ readOnly: true }}
               value={data.issuer_country_name}
               fullWidth
               size="small"
-              label="issuer_country_name"></TextField>
+              label="issuer_country_name"
+            ></TextField>
             <TextField
               inputProps={{ readOnly: true }}
               value={data.issuer_organization_name}
               fullWidth
               size="small"
-              label="issuer_organization_name"></TextField>
+              label="issuer_organization_name"
+            ></TextField>
           </div>
 
           <TextField
@@ -152,33 +157,38 @@ function WebsiteSSLSettings(props: { id: string }) {
             value={data.subject_alt_name}
             fullWidth
             size="small"
-            label="subject_alt_name"></TextField>
+            label="subject_alt_name"
+          ></TextField>
           <div className="flex gap-2">
             <TextField
               inputProps={{ readOnly: true }}
               value={data.not_before}
               fullWidth
               size="small"
-              label="not_before"></TextField>
+              label="not_before"
+            ></TextField>
             <TextField
               inputProps={{ readOnly: true }}
               value={data.not_after}
               fullWidth
               size="small"
-              label="not_after"></TextField>
+              label="not_after"
+            ></TextField>
           </div>
           <TextField
             inputProps={{ readOnly: true }}
             value={data.signature_algorithm}
             fullWidth
             size="small"
-            label="signature_algorithm"></TextField>
+            label="signature_algorithm"
+          ></TextField>
           <TextField
             inputProps={{ readOnly: true }}
             value={data.serial_number_hex}
             fullWidth
             size="small"
-            label="serial_number_hex"></TextField>
+            label="serial_number_hex"
+          ></TextField>
         </div>
       )}
     </>
@@ -252,7 +262,8 @@ function WebsiteBasicSettings(props: { id: string }) {
             InputProps={{
               readOnly: true,
             }}
-            label="name"></TextField>
+            label="name"
+          ></TextField>
           {shortcutData && <ShortcutBook {...shortcutData}></ShortcutBook>}
         </div>
         <TextField
@@ -262,7 +273,8 @@ function WebsiteBasicSettings(props: { id: string }) {
             readOnly: true,
           }}
           size="small"
-          label="web server"></TextField>
+          label="web server"
+        ></TextField>
         <div className="text-right">
           <Divider className="pb-2"> domain settings </Divider>
 
@@ -272,7 +284,8 @@ function WebsiteBasicSettings(props: { id: string }) {
               onChange={(e) => setDomain(e.target.value)}
               fullWidth
               size="small"
-              label="domain"></TextField>
+              label="domain"
+            ></TextField>
 
             <TextField
               multiline
@@ -281,7 +294,8 @@ function WebsiteBasicSettings(props: { id: string }) {
               onChange={(e) => setExtraDomain(e.target.value)}
               fullWidth
               size="small"
-              label="extra domain"></TextField>
+              label="extra domain"
+            ></TextField>
           </div>
 
           <IconButton color="secondary" onClick={updateDomain}>
@@ -303,14 +317,16 @@ function WebsiteBasicSettings(props: { id: string }) {
                     color="secondary"
                     onClick={() => {
                       navigate(`/dash/explorer/?directory=${data.index_root}`);
-                    }}>
+                    }}
+                  >
                     <OpenInNewIcon></OpenInNewIcon>
                   </IconButton>
                 </InputAdornment>
               ),
             }}
             size="small"
-            label="path"></TextField>
+            label="path"
+          ></TextField>
         </div>
       </div>
     );
@@ -333,7 +349,8 @@ export default function BasicTabs(props: { id: string }) {
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="basic tabs example">
+          aria-label="basic tabs example"
+        >
           <Tab label="Basic" {...a11yProps(0)} />
           <Tab label="Config" {...a11yProps(1)} />
           <Tab label="SSL" {...a11yProps(2)} />

@@ -170,7 +170,8 @@ export default function UpdateCrontab(props: UpdateCrontabProps) {
           text={props.shellscript || location.state?.shellscript}
           onChange={(value) => {
             setShellscript(value);
-          }}></BashEditor>
+          }}
+        ></BashEditor>
       )}
     </>
   );

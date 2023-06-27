@@ -29,7 +29,8 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}>
+      {...other}
+    >
       {<div>{children}</div>}
     </div>
   );
@@ -135,7 +136,8 @@ export default function BasicTabs() {
             sx={{ maxHeight: "48px" }}
             value={value}
             onChange={handleChange}
-            aria-label="terminal tabs ">
+            aria-label="terminal tabs "
+          >
             <Tab sx={{ maxHeight: "48px" }} label="Host" {...a11yProps(0)} />
 
             {terminalTabs.map((tab, index) => {
@@ -154,14 +156,16 @@ export default function BasicTabs() {
                           e.preventDefault();
                           e.stopPropagation();
                           handleRemoveTab(tab);
-                        }}>
+                        }}
+                      >
                         <CloseIcon></CloseIcon>
                       </IconButton>
                     </span>
                   }
                   iconPosition="end"
                   sx={{ maxHeight: "48px", minHeight: "0px" }}
-                  {...a11yProps(index + 1)}></Tab>
+                  {...a11yProps(index + 1)}
+                ></Tab>
               );
             })}
           </Tabs>
@@ -175,7 +179,8 @@ export default function BasicTabs() {
               key={index}
               value={value}
               index={index + 1}
-              unique={tab.unique}>
+              unique={tab.unique}
+            >
               {tab.terminalSession}
             </TabPanel>
           );

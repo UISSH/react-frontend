@@ -58,7 +58,8 @@ export default function SelectApplication(
           justifyContent: "center",
           alignItems: "center",
           height: "200px",
-        }}>
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -80,7 +81,8 @@ export default function SelectApplication(
             value={selectedApplication}
             aria-labelledby="application-radio-buttons-group-label"
             name="radio-buttons-group"
-            onChange={handleChange}>
+            onChange={handleChange}
+          >
             {Object.keys(data).map((item) => {
               let name = data[item].info.name;
               return (
@@ -100,7 +102,8 @@ export default function SelectApplication(
           <Button
             disabled={!selectedApplication}
             variant="contained"
-            onClick={handleNextStep}>
+            onClick={handleNextStep}
+          >
             {t("next")}
           </Button>
         )}

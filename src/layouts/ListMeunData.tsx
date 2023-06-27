@@ -9,7 +9,7 @@ import WebIcon from "@mui/icons-material/Web";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDocker } from "@fortawesome/free-brands-svg-icons";
 
- function DockerIcon() {
+function DockerIcon() {
   return <FontAwesomeIcon icon={faDocker} />;
 }
 

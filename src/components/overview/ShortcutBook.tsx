@@ -1,7 +1,6 @@
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import { IconButton, Tooltip } from "@mui/material";
-import { DefaultTFuncReturn } from "i18next";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
@@ -18,7 +17,7 @@ import {
 
 export default function ShortcutBook(
   props: ShortcutItemIF & {
-    label?: string | DefaultTFuncReturn;
+    label?: string;
     className?: string;
   }
 ) {
@@ -75,7 +74,8 @@ export default function ShortcutBook(
               ? props.className
               : "flex justify-between items-center"
           }
-          onClick={handleRemoveShortcut}>
+          onClick={handleRemoveShortcut}
+        >
           <Tooltip title={t("common.remove-from-shortcut")}>
             <IconButton size="small" color="primary">
               <BookmarkOutlinedIcon></BookmarkOutlinedIcon>
@@ -90,7 +90,8 @@ export default function ShortcutBook(
               ? props.className
               : "flex justify-between items-center"
           }
-          onClick={handleAddShortcut}>
+          onClick={handleAddShortcut}
+        >
           <Tooltip title={t("common.add-to-shortcut")}>
             <IconButton size="small" color="primary">
               <BookmarkBorderOutlinedIcon></BookmarkBorderOutlinedIcon>

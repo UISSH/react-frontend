@@ -52,7 +52,8 @@ export default function LabTabs() {
             textColor="secondary"
             indicatorColor="secondary"
             onChange={handleChange}
-            aria-label="params tabs">
+            aria-label="params tabs"
+          >
             <Tab sx={{ textTransform: "none" }} label="useParams" value="1" />
             <Tab
               sx={{ textTransform: "none" }}

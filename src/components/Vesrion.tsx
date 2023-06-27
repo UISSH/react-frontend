@@ -79,12 +79,14 @@ export function DialogUpdate(props: DialogUpdateProps) {
         </DialogContentText>
         <DialogContentText
           id="alert-dialog-description"
-          className="mt-2 text-right">
+          className="mt-2 text-right"
+        >
           visit the{" "}
           <Button
             type="a"
             target="_blank"
-            href={`https://github.com/UISSH/backend/releases/tag/${props.version}`}>
+            href={`https://github.com/UISSH/backend/releases/tag/${props.version}`}
+          >
             Changelog
           </Button>
         </DialogContentText>
@@ -111,13 +113,15 @@ export default function Version(props: VersionProps) {
           version={version.latest_version}
           onClose={() => {
             setOpen(false);
-          }}></DialogUpdate>
+          }}
+        ></DialogUpdate>
         <Tooltip title="New version is available">
           <Badge color="info" variant="dot">
             <IconButton
               size="small"
               color="inherit"
-              onClick={() => setOpen(true)}>
+              onClick={() => setOpen(true)}
+            >
               <BrowserUpdatedOutlinedIcon></BrowserUpdatedOutlinedIcon>
             </IconButton>
           </Badge>

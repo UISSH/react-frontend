@@ -55,7 +55,8 @@ export default function BashEditor(props: BashEditorProps) {
             e.preventDefault();
             // onSave();
           }
-        }}>
+        }}
+      >
         <FullScreen handle={handle}>
           <CardContent sx={{ padding: 0 }}>
             <Box
@@ -65,7 +66,8 @@ export default function BashEditor(props: BashEditorProps) {
                 color: (theme) =>
                   darkTheme ? "white" : theme.palette.text.primary,
               }}
-              className=" flex justify-between py-2 px-2 items-center">
+              className=" flex justify-between py-2 px-2 items-center"
+            >
               <div className="flex w-full justify-between">
                 <FormControlLabel
                   className="ml-2"
@@ -85,7 +87,8 @@ export default function BashEditor(props: BashEditorProps) {
                   color="inherit"
                   onClick={() => {
                     handle.active ? handle.exit() : handle.enter();
-                  }}>
+                  }}
+                >
                   {handle.active ? (
                     <ZoomInMapIcon></ZoomInMapIcon>
                   ) : (
@@ -106,7 +109,8 @@ export default function BashEditor(props: BashEditorProps) {
                 height: handle.active
                   ? "calc(100vh - 80px)"
                   : "calc(100vh - 260px)",
-              }}>
+              }}
+            >
               <Editor
                 options={{
                   minimap: {

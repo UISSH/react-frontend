@@ -114,7 +114,8 @@ function GlobalLoading() {
     <div>
       <Dialog
         open={state}
-        PaperProps={{ sx: { borderRadius: "12px" }, className: "shadow-md" }}>
+        PaperProps={{ sx: { borderRadius: "12px" }, className: "shadow-md" }}
+      >
         <DialogContent className="flex flex-col justify-center items-center h-full w-full ">
           <CircularProgress size={"4rem"} />
         </DialogContent>
@@ -138,7 +139,8 @@ function CustomNavLink(props: {
               backgroundColor: theme.palette.error[50],
             }
           : {}
-      }>
+      }
+    >
       <NavLink to={props.item.to} className="text-inherit no-underline">
         <ListItemButton>
           <ListItemIcon className="text-inherit">
@@ -192,7 +194,8 @@ export default function PersistentDrawerLeft() {
           setOpenDebugSwitch(false);
         }}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description">
+        aria-describedby="modal-modal-description"
+      >
         <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-md rounded-md">
           <LabTabs></LabTabs>
         </Box>
@@ -206,7 +209,8 @@ export default function PersistentDrawerLeft() {
               aria-label="open drawer"
               onClick={handleDrawerOpen}
               edge="start"
-              sx={{ ...(open && { display: "none" }) }}>
+              sx={{ ...(open && { display: "none" }) }}
+            >
               <MenuIcon />
             </IconButton>
             <IconButton
@@ -214,7 +218,8 @@ export default function PersistentDrawerLeft() {
               sx={{ mr: 2 }}
               onClick={() => {
                 navigate(-1);
-              }}>
+              }}
+            >
               <ArrowBack></ArrowBack>
             </IconButton>
           </div>
@@ -244,12 +249,14 @@ export default function PersistentDrawerLeft() {
         }}
         variant="persistent"
         anchor="left"
-        open={open}>
+        open={open}
+      >
         <DrawerHeader
           sx={{
             color: "primary.contrastText",
             bgcolor: "primary.main",
-          }}>
+          }}
+        >
           {t("left-top-tips")}
           <IconButton size="small" onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (

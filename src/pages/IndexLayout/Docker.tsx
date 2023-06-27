@@ -24,7 +24,8 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}>
+      {...other}
+    >
       {value === index && children}
     </div>
   );
@@ -70,7 +71,8 @@ export default function Index() {
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="basic docker tabs">
+          aria-label="basic docker tabs"
+        >
           <Tab label={t("docker.container")} {...a11yProps(0)} />
           <Tab label={t("docker.image")} {...a11yProps(1)} />
           <Tab label={t("docker.volume")} {...a11yProps(2)} />

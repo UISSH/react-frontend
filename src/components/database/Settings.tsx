@@ -122,7 +122,8 @@ export default function Settings(props: SettingsProps) {
                   readOnly: true,
                 }}
                 label={t("dbname")}
-                value={dbData.name}></TextField>
+                value={dbData.name}
+              ></TextField>
               <TextField
                 fullWidth
                 required
@@ -131,7 +132,8 @@ export default function Settings(props: SettingsProps) {
                   setDbData({ ...dbData, username: e.target.value });
                 }}
                 label={t("username")}
-                value={dbData.username}></TextField>
+                value={dbData.username}
+              ></TextField>
               <TextField
                 fullWidth
                 required
@@ -140,7 +142,8 @@ export default function Settings(props: SettingsProps) {
                   setDbData({ ...dbData, password: e.target.value });
                 }}
                 label={t("password")}
-                value={dbData.password}></TextField>
+                value={dbData.password}
+              ></TextField>
 
               <div className="flex justify-end gap-x-2">
                 {shortcutData && (
@@ -150,7 +153,8 @@ export default function Settings(props: SettingsProps) {
                 <LoadingButton
                   loading={saveLoading}
                   variant="contained"
-                  onClick={handleSave}>
+                  onClick={handleSave}
+                >
                   {t("common.save")}
                 </LoadingButton>
               </div>

@@ -38,7 +38,8 @@ export default function ExplorerNameItem(props: ExplorerNameItemProps) {
               },
             });
           }
-        }}>
+        }}
+      >
         {row.type == "directory" ? (
           <FolderIcon></FolderIcon>
         ) : (

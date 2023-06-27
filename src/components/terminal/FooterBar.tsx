@@ -86,7 +86,8 @@ export function TeminalMenuPopover() {
         transformOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <div className="px-2 py-3 max-w-xs">
           {tabs.length > 0 && (
             <div className="px-2">
@@ -107,8 +108,10 @@ export function TeminalMenuPopover() {
                         } else {
                           setSelectedTabs([]);
                         }
-                      }}></Checkbox>
-                  }></FormControlLabel>
+                      }}
+                    ></Checkbox>
+                  }
+                ></FormControlLabel>
                 {tabs.map((tab) => {
                   return (
                     <FormControlLabel
@@ -148,7 +151,8 @@ export function TeminalMenuPopover() {
             }}
             variant="caption"
             display="block"
-            gutterBottom>
+            gutterBottom
+          >
             {t("terminal.click-to-send-to-the-selected-terminal")}
           </Typography>
           <div className="flex flex-wrap gap-1">
@@ -163,7 +167,8 @@ export function TeminalMenuPopover() {
                       uuid: new Date().getTime().toString(),
                       uniques: selectedTabs,
                     });
-                  }}>
+                  }}
+                >
                   {snippet.key.replace(TERMINAL_SNIPPET_PREFIX, "")}
                 </Button>
               );
@@ -214,7 +219,8 @@ export default function FooterBar(props: FooterBarProps) {
           background: (theme) => theme.palette.secondary.main,
           ...getSX(),
         }}
-        position="fixed">
+        position="fixed"
+      >
         <Toolbar className="gap-1">
           <TeminalMenuPopover />
           <Box
@@ -223,7 +229,8 @@ export default function FooterBar(props: FooterBarProps) {
               flexGrow: 1,
               "& > :not(style)": { m: 1 },
               paddingRight: "18px",
-            }}>
+            }}
+          >
             <Input
               onKeyDown={(e) => {
                 if (e.key === "Enter") {

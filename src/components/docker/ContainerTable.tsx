@@ -4,7 +4,7 @@ import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import SyncIcon from "@mui/icons-material/Sync";
-import TerminalIcon from '@mui/icons-material/Terminal';
+import TerminalIcon from "@mui/icons-material/Terminal";
 import {
   alpha,
   Button,
@@ -13,7 +13,7 @@ import {
   IconButton,
   Toolbar,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
@@ -39,15 +39,12 @@ function ChartSimpleIcon() {
 
 const LABEL = "docker.container";
 
-
 interface DialogState {
   open: boolean;
   containerId: string;
 }
 
-
-
-export interface ContainerTableProps { }
+export interface ContainerTableProps {}
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
@@ -79,13 +76,15 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -94,26 +93,29 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
           className="flex-nowarp bg-white"
           variant="contained"
-          aria-label="outlined primary button group">
-
+          aria-label="outlined primary button group"
+        >
           {numSelected == 1 && (
             <ButtonGroup
               className="flex-nowarp bg-white"
               variant="contained"
-              color="inherit">
+              color="inherit"
+            >
               <div className="px-2 gap-1 flex">
                 <Tooltip title={"turn on"}>
                   <IconButton
                     onClick={() => {
                       props.onAction && props.onAction("start");
-                    }}>
+                    }}
+                  >
                     <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
                   </IconButton>
                 </Tooltip>
@@ -121,7 +123,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                   <IconButton
                     onClick={() => {
                       props.onAction && props.onAction("stop");
-                    }}>
+                    }}
+                  >
                     <StopCircleIcon color="primary"></StopCircleIcon>
                   </IconButton>
                 </Tooltip>
@@ -130,7 +133,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                   <IconButton
                     onClick={() => {
                       props.onAction && props.onAction("restart");
-                    }}>
+                    }}
+                  >
                     <SyncIcon color="primary"></SyncIcon>
                   </IconButton>
                 </Tooltip>
@@ -142,7 +146,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               color="error"
               className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
+              onClick={handleDelete}
+            >
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -206,17 +211,25 @@ export default function ContainerTable(props: ContainerProps) {
     },
   ];
 
-
-
   const { enqueueSnackbar } = useSnackbar();
 
-  const [logsDialog, setLogsDialog] = useState<DialogState>({ open: false, containerId: "" })
+  const [logsDialog, setLogsDialog] = useState<DialogState>({
+    open: false,
+    containerId: "",
+  });
 
-  const [containerInspectDialog, setContainerInspectDialog] = useState<DialogState>({ open: false, containerId: "" })
+  const [containerInspectDialog, setContainerInspectDialog] =
+    useState<DialogState>({ open: false, containerId: "" });
 
-  const [terminalDialog, setTerminalDialog] = useState<DialogState>({ open: false, containerId: "" })
+  const [terminalDialog, setTerminalDialog] = useState<DialogState>({
+    open: false,
+    containerId: "",
+  });
 
-  const [containerStats, setContainerStats] = useState<DialogState>({ open: false, containerId: "" })
+  const [containerStats, setContainerStats] = useState<DialogState>({
+    open: false,
+    containerId: "",
+  });
 
   const [selected, setSelected] = useState<readonly string[]>([]);
   const executeCommand = async (command: string) => {
@@ -243,8 +256,8 @@ export default function ContainerTable(props: ContainerProps) {
   };
 
   const handleResetDialog = (setFN: Dispatch<SetStateAction<DialogState>>) => {
-    setFN({ open: false, containerId: "" })
-  }
+    setFN({ open: false, containerId: "" });
+  };
 
   const handleAction = async (action: string) => {
     if (action === "reload") {
@@ -277,63 +290,73 @@ export default function ContainerTable(props: ContainerProps) {
         <div className="flex  flex-nowrap gap-1 items-center justify-end">
           <div>{row.name}</div>
 
-          <IconButton disabled={
-            row.state === "running" ? false : true
-          } color="primary" onClick={(e) => {
-            e.stopPropagation()
-            setTerminalDialog({
-              open: true,
-              containerId: row.id
-            })
-          }}>
-            <TerminalIcon ></TerminalIcon>
+          <IconButton
+            disabled={row.state === "running" ? false : true}
+            color="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              setTerminalDialog({
+                open: true,
+                containerId: row.id,
+              });
+            }}
+          >
+            <TerminalIcon></TerminalIcon>
           </IconButton>
-
-
         </div>
-      )
+      );
       row.id_name = (
         <div className="flex  flex-nowrap gap-1">
           <Tooltip title={row.id}>
-            <Button onClick={(e) => {
-              e.stopPropagation()
-              setContainerInspectDialog({
-                open: true,
-                containerId: row.id
-              })
-            }}>{row.id.slice(0, 12)}</Button>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setContainerInspectDialog({
+                  open: true,
+                  containerId: row.id,
+                });
+              }}
+            >
+              {row.id.slice(0, 12)}
+            </Button>
           </Tooltip>
-
         </div>
       );
       row.state = (
         <div className="flex  flex-nowrap gap-1 items-center justify-end">
           <div>{row.state}</div>
 
-
-          <Button className="capitalize" size="small" variant="contained" onClick={(e) => {
-            e.stopPropagation()
-            setLogsDialog({
-              open: true,
-              containerId: row.id
-            })
-          }}>
+          <Button
+            className="capitalize"
+            size="small"
+            variant="contained"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLogsDialog({
+                open: true,
+                containerId: row.id,
+              });
+            }}
+          >
             Logs
           </Button>
 
           <Tooltip title="view container stats">
-            <IconButton color="primary" onClick={(e) => {
-              e.stopPropagation()
-              setContainerStats({
-                open: true,
-                containerId: row.id
-              })
-            }}>
+            <IconButton
+              color="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                setContainerStats({
+                  open: true,
+                  containerId: row.id,
+                });
+              }}
+            >
               <ChartSimpleIcon></ChartSimpleIcon>
-            </IconButton></Tooltip>
+            </IconButton>
+          </Tooltip>
         </div>
-
-      )
+      );
       row.port = <ContainerPort row={row}></ContainerPort>;
       row.created = new Date((row.created as number) * 1000).toLocaleString();
       return row;
@@ -378,37 +401,38 @@ export default function ContainerTable(props: ContainerProps) {
   return (
     <>
       <PureFunctionContext.Provider value={mutate}>
-
-        {terminalDialog.containerId &&
+        {terminalDialog.containerId && (
           <TerminalLocalSerssionDialog
             containerId={terminalDialog.containerId}
             open={terminalDialog.open}
             onClose={() => handleResetDialog(setTerminalDialog)}
             cmd={"docker exec -it " + terminalDialog.containerId + " /bin/sh"}
-          />}
+          />
+        )}
 
-        {logsDialog.containerId &&
+        {logsDialog.containerId && (
           <ContainerLogs
             containerId={logsDialog.containerId}
             open={logsDialog.open}
             onClose={() => handleResetDialog(setLogsDialog)}
           />
-        }
+        )}
 
-        {containerInspectDialog.containerId &&
+        {containerInspectDialog.containerId && (
           <ContainerInspectDialog
             containerId={containerInspectDialog.containerId}
             open={containerInspectDialog.open}
             onClose={() => handleResetDialog(setContainerInspectDialog)}
           />
-        }
+        )}
 
-        {containerStats.containerId &&
+        {containerStats.containerId && (
           <ContainerStatsDialog
             containerId={containerStats.containerId}
             open={containerStats.open}
             onClose={() => handleResetDialog(setContainerStats)}
-          />}
+          />
+        )}
 
         <TableDjango
           onAction={handleAction}
@@ -417,7 +441,8 @@ export default function ContainerTable(props: ContainerProps) {
           onSetPage={handleSetTargetPage}
           rows={data}
           headCells={headCells}
-          title={LABEL}></TableDjango>
+          title={LABEL}
+        ></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );

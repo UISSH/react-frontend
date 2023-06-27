@@ -116,7 +116,8 @@ export default function SearchImage(props: SearchImageProps) {
                 autoComplete: "new-password",
               }}
             />
-          )}></Autocomplete>
+          )}
+        ></Autocomplete>
 
         <IconButton onClick={handlePull}>
           <GetAppIcon />

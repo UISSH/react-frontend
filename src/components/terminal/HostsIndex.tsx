@@ -85,14 +85,16 @@ export function SplitButton(props: SplitButtonProps) {
         variant="contained"
         color="secondary"
         ref={anchorRef}
-        aria-label="split button">
+        aria-label="split button"
+      >
         {props.children}
 
         <Button
           aria-controls={open ? "split-button-menu" : undefined}
           aria-expanded={open ? "true" : undefined}
           aria-haspopup="menu"
-          onClick={handleToggle}>
+          onClick={handleToggle}
+        >
           <ArrowDropDownIcon
             sx={{ fontSize: "1.2rem" }}
             className={`transition duration-500 ${open ? "rotate-180" : ""}  `}
@@ -108,7 +110,8 @@ export function SplitButton(props: SplitButtonProps) {
         role={undefined}
         transition
         placement="bottom-end"
-        disablePortal>
+        disablePortal
+      >
         {({ TransitionProps, placement }) => (
           <Grow {...TransitionProps}>
             <Paper>
@@ -197,7 +200,8 @@ export default function HostsIndex(props: HostsIndexProps) {
                     MenuList={
                       <MenuList
                         id={"split-button-menu-" + item}
-                        sx={{ minWidth: "100px" }}>
+                        sx={{ minWidth: "100px" }}
+                      >
                         <MenuItem
                           dense
                           divider
@@ -206,13 +210,15 @@ export default function HostsIndex(props: HostsIndexProps) {
                             delete sshClient[item];
                             setSshClient(JSON.parse(JSON.stringify(sshClient)));
                             saveSSHClient();
-                          }}>
+                          }}
+                        >
                           <DeleteIcon></DeleteIcon>
                           <div> {t("common.delete")} </div>
                         </MenuItem>
                         <MenuItem
                           dense
-                          className="flex justify-between pl-1 py-0">
+                          className="flex justify-between pl-1 py-0"
+                        >
                           <ShortcutBook
                             className="flex justify-between w-full items-center"
                             label={t("common.add")}
@@ -226,21 +232,25 @@ export default function HostsIndex(props: HostsIndexProps) {
                                   name: item,
                                 },
                               },
-                            }}></ShortcutBook>
+                            }}
+                          ></ShortcutBook>
                         </MenuItem>
                       </MenuList>
-                    }>
+                    }
+                  >
                     <Button
                       sx={{ minWidth: "100px" }}
                       onClick={() => {
                         handleOpenSSHSession(item);
                       }}
                       variant="contained"
-                      color="secondary">
+                      color="secondary"
+                    >
                       <Paper
                         component="div"
                         className="shadow-none bg-inherit text-inherit"
-                        sx={{ minWidth: "120px" }}>
+                        sx={{ minWidth: "120px" }}
+                      >
                         {item}
                       </Paper>
                     </Button>
@@ -254,7 +264,8 @@ export default function HostsIndex(props: HostsIndexProps) {
               color="primary"
               onClick={() => {
                 setPostHostOpen(true);
-              }}>
+              }}
+            >
               <AddIcon />
             </IconButton>
           </Tooltip>
@@ -276,7 +287,8 @@ export default function HostsIndex(props: HostsIndexProps) {
           }}
           onClose={() => {
             setPostHostOpen(false);
-          }}></PostHost>
+          }}
+        ></PostHost>
       </div>
     </>
   );

@@ -247,12 +247,14 @@ export default function Index({ className }: { className?: string }) {
     <PureFunctionContext.Provider
       value={() => {
         setUpdateState(updateState + 1);
-      }}>
+      }}
+    >
       <ExplorerDropFileUpload>
         <Dialog open={alertDialog.open} onClose={handleClose}>
           <DialogTitle
             bgcolor={(theme: any) => theme.palette.primary.main}
-            color={(theme: any) => theme.palette.text.disabled}>
+            color={(theme: any) => theme.palette.text.disabled}
+          >
             {alertDialog.title}
           </DialogTitle>
           <DialogContent>{alertDialog.content}</DialogContent>
@@ -266,7 +268,8 @@ export default function Index({ className }: { className?: string }) {
               onClick={(e) => {
                 requestDelete(alertDialog.records);
               }}
-              autoFocus>
+              autoFocus
+            >
               {t("yes")}
             </Button>
           </DialogActions>

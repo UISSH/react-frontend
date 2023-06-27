@@ -62,7 +62,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           setOpen={(open) => {
             setOpenDialog(open);
             handleReloadParent();
-          }}></AddDialog>
+          }}
+        ></AddDialog>
       </Suspense>
       <Toolbar
         sx={{
@@ -75,13 +76,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 100%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -90,24 +93,28 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 100%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             <Button
               variant="contained"
               type="a"
               target={"_blank"}
-              href={getApiGateway() + ":8080"}>
+              href={getApiGateway() + ":8080"}
+            >
               phpMyAdmin
             </Button>
           </Typography>
         )}
         <ButtonGroup
           variant="contained"
-          aria-label="outlined primary button group">
+          aria-label="outlined primary button group"
+        >
           <Button
             startIcon={<AddIcon />}
             onClick={() => {
               setOpenDialog(true);
-            }}>
+            }}
+          >
             {t("add")}
           </Button>
 
@@ -115,7 +122,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <Button
               color="error"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
+              onClick={handleDelete}
+            >
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -126,7 +134,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <IconButton
               className={globalProgress ? "animate-spin" : ""}
               color="primary"
-              onClick={handleReloadParent}>
+              onClick={handleReloadParent}
+            >
               <RefreshIcon />
             </IconButton>
           </div>
@@ -168,7 +177,8 @@ function PasswordField({
             aria-label="toggle password visibility"
             onClick={handleClickShowPassword}
             onMouseDown={handleMouseDownPassword}
-            edge="end">
+            edge="end"
+          >
             {show ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </InputAdornment>
@@ -331,14 +341,16 @@ export default function Index() {
                 color="primary"
                 onClick={() => {
                   navigate(`/dash/database/${row.id}`);
-                }}>
+                }}
+              >
                 <SettingsIcon></SettingsIcon>
               </IconButton>
             );
             row.password = (
               <PasswordField
                 password={row.password}
-                readOnly={true}></PasswordField>
+                readOnly={true}
+              ></PasswordField>
             );
             if (row.create_status_text == "success") {
               row.create_status_text = (
@@ -348,7 +360,8 @@ export default function Index() {
               row.create_status_text = (
                 <HourglassEmptyIcon
                   className="animate-pulse"
-                  color="info"></HourglassEmptyIcon>
+                  color="info"
+                ></HourglassEmptyIcon>
               );
             } else {
               row.create_status_text = (
@@ -376,7 +389,8 @@ export default function Index() {
       <Dialog open={alertDialog.open} onClose={handleClose}>
         <DialogTitle
           bgcolor={(theme) => theme.palette.primary.main}
-          color={(theme) => theme.palette.text.disabled}>
+          color={(theme) => theme.palette.text.disabled}
+        >
           {alertDialog.title}
         </DialogTitle>
         <DialogContent>{alertDialog.content}</DialogContent>
@@ -388,7 +402,8 @@ export default function Index() {
             variant="contained"
             color="error"
             onClick={requestDelete}
-            autoFocus>
+            autoFocus
+          >
             {t("yes")}
           </Button>
         </DialogActions>

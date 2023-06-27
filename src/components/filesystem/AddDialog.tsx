@@ -160,7 +160,8 @@ export default function PostHost(props: AddProps) {
                   helperText={errors.basePath?.message}
                   placeholder="/tmp"
                   size="small"
-                  label={t("filesystem.ftp-folder")}></TextField>
+                  label={t("filesystem.ftp-folder")}
+                ></TextField>
                 <RadioGroup
                   row
                   aria-labelledby="file-system-row-radio-buttons-group-label"
@@ -169,7 +170,8 @@ export default function PostHost(props: AddProps) {
                   onChange={(e) => {
                     let value = e.target.value as "os" | "s3";
                     setFileSystemType(value);
-                  }}>
+                  }}
+                >
                   <FormControlLabel
                     value="os"
                     control={<Radio />}
@@ -182,7 +184,8 @@ export default function PostHost(props: AddProps) {
                 <S3Params
                   onChange={(params) => {
                     setParams(params);
-                  }}></S3Params>
+                  }}
+                ></S3Params>
               )}
             </div>
           </DialogContent>
@@ -192,7 +195,8 @@ export default function PostHost(props: AddProps) {
               variant="contained"
               onClick={() => {
                 props.onClose && props.onClose();
-              }}>
+              }}
+            >
               {t("cancel")}
             </Button>
             <Button variant="contained" type="submit">

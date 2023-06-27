@@ -92,13 +92,15 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 100%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -107,17 +109,20 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 100%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
           variant="contained"
-          aria-label="outlined primary button group">
+          aria-label="outlined primary button group"
+        >
           <IconButton
             className={globalProgress ? "animate-spin" : ""}
             color="primary"
-            onClick={handleReloadParent}>
+            onClick={handleReloadParent}
+          >
             <RefreshIcon />
           </IconButton>
         </ButtonGroup>
@@ -222,7 +227,8 @@ export default function IPTablesIndex(props: IPTablesIndexProps) {
               e.stopPropagation();
               await deleteRule(row.id);
               setUpdateState(updateState + 1);
-            }}>
+            }}
+          >
             {t("common.delete")}
           </Button>
         </div>
@@ -272,7 +278,8 @@ export default function IPTablesIndex(props: IPTablesIndexProps) {
           onSetPage={handleSetTargetPage}
           rows={rowsState}
           headCells={headCells}
-          title={LABEL}></TableDjango>
+          title={LABEL}
+        ></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );

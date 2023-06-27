@@ -39,8 +39,6 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-
-
 export default function SystemStatus() {
   const { t } = useTranslation();
   const ws = useRef<WebSocket | null>(null);
@@ -107,7 +105,7 @@ export default function SystemStatus() {
       let used = (
         (1 -
           (Number(cpu_time.idle) - Number(cpuStatus.info_0.idle)) /
-          (total_1 - total_0)) *
+            (total_1 - total_0)) *
         100
       ).toFixed(2);
       if (used === "NaN") {
@@ -232,7 +230,8 @@ export default function SystemStatus() {
         open={systemProccessOpen}
         onClose={() => {
           setSystemProccessOpen(false);
-        }}></SystemProccess>
+        }}
+      ></SystemProccess>
       <Card className="shadow-sm rounded-2xl ">
         <CardContent>
           <div className="flex justify-between items-center">
@@ -242,7 +241,8 @@ export default function SystemStatus() {
             <IconButton
               onClick={() => {
                 setSystemProccessOpen(true);
-              }}>
+              }}
+            >
               <FullscreenIcon></FullscreenIcon>
             </IconButton>
           </div>

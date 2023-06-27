@@ -243,10 +243,12 @@ export default function ExplorerTable(props: ExplorerTableProps) {
         <ExplorerDropFileUpload>
           <Dialog
             open={alertDialog.open}
-            onClose={() => setAlertDialog({ ...alertDialog, open: false })}>
+            onClose={() => setAlertDialog({ ...alertDialog, open: false })}
+          >
             <DialogTitle
               bgcolor={(theme: any) => theme.palette.primary.main}
-              color={(theme: any) => theme.palette.text.disabled}>
+              color={(theme: any) => theme.palette.text.disabled}
+            >
               {alertDialog.title}
             </DialogTitle>
             <DialogContent>{alertDialog.content}</DialogContent>
@@ -254,7 +256,8 @@ export default function ExplorerTable(props: ExplorerTableProps) {
               <Button
                 variant="contained"
                 color="info"
-                onClick={() => setAlertDialog({ ...alertDialog, open: false })}>
+                onClick={() => setAlertDialog({ ...alertDialog, open: false })}
+              >
                 {t("no")}
               </Button>
               <Button
@@ -263,7 +266,8 @@ export default function ExplorerTable(props: ExplorerTableProps) {
                 onClick={(e) => {
                   requestDelete(alertDialog.records);
                 }}
-                autoFocus>
+                autoFocus
+              >
                 {t("yes")}
               </Button>
             </DialogActions>
@@ -279,7 +283,8 @@ export default function ExplorerTable(props: ExplorerTableProps) {
             rows={data}
             headCells={headCells}
             title={LABEL}
-            pagination={paginationState}></TableDjango>
+            pagination={paginationState}
+          ></TableDjango>
         </ExplorerDropFileUpload>
       </PureFunctionContext.Provider>
     </>

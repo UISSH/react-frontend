@@ -20,6 +20,7 @@ export default function Index({
   return (
     <HourglassEmptyIcon
       className="animate-pulse"
-      color={color}></HourglassEmptyIcon>
+      color={color}
+    ></HourglassEmptyIcon>
   );
 }

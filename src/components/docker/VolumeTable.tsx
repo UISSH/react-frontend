@@ -26,7 +26,7 @@ interface RowIF extends VolumeRowIF {
 
 const LABEL = "docker.volume";
 
-export interface VolumeTableProps { }
+export interface VolumeTableProps {}
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
@@ -58,13 +58,15 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -73,22 +75,23 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
           className="flex-nowarp"
           variant="contained"
-          aria-label="outlined primary button group">
-
-
+          aria-label="outlined primary button group"
+        >
           {numSelected > 0 ? (
             <Button
               color="error"
               className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
+              onClick={handleDelete}
+            >
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -160,9 +163,8 @@ export default function ContainerTable(props: VolumeTableProps) {
   };
 
   const handleOpenMountPoint = (path: string) => {
-    navigate(`/dash/explorer?directory=${path}`)
-
-  }
+    navigate(`/dash/explorer?directory=${path}`);
+  };
 
   const handleAction = async (action: string) => {
     if (action === "reload") {
@@ -181,11 +183,17 @@ export default function ContainerTable(props: VolumeTableProps) {
     let c = 0;
     return data.map((row) => {
       row.id = ++c;
-      row.nameJSX = <Button onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        handleOpenMountPoint(row.mountpoint)
-      }}>{row.name.substring(0, 16)}</Button>;
+      row.nameJSX = (
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleOpenMountPoint(row.mountpoint);
+          }}
+        >
+          {row.name.substring(0, 16)}
+        </Button>
+      );
       return row;
     });
   };
@@ -236,7 +244,8 @@ export default function ContainerTable(props: VolumeTableProps) {
           onSetPage={handleSetTargetPage}
           rows={data}
           headCells={headCells}
-          title={LABEL}></TableDjango>
+          title={LABEL}
+        ></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );

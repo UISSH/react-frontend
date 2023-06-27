@@ -95,7 +95,8 @@ export default function NginxConfigEditor(props: NginxConfigEditorProps) {
               e.preventDefault();
               onSave();
             }
-          }}>
+          }}
+        >
           <FullScreen handle={handle}>
             <CardContent sx={{ padding: 0 }}>
               <Box
@@ -105,7 +106,8 @@ export default function NginxConfigEditor(props: NginxConfigEditorProps) {
                   color: (theme) =>
                     darkTheme ? "white" : theme.palette.primary.contrastText,
                 }}
-                className=" flex flex-nowrap justify-end py-2 px-2 items-center">
+                className=" flex flex-nowrap justify-end py-2 px-2 items-center"
+              >
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -128,7 +130,8 @@ export default function NginxConfigEditor(props: NginxConfigEditorProps) {
                   color="inherit"
                   onClick={() => {
                     handle.active ? handle.exit() : handle.enter();
-                  }}>
+                  }}
+                >
                   {handle.active ? (
                     <ZoomInMapIcon></ZoomInMapIcon>
                   ) : (
@@ -143,7 +146,8 @@ export default function NginxConfigEditor(props: NginxConfigEditorProps) {
                   height: handle.active
                     ? "calc(100vh - 60px)"
                     : "calc(100vh - 150px)",
-                }}>
+                }}
+              >
                 <LazyMode mode={"nginx"}>
                   <AceEditor
                     value={value}

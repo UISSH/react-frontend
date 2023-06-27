@@ -33,7 +33,8 @@ export default function S3Params(props: S3ParamsProps) {
         onChange={(e) => {
           setParams({ ...params, bucket: e.target.value });
           onChange && onChange({ ...params, bucket: e.target.value });
-        }}></TextField>
+        }}
+      ></TextField>
       <TextField
         label="Access Key ID"
         value={params.access_key_id}
@@ -41,7 +42,8 @@ export default function S3Params(props: S3ParamsProps) {
         onChange={(e) => {
           setParams({ ...params, access_key_id: e.target.value });
           onChange && onChange({ ...params, access_key_id: e.target.value });
-        }}></TextField>
+        }}
+      ></TextField>
       <TextField
         label="Secret Access Key"
         value={params.secret_access_key}
@@ -50,7 +52,8 @@ export default function S3Params(props: S3ParamsProps) {
           setParams({ ...params, secret_access_key: e.target.value });
           onChange &&
             onChange({ ...params, secret_access_key: e.target.value });
-        }}></TextField>
+        }}
+      ></TextField>
     </>
   );
 }

@@ -139,7 +139,8 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
           className="grid  gap-2"
           component="form"
           noValidate
-          autoComplete="off">
+          autoComplete="off"
+        >
           <div className="capitalize">
             <Divider textAlign="center">{t("basic")}</Divider>
           </div>
@@ -216,7 +217,8 @@ export default function BaseSetting(props: CreateWebsiteStepProps) {
             // disabled={!canNext.current}
             disabled={disable}
             variant="contained"
-            onClick={handleNextStep}>
+            onClick={handleNextStep}
+          >
             {t("next")}
           </Button>
         )}

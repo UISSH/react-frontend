@@ -80,7 +80,8 @@ export default function TextEditing(props: TextEditingProps) {
               backgroundColor: (theme) => theme.palette.secondary.main,
               color: (theme) => theme.palette.text.primary,
             }}
-            className=" flex justify-between py-2 px-2">
+            className=" flex justify-between py-2 px-2"
+          >
             <div>mode:{aceMode}</div>
           </Box>
           <div className=" rounded-md">

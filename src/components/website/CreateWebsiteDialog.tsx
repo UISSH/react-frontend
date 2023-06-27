@@ -133,10 +133,12 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
     <CardDialog
       disableEscapeKeyDown
       open={open}
-      onClose={() => onStatus("cancel")}>
+      onClose={() => onStatus("cancel")}
+    >
       <DialogTitle
         bgcolor={(theme) => theme.palette.primary.main}
-        color={(theme) => theme.palette.text.disabled}>
+        color={(theme) => theme.palette.text.disabled}
+      >
         <div className="flex justify-between items-center">
           <div className="capitalize">{t("website.create-new-website")}</div>
           <IconButton color="inherit" onClick={() => onStatus("cancel")}>
@@ -150,7 +152,8 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           <SelectApplication
             requestBody={requestBody}
             onNextStep={handleNextStep}
-            onSelectApplication={handleSelectApplication}></SelectApplication>
+            onSelectApplication={handleSelectApplication}
+          ></SelectApplication>
         </div>
       )}
 
@@ -159,7 +162,8 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           <BaseSetting
             requestBody={requestBody}
             onPreviousStep={handlePreviousStep}
-            onNextStep={handleNextStep}></BaseSetting>
+            onNextStep={handleNextStep}
+          ></BaseSetting>
         </div>
       )}
 
@@ -168,7 +172,8 @@ export default function CreateWebsiteDialog(props: CreateWebsiteProps) {
           onDone={handleDone}
           requestBody={requestBody}
           onPreviousStep={handlePreviousStep}
-          application={application}></ApplicationSettings>
+          application={application}
+        ></ApplicationSettings>
       )}
     </CardDialog>
   );

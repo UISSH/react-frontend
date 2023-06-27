@@ -84,17 +84,20 @@ export default function FileNameDialog(props: FileNameDialogProps) {
       <CardDialog
         disableEscapeKeyDown
         open={props.open}
-        onClose={() => props.onStatus("cancel")}>
+        onClose={() => props.onStatus("cancel")}
+      >
         <DialogTitle
           bgcolor={(theme) => theme.palette.primary.main}
-          color={(theme) => theme.palette.text.disabled}>
+          color={(theme) => theme.palette.text.disabled}
+        >
           <div className="flex justify-between  items-center">
             <div className="capitalize">
               {t("exploprer." + actionText) + t("common." + nameText)}
             </div>
             <IconButton
               color="inherit"
-              onClick={() => props.onStatus("cancel")}>
+              onClick={() => props.onStatus("cancel")}
+            >
               <CloseIcon />
             </IconButton>
           </div>
@@ -114,14 +117,16 @@ export default function FileNameDialog(props: FileNameDialogProps) {
               required
               error={errors.name ? true : false}
               helperText={errors.name?.message}
-              label={t("common.name")}></TextField>
+              label={t("common.name")}
+            ></TextField>
           </DialogContent>
 
           <DialogActions>
             <Button
               color="secondary"
               variant="contained"
-              onClick={() => props.onStatus("cancel")}>
+              onClick={() => props.onStatus("cancel")}
+            >
               {t("cancel")}
             </Button>
             <Button variant="contained" type="submit">

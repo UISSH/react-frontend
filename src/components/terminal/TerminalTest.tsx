@@ -13,7 +13,8 @@ export default function Index() {
     <Button
       onClick={() => {
         conut2.current = conut2.current + 1;
-      }}>
+      }}
+    >
       {conut2.current}
     </Button>
   );

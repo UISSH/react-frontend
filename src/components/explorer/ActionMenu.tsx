@@ -57,7 +57,8 @@ export default function NewActionMenu(props: ExplorerTableProps) {
         onStatus={(status) => {
           setFileNameDialogStatus({ ...fileNameDialogStatus, open: false });
         }}
-        {...fileNameDialogStatus}></FileNameDialog>
+        {...fileNameDialogStatus}
+      ></FileNameDialog>
 
       <IconButton
         className="h-full"
@@ -65,7 +66,8 @@ export default function NewActionMenu(props: ExplorerTableProps) {
         color="primary"
         aria-haspopup="true"
         aria-controls={open ? "basic-menu" : undefined}
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         <AddIcon />
       </IconButton>
       <Menu
@@ -75,19 +77,22 @@ export default function NewActionMenu(props: ExplorerTableProps) {
         onClose={handleClose}
         MenuListProps={{
           "aria-labelledby": "basic-button",
-        }}>
+        }}
+      >
         <MenuItem
           className="capitalize"
           onClick={(event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
             handleClickMenu("newFile");
-          }}>
+          }}
+        >
           {t("common.file")}
         </MenuItem>
         <MenuItem
           className="capitalize"
           onClick={(event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
             handleClickMenu("newFolder");
-          }}>
+          }}
+        >
           {t("common.folder")}
         </MenuItem>
       </Menu>

@@ -160,7 +160,8 @@ export default function AddIPTablesRule(props: {
                   minWidth: 120,
                 }}
                 label="application"
-                onChange={handleApplicationChange}>
+                onChange={handleApplicationChange}
+              >
                 {ApplicationMenuItems}
               </Select>
             </FormControl>
@@ -181,7 +182,8 @@ export default function AddIPTablesRule(props: {
                 label={t("iptables.protocol")}
                 onChange={(e) => {
                   setProtocol(e.target.value as string);
-                }}>
+                }}
+              >
                 <MenuItem value={"ALL"}>ALL</MenuItem>
                 <MenuItem value={"TCP"}>TCP</MenuItem>
                 <MenuItem value={"UDP"}>UDP</MenuItem>
@@ -301,14 +303,16 @@ export default function AddIPTablesRule(props: {
             onChange={(e) => {
               setUfwCommand(e.target.value);
             }}
-            value={ufwCommand}></TextField>
+            value={ufwCommand}
+          ></TextField>
         </div>
         <div className="flex gap-2 justify-end p-2">
           <Button
             size="small"
             variant="contained"
             color="primary"
-            type="submit">
+            type="submit"
+          >
             {t("iptables.execute")}
           </Button>
         </div>

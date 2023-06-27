@@ -143,7 +143,8 @@ export default function Index(props: FileMenuProps) {
         open={openRename}
         onStatus={(status) => {
           setOpenRename(false);
-        }}></RenameFSDialog>
+        }}
+      ></RenameFSDialog>
     ),
     [openRename, props.directory, props.name]
   );
@@ -156,13 +157,15 @@ export default function Index(props: FileMenuProps) {
         open={openDelete}
         onClose={() => {
           setOpenDelete(false);
-        }}></DeleteFile>
+        }}
+      ></DeleteFile>
       <IconButton
         id={props.path + "-positioned-button"}
         aria-controls={open ? props.path + "-positioned-menu" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
-        aria-expanded={open ? "true" : undefined}>
+        aria-expanded={open ? "true" : undefined}
+      >
         <MoreHorizIcon />
       </IconButton>
 
@@ -180,7 +183,8 @@ export default function Index(props: FileMenuProps) {
         transformOrigin={{
           vertical: "top",
           horizontal: "left",
-        }}>
+        }}
+      >
         {props.name && (
           <Box
             className="w-full h-full p-2 pl-4 "
@@ -190,7 +194,8 @@ export default function Index(props: FileMenuProps) {
               backgroundColor: (theme) => {
                 return theme.palette.secondary.main;
               },
-            }}>
+            }}
+          >
             {props.name}
           </Box>
         )}
@@ -208,7 +213,8 @@ export default function Index(props: FileMenuProps) {
           onClick={() => {
             setAnchorEl(null);
             setOpenDelete(true);
-          }}>
+          }}
+        >
           {t("exploprer.delete")}
         </MenuItem>
       </Menu>

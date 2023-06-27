@@ -65,8 +65,6 @@ export default function SystemProccess(props: SystemProccessProps) {
   const ws = useRef<WebSocket>();
   const [data, setData] = useState<ProccessIF[]>([]);
 
-
-
   useLayoutEffect(() => {
     ws.current = new WebSocket(getWSGateway("server_status"));
 
@@ -101,7 +99,8 @@ export default function SystemProccess(props: SystemProccessProps) {
     <>
       <CardDialog open={props.open} onClose={props.onClose}>
         <BasicTable
-          rows={data.filter((item) => item.resident_size)}></BasicTable>
+          rows={data.filter((item) => item.resident_size)}
+        ></BasicTable>
       </CardDialog>
     </>
   );
@@ -115,22 +114,21 @@ function BasicTable(props: { rows: ProccessIF[] }) {
   const handleKillProcess = async (pid: string) => {
     console.log(pid);
 
-
     setGlobalLoadingAtom(true);
     let res = await requestData({
       method: "POST",
       url: "/api/Operating/excute_command_sync/",
       data: {
-        "cwd": "/tmp",
-        "command": "kill -9 " + pid
-      }
-    })
+        cwd: "/tmp",
+        command: "kill -9 " + pid,
+      },
+    });
     if (!res.ok) {
       enqueueSnackbar("request error.", { variant: "error" });
       setGlobalLoadingAtom(false);
-      return
+      return;
     }
-    let resJson = await res.json() as OperatingResIF;
+    let resJson = (await res.json()) as OperatingResIF;
 
     if (resJson.result.result_text == "SUCCESS") {
       enqueueSnackbar("kill process success.", { variant: "success" });
@@ -138,11 +136,7 @@ function BasicTable(props: { rows: ProccessIF[] }) {
       enqueueSnackbar("kill process failed.", { variant: "error" });
     }
     setGlobalLoadingAtom(false);
-
-
-
-
-  }
+  };
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -150,50 +144,61 @@ function BasicTable(props: { rows: ProccessIF[] }) {
           <TableRow
             sx={{
               backgroundColor: (theme) => theme.palette.primary.main,
-            }}>
+            }}
+          >
             <TableCell
               sx={{
                 color: (theme) => theme.palette.primary.contrastText,
-              }}>
+              }}
+            >
               name
             </TableCell>
             <TableCell
               sx={{
                 color: (theme) => theme.palette.primary.contrastText,
               }}
-              align="right">
+              align="right"
+            >
               uid
             </TableCell>
             <TableCell
               sx={{
                 color: (theme) => theme.palette.primary.contrastText,
               }}
-              align="right">
+              align="right"
+            >
               pid
             </TableCell>
             <TableCell
               sx={{
                 color: (theme) => theme.palette.primary.contrastText,
               }}
-              align="right">
+              align="right"
+            >
               memory
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody >
+        <TableBody>
           {props.rows.map((row) => (
             <TableRow
               className="group"
               key={row.pid}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-              <TableCell component="th" scope="row" className="flex items-center gap-1" >
-                <div>
-                  {row.name}
-                </div>
-                <IconButton size="small" className="invisible group-hover:visible"
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell
+                component="th"
+                scope="row"
+                className="flex items-center gap-1"
+              >
+                <div>{row.name}</div>
+                <IconButton
+                  size="small"
+                  className="invisible group-hover:visible"
                   onClick={() => {
-                    handleKillProcess(row.pid)
-                  }}>
+                    handleKillProcess(row.pid);
+                  }}
+                >
                   <Close></Close>
                 </IconButton>
               </TableCell>

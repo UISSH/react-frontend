@@ -70,7 +70,8 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {
           <div className="flex flex-1 w-full">
             <Typography
@@ -78,7 +79,8 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               sx={{ flex: numSelected > 0 ? "1 1 100%" : "0 0 0%" }}
               color="inherit"
               variant="subtitle1"
-              component="div">
+              component="div"
+            >
               {numSelected} {t(LABEL)}
             </Typography>
 
@@ -89,14 +91,16 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               sx={{ flex: numSelected <= 0 ? "1 1 100%" : "0 0 0%" }}
               variant="h6"
               id="tableTitle"
-              component="div">
+              component="div"
+            >
               {t(LABEL)}
             </Typography>
           </div>
         }
         <ButtonGroup
           variant="contained"
-          aria-label="outlined primary button group">
+          aria-label="outlined primary button group"
+        >
           {currentPath && (
             <NewActionMenu currentPath={currentPath}></NewActionMenu>
           )}
@@ -107,7 +111,8 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <Button
               color="error"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
+              onClick={handleDelete}
+            >
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (

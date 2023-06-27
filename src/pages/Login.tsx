@@ -50,7 +50,8 @@ function FormTextField(props: FormTextProps) {
       onChange={props.setStatus}
       value={props.value}
       type={props.type}
-      InputProps={props.InputProps}></TextField>
+      InputProps={props.InputProps}
+    ></TextField>
   );
 }
 
@@ -168,13 +169,15 @@ function Login() {
     <ScopedCssBaseline enableColorScheme>
       <div
         style={{ backgroundImage: `url(${backgroundJPG})` }}
-        className="p-0  m-0 w-screen  h-screen bg-cover bg-center">
+        className="p-0  m-0 w-screen  h-screen bg-cover bg-center"
+      >
         <div className="h-full flex items-center justify-center backdrop-blur-xl">
           <div>
             <Card className="rounded-2xl  text-center w-96  shadow-2xl">
               <CardHeader
                 title={t("login-server")}
-                className="text-center"></CardHeader>
+                className="text-center"
+              ></CardHeader>
               {netError.msg ? (
                 <Alert severity="error">{netError.msg}</Alert>
               ) : (
@@ -200,7 +203,8 @@ function Login() {
                         </InputAdornment>
                       ),
                     }}
-                    label="api"></TextField>
+                    label="api"
+                  ></TextField>
 
                   <FormTextField
                     label={t("login.username")}
@@ -214,7 +218,8 @@ function Login() {
                           <SupervisorAccountOutlined />
                         </InputAdornment>
                       ),
-                    }}></FormTextField>
+                    }}
+                  ></FormTextField>
 
                   <FormTextField
                     label={t("login.password")}
@@ -228,7 +233,8 @@ function Login() {
                           <Password />
                         </InputAdornment>
                       ),
-                    }}></FormTextField>
+                    }}
+                  ></FormTextField>
                 </Stack>
               </CardContent>
               <CardActions className={"flex justify-end px-4"}>
@@ -246,7 +252,8 @@ function Login() {
                 <LoadingButton
                   loading={loading}
                   variant={"contained"}
-                  onClick={onLogin}>
+                  onClick={onLogin}
+                >
                   {t("login.login")}
                 </LoadingButton>
               </CardActions>

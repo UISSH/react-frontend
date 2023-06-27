@@ -71,7 +71,8 @@ export default function ExplorerDropFileUpload(
         <Paper
           sx={{
             boxShadow: "none",
-          }}>
+          }}
+        >
           <div {...getRootProps()}>
             <input {...getInputProps()} />
             {props.children}

@@ -67,7 +67,8 @@ export default function ApplicationSettings(
           className="grid  gap-2"
           component="form"
           noValidate
-          autoComplete="off">
+          autoComplete="off"
+        >
           {props.application &&
             params &&
             props.application.attr.map((item) => {

@@ -115,7 +115,8 @@ export default function PostHost(props: PostHostProps) {
               @
               <Tooltip
                 open={!!errors.hostname}
-                title={errors.hostname?.message}>
+                title={errors.hostname?.message}
+              >
                 <TextField
                   {...register("hostname", {
                     required: true,
@@ -166,11 +167,13 @@ export default function PostHost(props: PostHostProps) {
                     type="password"
                     size="small"
                     fullWidth
-                    autoComplete="new-password"></TextField>
+                    autoComplete="new-password"
+                  ></TextField>
                   <IconButton component="label">
                     <Tooltip
                       open={!!errors.private_key_file}
-                      title={errors.private_key_file?.message}>
+                      title={errors.private_key_file?.message}
+                    >
                       <KeyIcon
                         color={
                           !!errors.private_key_file
@@ -178,7 +181,8 @@ export default function PostHost(props: PostHostProps) {
                             : watchPrivateKeyFile
                             ? "primary"
                             : "inherit"
-                        }></KeyIcon>
+                        }
+                      ></KeyIcon>
                     </Tooltip>
                     <input
                       {...register("private_key_file", {
@@ -195,7 +199,8 @@ export default function PostHost(props: PostHostProps) {
               ) : (
                 <Tooltip
                   open={!!errors.password}
-                  title={errors.password?.message}>
+                  title={errors.password?.message}
+                >
                   <TextField
                     {...register("password", {
                       required: {
@@ -209,7 +214,8 @@ export default function PostHost(props: PostHostProps) {
                     type="password"
                     size="small"
                     fullWidth
-                    autoComplete="new-password"></TextField>
+                    autoComplete="new-password"
+                  ></TextField>
                 </Tooltip>
               )}
             </div>
@@ -233,7 +239,8 @@ export default function PostHost(props: PostHostProps) {
               variant="contained"
               onClick={() => {
                 props.onClose && props.onClose();
-              }}>
+              }}
+            >
               {t("cancel")}
             </Button>
             <Button variant="contained" type="submit">

@@ -86,7 +86,8 @@ export default function DropFileUpload(props: DropFileUploadProps) {
         <Paper
           sx={{
             boxShadow: "none",
-          }}>
+          }}
+        >
           <div {...getRootProps()}>
             <input {...getInputProps()} />
             {props.children}

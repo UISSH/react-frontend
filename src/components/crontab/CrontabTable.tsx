@@ -83,13 +83,15 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -98,7 +100,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             {t(LABEL)}
           </Typography>
         )}
@@ -107,7 +110,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             startIcon={<AddIcon />}
             onClick={() => {
               navigate(`?action=update`);
-            }}>
+            }}
+          >
             {t("common.add")}
           </Button>
           {numSelected > 0 ? (
@@ -115,7 +119,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               color="error"
               className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
+              onClick={handleDelete}
+            >
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -126,7 +131,8 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <IconButton
               className={globalProgress ? "animate-spin" : ""}
               color="primary"
-              onClick={handleReloadParent}>
+              onClick={handleReloadParent}
+            >
               <RefreshIcon />
             </IconButton>
           </div>
@@ -219,7 +225,8 @@ export default function CrontabTable(props: CrontabTableProps) {
                 shellscript: row.shellscript,
               },
             });
-          }}>
+          }}
+        >
           editor
         </Button>
       );
@@ -272,7 +279,8 @@ export default function CrontabTable(props: CrontabTableProps) {
           rows={rowsState}
           headCells={headCells}
           title={LABEL}
-          pagination={paginationState}></TableDjango>
+          pagination={paginationState}
+        ></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );

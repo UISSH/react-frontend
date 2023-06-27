@@ -55,7 +55,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         onStatus={(res) => {
           setOpenDialog(false);
           handleReloadParent();
-        }}></CreateWebsiteDialog>
+        }}
+      ></CreateWebsiteDialog>
       <Toolbar
         sx={{
           pl: { sm: 2 },
@@ -67,13 +68,15 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div">
+            component="div"
+          >
             {numSelected} {t("layout.website")}
           </Typography>
         ) : (
@@ -82,7 +85,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
-            component="div">
+            component="div"
+          >
             {t("layout.website")}
           </Typography>
         )}
@@ -92,7 +96,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             startIcon={<AddIcon />}
             onClick={() => {
               setOpenDialog(true);
-            }}>
+            }}
+          >
             {t("website.add")}
           </Button>
 
@@ -100,7 +105,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <Button
               color="error"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}>
+              onClick={handleDelete}
+            >
               {t("website.delete")}
             </Button>
           ) : (
@@ -110,7 +116,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <IconButton
               className={globalProgress ? "animate-spin" : ""}
               color="primary"
-              onClick={handleReloadParent}>
+              onClick={handleReloadParent}
+            >
               <RefreshIcon />
             </IconButton>
           </div>
@@ -273,13 +280,13 @@ export default function WebsiteTable() {
                     url = `https://${domain}`;
                   }
                   openInNewTab(url);
-                }}>
+                }}
+              >
                 {domain}
                 <PublicIcon
                   fontSize="small"
-                  color={
-                    row.ssl_enable ? "success" : "inherit"
-                  }></PublicIcon>{" "}
+                  color={row.ssl_enable ? "success" : "inherit"}
+                ></PublicIcon>{" "}
               </div>
             );
 
@@ -289,14 +296,16 @@ export default function WebsiteTable() {
                 className="flex flex-nowrap gap-2 justify-end items-center cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
-                }}>
+                }}
+              >
                 <div>{web_server_type_text}</div>
                 <IconButton
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     navigate(`/dash/website/${row.id}`);
-                  }}>
+                  }}
+                >
                   <SettingsIcon></SettingsIcon>
                 </IconButton>
               </div>
@@ -305,7 +314,8 @@ export default function WebsiteTable() {
               <SwitchSSL
                 id={row.id}
                 status={row.ssl_enable}
-                onUpdate={handleUpdate}></SwitchSSL>
+                onUpdate={handleUpdate}
+              ></SwitchSSL>
             );
             let _index_root = row.index_root;
             let database_id = row.database_id;
@@ -314,9 +324,11 @@ export default function WebsiteTable() {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/dash/database/${database_id}`);
-                }}>
+                }}
+              >
                 <DatasetIcon
-                  color={database_id ? "primary" : "disabled"}></DatasetIcon>
+                  color={database_id ? "primary" : "disabled"}
+                ></DatasetIcon>
               </IconButton>
             ) : (
               <div className="pr-2 pl-2">
@@ -339,12 +351,14 @@ export default function WebsiteTable() {
                         onClick={(e) => {
                           e.preventDefault();
                           navigate(`/dash/explorer/?directory=${_index_root}`);
-                        }}>
+                        }}
+                      >
                         <FolderOpenIcon />
                       </IconButton>
                     </InputAdornment>
                   ),
-                }}></TextField>
+                }}
+              ></TextField>
             );
             return row;
           })
@@ -360,7 +374,8 @@ export default function WebsiteTable() {
       <Dialog open={alertDialog.open} onClose={handleClose}>
         <DialogTitle
           bgcolor={(theme) => theme.palette.primary.main}
-          color={(theme) => theme.palette.text.disabled}>
+          color={(theme) => theme.palette.text.disabled}
+        >
           {alertDialog.title}
         </DialogTitle>
         <DialogContent>{alertDialog.content}</DialogContent>
@@ -372,7 +387,8 @@ export default function WebsiteTable() {
             variant="contained"
             color="error"
             onClick={requestDeleteWebsite}
-            autoFocus>
+            autoFocus
+          >
             {t("yes")}
           </Button>
         </DialogActions>
