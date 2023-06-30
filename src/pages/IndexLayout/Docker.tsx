@@ -8,6 +8,10 @@ import Tabs from "@mui/material/Tabs";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import ContainerTable from "../../components/docker/ContainerTable";
+import useSWR from "swr";
+import { requestData } from "../../requests/http";
+import { OperatingResIF } from "../../constant";
+import InstallDocker from "../../components/docker/InstallDocker";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -24,8 +28,7 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
+      {...other}>
       {value === index && children}
     </div>
   );
@@ -41,6 +44,32 @@ function a11yProps(index: number) {
 export default function Index() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [t] = useTranslation();
+  const { data, error, isLoading } = useSWR<OperatingResIF>(
+    "/api/DockerContainer/ping/",
+    async (url) => {
+      const res = await requestData({
+        url: url,
+      });
+
+      if (res.ok) {
+        return await res.json();
+      } else {
+        console.log(res);
+        throw new Error("query docker api failur");
+      }
+    }
+  );
+
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
+  if (error) {
+    return <div>error</div>;
+  }
+
+  if (data?.result.result == 2) {
+    return <InstallDocker></InstallDocker>;
+  }
 
   const [value, setValue] = React.useState(0);
 
@@ -71,8 +100,7 @@ export default function Index() {
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="basic docker tabs"
-        >
+          aria-label="basic docker tabs">
           <Tab label={t("docker.container")} {...a11yProps(0)} />
           <Tab label={t("docker.image")} {...a11yProps(1)} />
           <Tab label={t("docker.volume")} {...a11yProps(2)} />

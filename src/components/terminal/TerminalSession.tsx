@@ -1,5 +1,6 @@
 import OnlinePredictionIcon from "@mui/icons-material/OnlinePrediction";
 import { Box, Divider } from "@mui/material";
+import { WebglAddon } from "xterm-addon-webgl";
 
 import { useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
@@ -137,9 +138,15 @@ export default function TerminalSession(props: TerminalSessionProps) {
       fontFamily: '"Cascadia Code", Menlo, monospace',
       theme: materialTheme,
       cursorBlink: true,
+      windowsPty: {
+        backend: "conpty",
+        buildNumber: 19000,
+      },
     }) as Terminal;
     let term = termRef.current;
     term.loadAddon(fitAddon.current);
+    term.loadAddon(new WebglAddon());
+
     term.open(element);
 
     term.onResize((size) => {
@@ -254,15 +261,13 @@ export default function TerminalSession(props: TerminalSessionProps) {
         requestDataProps={{
           url: "/api/Terminal/upload_file/",
           method: "POST",
-        }}
-      >
+        }}>
         <Box
           sx={{
             backgroundColor: theme.palette.background.default,
             color: theme.palette.text.secondary,
           }}
-          className="flex justify-between py-1 px-2"
-        >
+          className="flex justify-between py-1 px-2">
           <div>
             {props.auth.username}@{props.auth.hostname}:{props.auth.port}
           </div>
@@ -271,8 +276,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
             {connectStatus ? (
               <OnlinePredictionIcon
                 color="success"
-                className="animate-pulse"
-              ></OnlinePredictionIcon>
+                className="animate-pulse"></OnlinePredictionIcon>
             ) : (
               <OnlinePredictionIcon color="error"></OnlinePredictionIcon>
             )}
@@ -284,8 +288,7 @@ export default function TerminalSession(props: TerminalSessionProps) {
           sx={{
             height: "calc(100vh - 195px)",
             backgroundColor: theme.palette.background.default,
-          }}
-        >
+          }}>
           <div className="w-full h-full" id={props.unique}></div>
         </Box>
       </DropFileUpload>
