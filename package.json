@@ -43,7 +43,7 @@
     "react-hook-form": "^7.45.0",
     "react-i18next": "^13.0.1",
     "react-json-tree": "^0.18.0",
-    "react-router-dom": "^6.14.0",
+    "react-router-dom": "^6.14.1",
     "recoil": "^0.7.7",
     "swr": "^2.2.0",
     "xterm": "^5.2.1",
