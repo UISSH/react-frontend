@@ -41,38 +41,10 @@ function a11yProps(index: number) {
   };
 }
 
-export default function Index() {
-  const [searchParams, setSearchParams] = useSearchParams();
+function Container() {
   const [t] = useTranslation();
-  const { data, error, isLoading } = useSWR<OperatingResIF>(
-    "/api/DockerContainer/ping/",
-    async (url) => {
-      const res = await requestData({
-        url: url,
-      });
-
-      if (res.ok) {
-        return await res.json();
-      } else {
-        console.log(res);
-        throw new Error("query docker api failur");
-      }
-    }
-  );
-
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
-  if (error) {
-    return <div>error</div>;
-  }
-
-  if (data?.result.result == 2) {
-    return <InstallDocker></InstallDocker>;
-  }
-
   const [value, setValue] = React.useState(0);
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     if (newValue == 0) {
       setSearchParams({ tab: "container" });
@@ -117,4 +89,35 @@ export default function Index() {
       </TabPanel>
     </Box>
   );
+}
+
+export default function Index() {
+  const { data, error, isLoading } = useSWR<OperatingResIF>(
+    "/api/DockerContainer/ping/",
+    async (url) => {
+      const res = await requestData({
+        url: url,
+      });
+
+      if (res.ok) {
+        return await res.json();
+      } else {
+        console.log(res);
+        throw new Error("query docker api failur");
+      }
+    }
+  );
+
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
+  if (error) {
+    return <div>error</div>;
+  }
+
+  if (data?.result.result == 2) {
+    return <InstallDocker></InstallDocker>;
+  } else {
+    return <Container></Container>;
+  }
 }

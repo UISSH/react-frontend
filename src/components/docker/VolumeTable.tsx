@@ -6,6 +6,7 @@ import {
   ButtonGroup,
   IconButton,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
@@ -19,6 +20,9 @@ import { requestData } from "../../requests/http";
 import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import { VolumeRowIF } from "./schema";
+import { DeleteForeverOutlined } from "@mui/icons-material";
+import { useRecoilState } from "recoil";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 interface RowIF extends VolumeRowIF {
   id: number;
@@ -30,6 +34,10 @@ export interface VolumeTableProps {}
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const onReloadTableData = useContext(PureFunctionContext);
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
 
   const { numSelected } = props;
   const [t] = useTranslation();
@@ -39,6 +47,22 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     if (props.onAction) {
       props.onAction("delete");
     }
+  };
+
+  const handleDeleteUnused = async () => {
+    setGlobalLoadingAtom(true);
+    let res = await requestData({
+      url: "/api/DockerVolume/prune_volumes/",
+      method: "GET",
+    });
+
+    if (res.ok) {
+      enqueueSnackbar("delete unused volume success", { variant: "success" });
+    } else {
+      enqueueSnackbar("delete unused volume failed", { variant: "error" });
+    }
+
+    setGlobalLoadingAtom(false);
   };
 
   const handleReloadParent = () => {
@@ -58,15 +82,13 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}
-      >
+        }}>
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div"
-          >
+            component="div">
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -75,23 +97,20 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
-            component="div"
-          >
+            component="div">
             {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
           className="flex-nowarp"
           variant="contained"
-          aria-label="outlined primary button group"
-        >
+          aria-label="outlined primary button group">
           {numSelected > 0 ? (
             <Button
               color="error"
               className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}
-            >
+              onClick={handleDelete}>
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -101,6 +120,12 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <IconButton color="primary" onClick={handleReloadParent}>
               <RefreshIcon />
             </IconButton>
+
+            <Tooltip title="delete unused volume">
+              <IconButton color="primary" onClick={handleReloadParent}>
+                <DeleteForeverOutlined />
+              </IconButton>
+            </Tooltip>
           </div>
         </ButtonGroup>
       </Toolbar>
@@ -111,6 +136,11 @@ export default function ContainerTable(props: VolumeTableProps) {
   const [t] = useTranslation();
   const navigate = useNavigate();
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
   const headCells = [
     {
       key: "id",
@@ -140,11 +170,8 @@ export default function ContainerTable(props: VolumeTableProps) {
     },
   ];
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  const [selected, setSelected] = useState<readonly string[]>([]);
-
   const deleteVolume = async (name: string) => {
+    setGlobalLoadingAtom(true);
     let res = await requestData({
       url: `/api/DockerVolume/${name}/`,
       method: "DELETE",
@@ -160,6 +187,7 @@ export default function ContainerTable(props: VolumeTableProps) {
         variant: "error",
       });
     }
+    setGlobalLoadingAtom(false);
   };
 
   const handleOpenMountPoint = (path: string) => {
@@ -189,8 +217,7 @@ export default function ContainerTable(props: VolumeTableProps) {
             e.preventDefault();
             e.stopPropagation();
             handleOpenMountPoint(row.mountpoint);
-          }}
-        >
+          }}>
           {row.name.substring(0, 16)}
         </Button>
       );
@@ -244,8 +271,7 @@ export default function ContainerTable(props: VolumeTableProps) {
           onSetPage={handleSetTargetPage}
           rows={data}
           headCells={headCells}
-          title={LABEL}
-        ></TableDjango>
+          title={LABEL}></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );

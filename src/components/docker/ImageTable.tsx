@@ -25,6 +25,8 @@ import { EnhancedTableToolbarProps, TableDjango } from "../DjangoTable";
 import LinearBuffer from "../LinearBuffer";
 import { ImageRowIF as RowIF } from "./schema";
 import SearchImage from "./SearchImage";
+import { useRecoilState } from "recoil";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 const LABEL = "docker.image";
 
@@ -56,15 +58,13 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}
-      >
+        }}>
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div"
-          >
+            component="div">
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -73,8 +73,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               className="capitalize"
               variant="h6"
               id="tableTitle"
-              component="div"
-            >
+              component="div">
               {t(LABEL)}
             </Typography>
             <SearchImage />
@@ -83,15 +82,13 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <ButtonGroup
           className="flex-nowarp"
           variant="contained"
-          aria-label="outlined primary button group"
-        >
+          aria-label="outlined primary button group">
           {numSelected > 0 ? (
             <Button
               color="error"
               className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}
-            >
+              onClick={handleDelete}>
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -111,6 +108,10 @@ export default function ImageTable(props: ImageTableProps) {
   const [t] = useTranslation();
   const navigate = useNavigate();
   const [pullImageDialogOpen, setPullImageDialogOpen] = useState(false);
+
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+
   const headCells = [
     {
       key: "id_name",
@@ -144,6 +145,7 @@ export default function ImageTable(props: ImageTableProps) {
   const [selected, setSelected] = useState<readonly string[]>([]);
 
   const deleteImage = async (id: string) => {
+    setGlobalLoadingAtom(true);
     let res = await requestData({
       url: `/api/DockerImage/${id}`,
       method: "DELETE",
@@ -151,13 +153,12 @@ export default function ImageTable(props: ImageTableProps) {
     if (res.ok) {
       enqueueSnackbar(t("success"), { variant: "success" });
     } else {
-      enqueueSnackbar(t("error"), { variant: "error" });
+      enqueueSnackbar(await res.text(), { variant: "error" });
     }
+    setGlobalLoadingAtom(false);
   };
 
   const handleAction = async (action: string) => {
-    console.log(action);
-
     if (action === "reload") {
       mutate();
     } else if (action === "delete") {
@@ -197,8 +198,7 @@ export default function ImageTable(props: ImageTableProps) {
                     imageId: row.id,
                   },
                 });
-              }}
-            >
+              }}>
               <PlayCircleFilledWhiteIcon />
             </IconButton>
           </Tooltip>
@@ -255,8 +255,7 @@ export default function ImageTable(props: ImageTableProps) {
           onSetPage={handleSetTargetPage}
           rows={data}
           headCells={headCells}
-          title={LABEL}
-        ></TableDjango>
+          title={LABEL}></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );

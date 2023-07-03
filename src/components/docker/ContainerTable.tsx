@@ -32,6 +32,8 @@ import { ContainerIF } from "./schema";
 import { faChartSimple } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContainerStatsDialog from "./ContainerStatsDialog";
+import { useRecoilState } from "recoil";
+import { GlobalLoadingAtom } from "../../store/recoilStore";
 
 function ChartSimpleIcon() {
   return <FontAwesomeIcon icon={faChartSimple} />;
@@ -76,15 +78,13 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}
-      >
+        }}>
         {numSelected > 0 ? (
           <Typography
             sx={{ flex: "1 1 50%" }}
             color="inherit"
             variant="subtitle1"
-            component="div"
-          >
+            component="div">
             {numSelected} {t(LABEL)}
           </Typography>
         ) : (
@@ -93,48 +93,42 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             sx={{ flex: "1 1 50%" }}
             variant="h6"
             id="tableTitle"
-            component="div"
-          >
+            component="div">
             {t(LABEL)}
           </Typography>
         )}
         <ButtonGroup
           className="flex-nowarp bg-white"
           variant="contained"
-          aria-label="outlined primary button group"
-        >
+          aria-label="outlined primary button group">
           {numSelected == 1 && (
             <ButtonGroup
               className="flex-nowarp bg-white"
               variant="contained"
-              color="inherit"
-            >
+              color="inherit">
               <div className="px-2 gap-1 flex">
-                <Tooltip title={"turn on"}>
+                <Tooltip title={"start docker container"}>
                   <IconButton
                     onClick={() => {
                       props.onAction && props.onAction("start");
-                    }}
-                  >
+                    }}>
                     <PlayCircleFilledIcon color="primary"></PlayCircleFilledIcon>
                   </IconButton>
                 </Tooltip>
-                <Tooltip title={"turn off"}>
+                <Tooltip title={"stop docker container"}>
                   <IconButton
                     onClick={() => {
                       props.onAction && props.onAction("stop");
-                    }}
-                  >
+                    }}>
                     <StopCircleIcon color="primary"></StopCircleIcon>
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title="restart">
+                <Tooltip title="restart docker container">
                   <IconButton
                     onClick={() => {
                       props.onAction && props.onAction("restart");
-                    }}
-                  >
+                    }}>
                     <SyncIcon color="primary"></SyncIcon>
                   </IconButton>
                 </Tooltip>
@@ -146,8 +140,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               color="error"
               className="flex flex-nowrap"
               startIcon={<DeleteIcon />}
-              onClick={handleDelete}
-            >
+              onClick={handleDelete}>
               <div className="whitespace-nowrap">{t("common.delete")}</div>
             </Button>
           ) : (
@@ -213,6 +206,9 @@ export default function ContainerTable(props: ContainerProps) {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const [globalLoadingAtom, setGlobalLoadingAtom] =
+    useRecoilState(GlobalLoadingAtom);
+
   const [logsDialog, setLogsDialog] = useState<DialogState>({
     open: false,
     containerId: "",
@@ -233,6 +229,7 @@ export default function ContainerTable(props: ContainerProps) {
 
   const [selected, setSelected] = useState<readonly string[]>([]);
   const executeCommand = async (command: string) => {
+    setGlobalLoadingAtom(true);
     let data = {
       url: "/api/Operating/excute_command_sync/",
       method: "POST" as const,
@@ -253,6 +250,8 @@ export default function ContainerTable(props: ContainerProps) {
     } else {
       enqueueSnackbar(resJson.msg, { variant: "error" });
     }
+
+    setGlobalLoadingAtom(false);
   };
 
   const handleResetDialog = (setFN: Dispatch<SetStateAction<DialogState>>) => {
@@ -299,8 +298,7 @@ export default function ContainerTable(props: ContainerProps) {
                 open: true,
                 containerId: row.id,
               });
-            }}
-          >
+            }}>
             <TerminalIcon></TerminalIcon>
           </IconButton>
         </div>
@@ -315,8 +313,7 @@ export default function ContainerTable(props: ContainerProps) {
                   open: true,
                   containerId: row.id,
                 });
-              }}
-            >
+              }}>
               {row.id.slice(0, 12)}
             </Button>
           </Tooltip>
@@ -336,8 +333,7 @@ export default function ContainerTable(props: ContainerProps) {
                 open: true,
                 containerId: row.id,
               });
-            }}
-          >
+            }}>
             Logs
           </Button>
 
@@ -350,8 +346,7 @@ export default function ContainerTable(props: ContainerProps) {
                   open: true,
                   containerId: row.id,
                 });
-              }}
-            >
+              }}>
               <ChartSimpleIcon></ChartSimpleIcon>
             </IconButton>
           </Tooltip>
@@ -441,8 +436,7 @@ export default function ContainerTable(props: ContainerProps) {
           onSetPage={handleSetTargetPage}
           rows={data}
           headCells={headCells}
-          title={LABEL}
-        ></TableDjango>
+          title={LABEL}></TableDjango>
       </PureFunctionContext.Provider>
     </>
   );
