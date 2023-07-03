@@ -61,7 +61,6 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     } else {
       enqueueSnackbar("delete unused volume failed", { variant: "error" });
     }
-
     setGlobalLoadingAtom(false);
   };
 
@@ -122,7 +121,7 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             </IconButton>
 
             <Tooltip title="delete unused volume">
-              <IconButton color="primary" onClick={handleReloadParent}>
+              <IconButton color="primary" onClick={handleDeleteUnused}>
                 <DeleteForeverOutlined />
               </IconButton>
             </Tooltip>
