@@ -40,7 +40,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-full-screen": "^1.1.1",
-    "react-hook-form": "^7.45.1",
+    "react-hook-form": "^7.45.2",
     "react-i18next": "^13.0.1",
     "react-json-tree": "^0.18.0",
     "react-router-dom": "^6.14.1",
